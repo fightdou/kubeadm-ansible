@@ -1,0 +1,35 @@
+# 节点初始主备状态
+lb_keepalived_state: "{% if inventory_hostname == groups['load-balancer'][0] %}MASTER{% else %}BACKUP{% endif %}"
+# 其他 Keepalived 节点的单点传播 IP
+lb_keepalived_unicast_peers: >-
+  {%- for host in groups['load-balancer'] -%}
+  {%- if hostvars[host]['ansible_host'] is defined -%}
+  '{{ hostvars[host]['ansible_host'] }}'
+  {%- else -%}
+  '{{ host }}'
+  {%- endif -%}
+  {%- if not loop.last -%},{%- endif -%}
+  {%- endfor -%}
+
+kube_apiserver_ip: >-
+  {% if lb_kube_apiserver_ip is not defined %}
+    127.0.0.1
+  {% else %}
+    {{ lb_kube_apiserver_ip }}
+  {% endif %}
+
+current_host_ip: >-
+  {%- if hostvars[inventory_hostname]['ansible_host'] is defined -%}
+  {{ hostvars[inventory_hostname]['ansible_host'] }}
+  {%- else -%}
+  {{ inventory_hostname }}
+  {%- endif -%}
+
+# kubelet 启动参数
+kubelet_args_base: >-
+  --address=127.0.0.1
+  --pod-infra-container-image={{ pod_infra_container_image }}
+  --root-dir={{ kubelet_root_dir }}
+  --hostname-override={{ inventory_hostname }}
+  --pod-manifest-path=/etc/kubernetes/manifests
+  --cgroup-driver={{ kubelet_cgroup_driver|default(kubelet_cgroup_driver_detected) }}

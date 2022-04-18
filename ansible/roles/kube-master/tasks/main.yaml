@@ -1,0 +1,96 @@
+- name: 读取 kubelet.conf 文件 stat 信息
+  stat: 
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- name: 拉取 master 节点需要拉取的镜像列表
+  shell: kubeadm config images pull --image-repository={{ kube_image_repository }}
+
+# 初始化第一个 master 节点
+- include_tasks: master-init.yml
+  when:
+  - not kubelet_conf_stat.stat.exists
+  - inventory_hostname == groups['kube-master'][0]
+
+# 初始化其他 master 节点
+- include_tasks: master-join.yml
+  when:
+  - not kubelet_conf_stat.stat.exists
+  - inventory_hostname != groups['kube-master'][0]
+  - inventory_hostname in (groups['kube-master'] + groups['new-master'])
+
+- name: 创建 cni 相关目录
+  file: 
+    name: /etc/kubernetes/plugins/network-plugin
+    state: directory
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 配置网络CNI插件
+- name: 渲染 flannel 配置文件
+  template:
+    src: kube-flannel.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 部署 flannel
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 轮询等待 flannel 运行
+  shell: kubectl get pod --all-namespaces -o wide | grep 'flannel' | awk '{print $4}'
+  register: pod_status
+  until: "'Running' in pod_status.stdout"
+  retries: 12
+  delay: 5
+  ignore_errors: true
+  when: wait_plugins_ready|bool
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- block:
+  - name: 安装 helm
+    shell: wget https://get.helm.sh/helm-v3.8.1-linux-amd64.tar.gz -P /root
+
+  - name: 解压 helm 包
+    shell: tar -xvf /root/helm-v3.8.1-linux-amd64.tar.gz -C /opt
+
+  - name: 复制 helm 二进制文件
+    copy:
+      src: /opt/linux-amd64/helm
+      dest: /usr/local/bin
+      mode: "0755"
+
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 备份etcd
+- block:
+  - name: 第一个 etcd 节点创建 etcd 备份目录
+    file: 
+      name: "{{ etcd_backup_dir }}"
+      state: directory
+
+  - name: 第一个 etcd 节点创建 etcd 备份工具
+    template: 
+      src: etcdtools.j2
+      dest: /usr/local/bin/etcdtools
+      owner: root
+      mode: 0755
+  - name: 第一个 etcd 节点创建 etcd 定时备份 crontab
+    cron: 
+      minute: "0"
+      hour: "{{ etcd_backup_hour }}"
+      name: Backup etcd databases
+      job: >
+        /usr/local/bin/etcdtools backup
+  - name: 第一个 etcd 节点创建清理 etcd 定时备份文件 crontab
+    cron: 
+      minute: "30"
+      hour: "{{ etcd_backup_hour }}"
+      name: Clean etcd databases backup file
+      job: >
+        /usr/local/bin/etcdtools cleanup
+  when: inventory_hostname == groups['kube-master'][0]

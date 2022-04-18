@@ -1,0 +1,41 @@
+- name: 确认 kubelet 已停止运行
+  service:
+    name: kubelet
+    state: stopped
+    enabled: yes
+
+- name: 创建 kubeadm init 配置文件
+  template:
+    src: kube-init.yml.j2
+    dest: "/etc/kubernetes/kubeadm-init.yml"
+    owner: root
+    mode: 0644
+
+- name: 初始化第一个 master 节点
+  shell: kubeadm init --config=/etc/kubernetes/kubeadm-init.yml --upload-certs
+
+- block:
+  - name: 创建 kubeconfig 目录
+    file: 
+      name: "{{ item }}"
+      state: directory
+    with_items:
+    - "{{ ansible_env.PWD }}/.kube"
+    - "{{ ansible_env.HOME }}/.kube"
+
+  - name: 复制 kubeconfig 文件到 .kube 目录
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: "{{ item }}/config"
+      mode: 0600
+      remote_src: yes
+    with_items:
+    - "{{ ansible_env.PWD | default('/root') }}/.kube"
+    - "{{ ansible_env.HOME | default('/root') }}/.kube"
+
+  - name: 设置 kubeconfig 文件权限
+    file:
+      path: "{{ ansible_env.PWD | default('/root') }}/.kube/config"
+      owner: "{{ ansible_env.SUDO_USER | default('root') }}"
+      mode: '0600'
+  when: inventory_hostname in (groups['kube-master'] + groups['new-master'])

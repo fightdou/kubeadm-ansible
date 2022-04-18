@@ -1,0 +1,65 @@
+- name: 使用 kubeadm 重置节点
+  command: kubeadm reset -f
+  ignore_errors: true
+
+- name: 停止 kubelet 服务
+  service:
+    name: kubelet
+    state: stopped
+    enabled: no
+  ignore_errors: true
+
+- name: 删除 kubelet 相关文件或目录
+  file: 
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ ansible_env.HOME | default('/root') }}/.helm"
+    - "{{ ansible_env.HOME | default('/root') }}/.kube"
+    - /etc/kubernetes
+    - /etc/cni/net.d
+    - /etc/sysctl.d/95-k8s-sysctl.conf
+    - /etc/systemd/system.conf.d/30-k8s-ulimits.conf
+    - /run/flannel
+    - /var/lib/etcd
+    - /var/lib/kubelet
+    - /var/lib/dockershim
+    - /var/run/kubernetes
+    - /var/lib/cni
+
+- name: 清理 iptables
+  shell: "{{ item }} || true"
+  with_items:
+  - iptables -F
+  - iptables -X
+  - iptables -F -t nat
+  - iptables -X -t nat
+  - iptables -F -t filter
+  - iptables -X -t filter
+  - iptables -F -t mangle
+  - iptables -X -t mangle
+
+- name: 刷新 iptables
+  iptables:
+    table: "{{ item }}"
+    flush: yes
+  with_items:
+    - filter
+    - nat
+    - mangle
+
+- name: 清理 ipvsadm
+  shell: "{{ item }} || true"
+  with_items:
+  - ipvsadm --clear
+
+- name: 移除添加的 hosts 信息
+  blockinfile:
+    path: "/etc/hosts"
+    state: absent
+    marker: "# Ansible inventory hosts {mark}"
+
+- name: 重启网络
+  systemd:
+    name: NetworkManager
+    state: restarted

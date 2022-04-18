@@ -1,0 +1,21 @@
+- name: 读取 kubelet.conf 文件 stat 信息
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- name: 拉取 worker 节点需要拉取的镜像列表
+  shell: kubeadm config images pull --image-repository={{ kube_image_repository }}
+
+- name: 创建 kubeadm join 配置文件
+  template:
+    src: kube-join.yml.j2
+    dest: "/etc/kubernetes/kubeadm-join.yaml"
+    owner: root
+    mode: 0644
+
+- name: Worker 节点加入集群
+  shell: kubeadm join --config=/etc/kubernetes/kubeadm-join.yaml
+  when: 
+  - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+  - inventory_hostname not in (groups['kube-master'] + groups['new-master'])
+  - not kubelet_conf_stat.stat.exists
