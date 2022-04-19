@@ -1,0 +1,186 @@
+---
+rbac:
+  create: true
+
+serviceAccounts:
+  nodeplugin:
+    create: true
+    name: cephfs-csi-nodeplugin
+  provisioner:
+    create: true
+    name: cephfs-csi-provisioner
+
+csiConfig:
+  - clusterID: "{{ ceph_cluster_id }}"
+    monitors: 
+    {% for host in groups['ceph-mons'] -%}
+    - "{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}"
+    {% endfor %}
+
+logLevel: 5
+
+nodeplugin:
+  name: nodeplugin
+  updateStrategy: RollingUpdate
+  priorityClassName: system-node-critical
+
+  httpMetrics:
+    enabled: true
+    containerPort: 8081
+
+    service:
+      enabled: true
+      servicePort: 8080
+      type: ClusterIP
+      annotations: {}
+      clusterIP: ""
+      externalIPs: []
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+
+  profiling:
+    enabled: false
+
+  registrar:
+    image:
+      repository: {{ kube_image_repository }}/csi-node-driver-registrar
+      tag: v2.4.0
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  plugin:
+    image:
+      repository: {{ kube_image_repository }}/cephcsi
+      tag: canary
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+  # forcecephkernelclient: true
+  podSecurityPolicy:
+    enabled: false
+
+provisioner:
+  name: provisioner
+  replicaCount: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+  timeout: 60s
+  priorityClassName: system-cluster-critical
+
+  httpMetrics:
+    enabled: true
+    containerPort: 8081
+
+    service:
+      enabled: true
+      servicePort: 8080
+      type: ClusterIP
+      annotations: {}
+      clusterIP: ""
+      externalIPs: []
+      loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+
+  profiling:
+    enabled: false
+
+  provisioner:
+    image:
+      repository: {{ kube_image_repository }}/csi-provisioner
+      tag: v3.0.0
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  attacher:
+    name: attacher
+    enabled: true
+    image:
+      repository: {{ kube_image_repository }}/csi-attacher
+      tag: v3.3.0
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  resizer:
+    name: resizer
+    enabled: true
+    image:
+      repository: {{ kube_image_repository }}/csi-resizer
+      tag: v1.3.0
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  snapshotter:
+    image:
+      repository: {{ kube_image_repository }}/csi-snapshotter
+      tag: v4.2.1
+      pullPolicy: IfNotPresent
+    resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podSecurityPolicy:
+    enabled: false
+
+selinuxMount: true
+
+topology:
+  enabled: false
+  domainLabels:
+    - failure-domain/region
+    - failure-domain/zone
+
+storageClass:
+  create: "{{ ceph.create_cephfs_storage_class }}"
+  name: "{{ ceph.cephfs_storage_class_name }}"
+  annotations: {}
+  clusterID: {{ ceph_cluster_id }}
+  fsName: {{ ceph_fs_name }}
+  pool: "{{ ceph.cephfs_pool_name }}"
+  fuseMountOptions: ""
+  kernelMountOptions: ""
+  mounter: ""
+  volumeNamePrefix: ""
+  provisionerSecret: csi-cephfs-secret
+  provisionerSecretNamespace: ""
+  controllerExpandSecret: csi-cephfs-secret
+  controllerExpandSecretNamespace: ""
+  nodeStageSecret: csi-cephfs-secret
+  nodeStageSecretNamespace: ""
+  reclaimPolicy: Delete
+  allowVolumeExpansion: true
+  mountOptions: []
+
+secret:
+  create: true
+  name: csi-cephfs-secret
+  adminID: admin
+  adminKey: {{ ceph_admin_keyring }}
+
+cephconf: |
+  [global]
+    auth_cluster_required = cephx
+    auth_service_required = cephx
+    auth_client_required = cephx
+
+    # Workaround for http://tracker.ceph.com/issues/23446
+    fuse_set_user_groups = false
+
+    # ceph-fuse which uses libfuse2 by default has write buffer size of 2KiB
+    # adding 'fuse_big_writes = true' option by default to override this limit
+    # see https://github.com/ceph/ceph-csi/issues/1928
+    fuse_big_writes = true
+
+provisionerSocketFile: csi-provisioner.sock
+pluginSocketFile: csi.sock
+kubeletDir: /var/lib/kubelet
+driverName: cephfs.csi.ceph.com
+configMapName: cephfs-csi-config
+externallyManagedConfigmap: false
+cephConfConfigMapName: cephfs-config

@@ -1,0 +1,31 @@
+- name: 获取ceph cluster id
+  shell: "ceph -s | grep id | awk -F':' '{print $2}' | sed s/[[:space:]]//g"
+  register: cluster_id
+
+- name: 记录 cluster_id
+  set_fact:
+    ceph_cluster_id: "{{ cluster_id.stdout }}"
+
+- name: 获取 ceph admin keyring
+  shell: ceph auth get-key client.admin
+  register: admin_keyring
+
+- name: 记录 admin_keyring
+  set_fact:
+    ceph_admin_keyring: "{{ admin_keyring.stdout }}"
+
+- name: ceph-csi-rbd | 获取网卡名称
+  shell: "ip a|grep '{{ inventory_hostname }}/'|awk '{print $NF}'"
+  register: net_card_name
+
+- name: 记录网卡名称
+  set_fact:
+    api_interface: "{{ net_card_name.stdout }}"
+
+- name: 获取ceph_fs ID
+  shell: ceph fs ls -f json | jq '.[].name'
+  register: ceph_fs_id
+
+- name: 记录 ceph_fs 名称
+  set_fact: 
+    ceph_fs_name: "{{ ceph_fs_id.stdout }}"

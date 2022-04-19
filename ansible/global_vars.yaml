@@ -64,3 +64,18 @@ etcd_backup_hour: "3"
 etcd_backup_expiry: "7"
 # etcd 备份目录
 etcd_backup_dir: "/var/lib/etcd/backup"
+
+# kubernetes ceph csi
+ceph:
+  install_ceph_rbd_csi: true
+  create_rbd_storage_class: true
+  rbd_storage_class_name: general
+  rbd_pool_name: "kubernetes"
+  install_ceph_cephfs_csi: true
+  create_cephfs_storage_class: true
+  cephfs_pool_name: "cephfs_data"
+  cephfs_storage_class_name: cephfs-general
+  rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
+  rbd_ceph_user: client.admin
+# MariaDB architecture (`standalone` or `replication`)
+mariadb_architecture: replication

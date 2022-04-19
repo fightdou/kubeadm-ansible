@@ -24,7 +24,7 @@
     name: /etc/kubernetes/plugins/network-plugin
     state: directory
   run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "localhost"
 
 # 配置网络CNI插件
 - name: 渲染 flannel 配置文件
@@ -32,12 +32,12 @@
     src: kube-flannel.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "localhost"
 
 - name: 部署 flannel
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "localhost"
 
 - name: 轮询等待 flannel 运行
   shell: kubectl get pod --all-namespaces -o wide | grep 'flannel' | awk '{print $4}'
@@ -48,7 +48,7 @@
   ignore_errors: true
   when: wait_plugins_ready|bool
   run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "localhost"
 
 - block:
   - name: 安装 helm
@@ -64,7 +64,7 @@
       mode: "0755"
 
   run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  delegate_to: "localhost"
 
 # 备份etcd
 - block:

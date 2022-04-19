@@ -1,0 +1,382 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: "{{ ceph.rbd_storage_class_name }}"
+kubeVersion: ""
+nameOverride: ""
+fullnameOverride: ""
+clusterDomain: cluster.local
+commonAnnotations: {}
+commonLabels: {}
+schedulerName: ""
+extraDeploy: []
+diagnosticMode:
+  enabled: false
+  command:
+    - sleep
+  args:
+    - infinity
+
+image:
+  registry: "bitnami"
+  repository: mariadb
+  tag: 10.5.15-debian-10-r52
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  debug: false
+
+architecture: "{{ mariadb_architecture }}"
+
+auth:
+  rootPassword: ""
+  database: my_database
+  username: ""
+  password: ""
+  replicationUser: replicator
+  replicationPassword: ""
+  existingSecret: "password-secrets"
+  forcePassword: false
+  usePasswordFiles: false
+  customPasswordFiles: {}
+initdbScripts: {}
+initdbScriptsConfigMap: ""
+
+primary:
+  command: []
+  args: []
+  lifecycleHooks: {}
+  hostAliases: []
+  configuration: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=::
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+    slow_query_log=0
+    slow_query_log_file=/opt/bitnami/mariadb/logs/mysqld.log
+    long_query_time=10.0
+
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    default-character-set=UTF8
+    plugin_dir=/opt/bitnami/mariadb/plugin
+
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+  existingConfigmap: ""
+  updateStrategy:
+    ## StrategyType
+    ## Can be set to RollingUpdate or OnDelete
+    ##
+    type: RollingUpdate
+  rollingUpdatePartition: ""
+  podAnnotations: {}
+  podLabels: {}
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  schedulerName: ""
+  podManagementPolicy: ""
+  topologySpreadConstraints: {}
+  priorityClassName: ""
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+  resources:
+    limits: {}
+    requests: {}
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 120
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 10
+    successThreshold: 1
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+    successThreshold: 1
+  customStartupProbe: {}
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  startupWaitOptions: {}
+  extraFlags: ""
+  extraEnvVars: []
+  extraEnvVarsCM: ""
+  extraEnvVarsSecret: ""
+  persistence:
+    enabled: true
+    existingClaim: ""
+    subPath: ""
+    storageClass: ""
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    selector: {}
+  extraVolumes: []
+  extraVolumeMounts: []
+  initContainers: []
+  sidecars: []
+  service:
+    type: ClusterIP
+    ports:
+      mysql: 3306
+    nodePorts:
+      mysql: ""
+    clusterIP: ""
+    loadBalancerIP: ""
+    externalTrafficPolicy: Cluster
+    loadBalancerSourceRanges: []
+    extraPorts: []
+    annotations: {}
+    sessionAffinity: None
+    sessionAffinityConfig: {}
+  pdb:
+    create: false
+    minAvailable: 1
+    maxUnavailable: ""
+  revisionHistoryLimit: 10
+
+secondary:
+  replicaCount: 1
+  command: []
+  args: []
+  lifecycleHooks: {}
+  hostAliases: []
+  configuration: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    default-character-set=UTF8
+
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+  existingConfigmap: ""
+  updateStrategy:
+    type: RollingUpdate
+  rollingUpdatePartition: ""
+  podAnnotations: {}
+  podLabels: {}
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  topologySpreadConstraints: {}
+  priorityClassName: ""
+  schedulerName: ""
+  podManagementPolicy: ""
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+  resources:
+    limits: {}
+    requests: {}
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 120
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 10
+    successThreshold: 1
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+    successThreshold: 1
+  customStartupProbe: {}
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  startupWaitOptions: {}
+  extraFlags: ""
+  extraEnvVars: []
+  extraEnvVarsCM: ""
+  extraEnvVarsSecret: ""
+  persistence:
+    enabled: true
+    subPath: ""
+    storageClass: ""
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    selector: {}
+  extraVolumes: []
+  extraVolumeMounts: []
+  initContainers: []
+  sidecars: []
+  service:
+    type: ClusterIP
+    ports:
+      mysql: 3306
+    nodePorts:
+      mysql: ""
+    clusterIP: ""
+    loadBalancerIP: ""
+    externalTrafficPolicy: Cluster
+    loadBalancerSourceRanges: []
+    extraPorts: []
+    annotations: {}
+    sessionAffinity: None
+    sessionAffinityConfig: {}
+  pdb:
+    create: false
+    minAvailable: 1
+    maxUnavailable: ""
+  revisionHistoryLimit: 10
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+rbac:
+  create: false
+
+volumePermissions:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/bitnami-shell
+    tag: 10-debian-10-r389
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  resources:
+    limits: {}
+    requests: {}
+
+metrics:
+  enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/mysqld-exporter
+    tag: 0.14.0-debian-10-r34
+    pullPolicy: IfNotPresent
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9104"
+  extraArgs:
+    primary: []
+    secondary: []
+  containerSecurityContext:
+    enabled: false
+  resources:
+    limits: {}
+    requests: {}
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    jobLabel: ""
+    interval: 30s
+    scrapeTimeout: ""
+    relabelings: []
+    metricRelabelings: []
+    honorLabels: false
+    selector: {}
+    labels: {}
+  prometheusRule:
+    enabled: false
+    namespace: ""
+    additionalLabels: {}
+    rules: []
+
+networkPolicy:
+  enabled: false
+  metrics:
+    enabled: false
+    podSelector: {}
+    namespaceSelector: {}
+  ingressRules:
+    primaryAccessOnlyFrom:
+      enabled: false
+      namespaceSelector: {}
+      podSelector: {}
+      customRules: {}
+    secondaryAccessOnlyFrom:
+      enabled: false
+      namespaceSelector: {}
+      podSelector: {}
+      customRules: {}
+  egressRules:
+    denyConnectionsToExternal: false
+    customRules: {}

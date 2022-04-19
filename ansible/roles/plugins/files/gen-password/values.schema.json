@@ -1,0 +1,130 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "secretName": {
+            "form": true,
+            "type": "string",
+            "description": "生成openstack相关密码的secret名称",
+            "title": "secret 名称",
+            "default": "openstack-password"
+        },
+        "passwordEnvs": {
+            "type": "object",
+            "properties": {
+                "mariadb-root-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "数据库 root 用户密码",
+                    "title": "root 密码",
+                    "default": ""
+                },
+                "keystone-database-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Keystone 数据库密码",
+                    "title": "Keystone 数据库密码",
+                    "default": ""
+                },
+                "keystone-admin-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Keystone admin 用户密码",
+                    "title": "Keystone admin 用户密码",
+                    "default": ""
+                },
+                "glance-database-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Glance 数据库密码",
+                    "title": "Glance 数据库密码",
+                    "default": ""
+                },
+                "glance-keystone-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Glance 用户密码",
+                    "title": "Glance 用户密码",
+                    "default": ""
+                },
+                "cinder-database-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Cinder 数据库密码",
+                    "title": "Cinder 数据库密码",
+                    "default": ""
+                },
+                "cinder-keystone-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Cinder 用户密码",
+                    "title": "Cinder 用户密码",
+                    "default": ""
+                },
+                "neutron-database-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Neutron 数据库密码",
+                    "title": "Neutron 数据库密码",
+                    "default": ""
+                },
+                "neutron-keystone-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Neutron 用户密码",
+                    "title": "Neutron 用户密码",
+                    "default": ""
+                },
+                "nova-database-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Nova 数据库密码",
+                    "title": "Nova 数据库密码",
+                    "default": ""
+                },
+                "nova-keystone-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Nova 用户密码",
+                    "title": "Nova 用户密码",
+                    "default": ""
+                },
+                "placement-database-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Placement 数据库密码",
+                    "title": "Placement 数据库密码",
+                    "default": ""
+                },
+                "placement-keystone-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Placement 用户密码",
+                    "title": "Placement 用户密码",
+                    "default": ""
+                },
+		        "rabbitmq-password": {
+                    "form": true,
+                    "type": "string",
+                    "description": "Rabbitmq 用户密码",
+                    "title": "Rabbitmq 用户密码",
+                    "default": ""
+		        },
+                "rbd_secret_uuid": {
+                    "form": true,
+                    "type": "string",
+                    "description": "rbd_secret_uuid is only used for nova",
+                    "title": "rbd secret uuid",
+                    "default": ""
+                },
+                "cinder_rbd_secret_uuid": {
+                    "form": true,
+                    "type": "string",
+                    "description": "cinder_rbd_secret_uuid is used for cinder",
+                    "title": "cinder rbd secret uuid",
+                    "default": ""
+                }
+            }
+        }
+    }
+}

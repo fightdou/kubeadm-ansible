@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: libvirt-etc
+data:
+  libvirtd.conf: |
+    {{- if .Values.libvirt_tls }}
+    listen_tls = 1
+    listen_tcp = 0
+    tls_port = "{{ .Values.nova_libvirt_port }}"
+    key_file = "/etc/pki/libvirt/private/serverkey.pem"
+    cert_file = "/etc/pki/libvirt/servercert.pem"
+    ca_file = "/etc/pki/CA/cacert.pem"
+    {{- else }}
+    listen_tcp = 1
+    listen_tls = 0
+    auth_tcp = "none"
+    tcp_port = "{{ .Values.nova_libvirt_port }}"
+    ca_file = ""
+    {{- end }}
+    log_level = 3
+    log_outputs = "3:file:/var/log/kolla/libvirt/libvirtd.log"
+  qemu.conf: |
+    stdio_handler = "file"
+    user = "nova"
+    group = "nova"
+    max_files =  {{ .Values.qemu_max_files }}
+    max_processes =  {{ .Values.qemu_max_processes }}
+  config.json: |
+    {
+        "command": "/usr/sbin/libvirtd --listen",
+        "config_files": [
+            {
+                "source": "/var/lib/kolla/config_files/libvirtd.conf",
+                "dest": "/etc/libvirt/libvirtd.conf",
+                "owner": "root",
+                "perm": "0600"
+            },
+            {
+                "source": "/var/lib/kolla/config_files/qemu.conf",
+                "dest": "/etc/libvirt/qemu.conf",
+                "owner": "root",
+                "perm": "0600"
+            },
+            {
+                "source": "/var/lib/kolla/config_files/secrets",
+                "dest": "/etc/libvirt/secrets",
+                "owner": "root",
+                "perm": "0600"
+            }]
+    }
+
+  {{ .Values.secret.rbd_secret_uuid }}.xml: |
+     <secret ephemeral='no' private='no'>
+     <uuid>{{ .Values.secret.rbd_secret_uuid }}</uuid>
+     <usage type='ceph'>
+     <name>{{ .Values.secret.secret_user }}</name>
+     </usage>
+     </secret>
+
+  {{ .Values.secret.rbd_secret_uuid }}.base64: |
+    {{ .Values.secret.ceph_admin_keyring }}
