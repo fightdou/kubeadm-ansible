@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: trochilus-db-sync
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: init
+          image: {{ include "entrypoint.image" . }}
+          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          command:
+            - kubernetes-entrypoint
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: PATH
+              value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
+            - name: DEPENDENCY_JOBS
+              value: {{ include "common.utils.joinListWithComma" .Values.dependencies.db_sync.jobs }}
+      containers:
+        - name: trochilus-db-sync
+          image: {{ include "db_sync.image" . }}
+          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - /tmp/db-sync.sh
+          volumeMounts:
+            - mountPath: /tmp
+              name: pod-tmp
+            - mountPath: /tmp/db-sync.sh
+              name: trochilus-bin
+              subPath: db-sync.sh
+            - mountPath: /etc/trochilus/trochilus.conf
+              name: trochilus-etc
+              subPath: trochilus.conf
+      restartPolicy: OnFailure
+      serviceAccount: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      volumes:
+        - emptyDir: {}
+          name: pod-tmp
+        - configMap:
+            defaultMode: 0755
+            name: trochilus-bin
+          name: trochilus-bin
+        - configMap:
+            defaultMode: 0755
+            name: trochilus-etc
+          name: trochilus-etc

@@ -1,6 +1,6 @@
 apiVersion: v2
-description: Deploy mariadb service
-name: mariadb
+description: Deploy trochilus service
+name: trochilus
 version: 0.0.1
 home: https://kungze.github.io/charts/
 maintainers:

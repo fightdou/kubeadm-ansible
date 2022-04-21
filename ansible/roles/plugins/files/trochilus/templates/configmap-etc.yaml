@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trochilus-etc
+data:
+  trochilus.conf: |
+    [DEFAULT]
+    debug = True
+    [agent_rest_client]
+    [agent_settings]
+    bind_host = {{ .Values.conf.agent_settings.bind_host }}
+    bind_port = {{ .Values.conf.agent_settings.bind_port }}
+    role = {{ .Values.conf.agent_settings.role }}
+    [api_settings]
+    bind_host = {{ .Values.conf.api_settings.bind_host }}
+    bind_port = {{ .Values.conf.api_settings.bind_port }}
+    enabled_volume_backends = {{ .Values.conf.api_settings.enabled_volume_backends }}
+    supported_instance_metadatas = k1, k2
+    supported_instance_metadatas = k1, k3
+    [database]
+    connection = mysql+pymysql://{{ .Values.mariadb.database }}:{{ .Values.mariadb.password }}@{{ .Values.mariadb.host_name }}:3306/{{ .Values.mariadb.database }}
+    [image_settings]
+    enabled_image_store = {{ .Values.conf.image_settings.enabled_image_store }}
+    rbd_store_config_file = {{ .Values.conf.image_settings.rbd_store_config_file }}
+    rbd_store_user = {{ .Values.conf.image_settings.rbd_store_user }}
+    rbd_store_pool = {{ .Values.conf.image_settings.rbd_store_pool }}
+    rbd_store_chunk_size = {{ .Values.conf.image_settings.rbd_store_chunk_size }}
+    rbd_store_conn_timeout = {{ .Values.conf.image_settings.rbd_store_conn_timeout }}
+    rbd_store_thin_provisioning = {{ .Values.conf.image_settings.rbd_store_thin_provisioning }}
+    [{{ .Values.conf.api_settings.enabled_volume_backends }}]
+    rbd_ceph_conf = {{ .Values.conf.rbd1.rbd_ceph_conf }}
+    rbd_pool = {{ .Values.conf.rbd1.rbd_pool }}
+    rbd_user = {{ .Values.conf.rbd1.rbd_user }}
+    rbd_keyring_conf = {{ .Values.conf.rbd1.rbd_keyring_conf }}
+    rados_connect_timeout = {{ .Values.conf.rbd1.rados_connect_timeout }}
+    volume_driver = {{ .Values.conf.rbd1.volume_driver }}
+    [network_settings]
+    physical_vlan_ranges = {{ .Values.conf.network_settings.physical_vlan_ranges }}
+    support_flat_physicals = {{ .Values.conf.network_settings.support_flat_physicals }}
+    physical_interface_mappings = {{ .Values.conf.network_settings.physical_interface_mappings }}
+    [vm_settings]
+    virt_type = {{ .Values.conf.vm_settings.virt_type }}
+    default_root_disk_backend = {{ .Values.conf.vm_settings.default_root_disk_backend }}
+    rbd_secret_uuid = {{ .Values.conf.vm_settings.rbd_secret_uuid }}
+    vnc_enabled = {{ .Values.conf.vm_settings.vnc_enabled }}
+    vnc_server_listen = {{ .Values.conf.vm_settings.vnc_server_listen }}
+    spice_enabled = {{ .Values.conf.vm_settings.spice_enabled }}
+    spice_server_listen = {{ .Values.conf.vm_settings.spice_server_listen }}
+    [voi_settings]
+    voi_image_base_path = {{ .Values.conf.voi_settings.voi_image_base_path }}
+    voi_vm_base_path = {{ .Values.conf.voi_settings.voi_vm_base_path }}
+    vm_name_template = {{ .Values.conf.voi_settings.vm_name_template }}
+    [webhook_settings]
+    target_host = {{ .Values.conf.webhook_settings.target_host }}
+    target_port = {{ .Values.conf.webhook_settings.target_port }}
+    target_path = {{ .Values.conf.webhook_settings.target_path }}
+    method = {{ .Values.conf.webhook_settings.method }}
+    auth_token = {{ .Values.conf.webhook_settings.auth_token }}
+    max_retries = {{ .Values.conf.webhook_settings.max_retries }}
+    retry_interval = {{ .Values.conf.webhook_settings.retry_interval }}
+    request_conn_timeout = {{ .Values.conf.webhook_settings.request_conn_timeout }}
+    request_read_timeout = {{ .Values.conf.webhook_settings.request_read_timeout }}
+    expected_codes = {{ .Values.conf.webhook_settings.expected_codes }}

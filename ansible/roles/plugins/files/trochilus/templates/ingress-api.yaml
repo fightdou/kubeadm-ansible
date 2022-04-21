@@ -1,0 +1,40 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trochilus-api
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  rules:
+  - host: trochilus-api
+    http:
+      paths:
+      - backend:
+          service:
+            name: trochilus-api
+            port:
+              name: api
+        path: /
+        pathType: ImplementationSpecific
+  - host: trochilus-api.{{ .Release.Namespace }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: trochilus-api
+            port:
+              name: api
+        path: /
+        pathType: ImplementationSpecific
+  - host: trochilus-api.{{ .Release.Namespace }}.svc.cluster.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: trochilus-api
+            port:
+              name: api
+        path: /
+        pathType: ImplementationSpecific
+{{- end }}

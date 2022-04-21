@@ -1,0 +1,40 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trochilus-webhook
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  rules:
+  - host: trochilus-webhook
+    http:
+      paths:
+      - backend:
+          service:
+            name: trochilus-webhook
+            port:
+              name: webhook
+        path: /
+        pathType: ImplementationSpecific
+  - host: trochilus-webhook.{{ .Release.Namespace }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: trochilus-webhook
+            port:
+              name: webhook
+        path: /
+        pathType: ImplementationSpecific
+  - host: trochilus-webhook.{{ .Release.Namespace }}.svc.cluster.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: trochilus-webhook
+            port:
+              name: webhook
+        path: /
+        pathType: ImplementationSpecific
+{{- end }}

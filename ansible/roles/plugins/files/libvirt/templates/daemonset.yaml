@@ -2,22 +2,23 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    application: libvirt
-    component: libvirt
-    release_group: libvirt
+    app.kubernetes.io/name: libvirt
+    app.kubernetes.io/component: libvirt
+    app.kubernetes.io/release_group: libvirt
   name: libvirt
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      application: libvirt
-      component: libvirt
-      release_group: libvirt
+      app.kubernetes.io/name: libvirt
+      app.kubernetes.io/component: libvirt
+      app.kubernetes.io/release_group: libvirt
   template:
     metadata:
       labels:
-        application: libvirt
-        component: libvirt
-        release_group: libvirt
+        app.kubernetes.io/name: libvirt
+        app.kubernetes.io/component: libvirt
+        app.kubernetes.io/release_group: libvirt
     spec:
       containers:
       - name: libvirt

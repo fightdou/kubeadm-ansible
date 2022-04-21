@@ -1,0 +1,109 @@
+global:
+  imageRegistry: "172.18.31.155/kolla"
+  imageTag: "v1"
+  pullPolicy: "IfNotPresent"
+
+serviceAccountName: trochilus
+nodeSelector:
+  compute_plane: enabled
+image:
+  trochilus_api:
+    repository: trochilus-api
+  trochilus_agent:
+    repository: trochilus-agent
+  trochilus_webhook:
+    repository: trochilus-webhook
+  entrypoint:
+    registry: "quay.io/airshipit"
+    repository: "kubernetes-entrypoint"
+    tag: "v1.0.0"
+  db_init:
+    registry: kolla
+    repository: centos-source-kolla-toolbox
+    tag: yoga
+  db_sync:
+    repository: trochilus-agent
+
+serviceAccountName: trochilus
+replicaCount: 2
+dependencies:
+  db_sync:
+    jobs:
+      - trochilus-db-init
+  api:
+    jobs:
+      - trochilus-db-sync
+  webhook:
+    jobs:
+      - trochilus-db-sync
+  agent:
+    jobs:
+      - trochilus-db-sync
+
+mariadb:
+  host_name: mariadb.default.svc.cluster.local
+  root_password: 123456
+  username: trochilus
+  password: 123456
+  database: trochilus
+
+conf:
+  agent_settings:
+    bind_host: 0.0.0.0
+    bind_port: 9002
+    system:
+    version:
+    # 主机角色，controller、computer或storage，可以多选
+    role: controller
+  api_settings:
+    bind_host: 0.0.0.0
+    bind_port: 9001
+    enabled_volume_backends: rbd1
+  database:
+    connection: mysql+pymysql://trochilus:123456@127.0.0.1:3306/trochilus
+  image_settings:
+    enabled_image_store: rbd
+    rbd_store_config_file: /etc/ceph/ceph.conf
+    rbd_store_user: admin
+    rbd_store_pool: images
+    rbd_store_chunk_size: 8
+    rbd_store_conn_timeout: 0
+    rbd_store_thin_provisioning: true
+  rbd1:
+    rbd_ceph_conf: /etc/ceph/ceph.conf
+    rbd_pool: volumes
+    rbd_user: admin
+    rbd_keyring_conf: /etc/ceph/ceph.client.admin.keyring
+    rados_connect_timeout: -1
+    volume_driver: trochilus.agent.storage.volume.drivers.rbd.RBDVolumeDriver
+  network_settings:
+    physical_vlan_ranges: vlan1:100:1000
+    support_flat_physicals: flat1
+    physical_interface_mappings: flat1:ens4
+  vm_settings:
+    virt_type: kvm
+    default_root_disk_backend: rbd1
+    rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
+    vnc_enabled: true
+    vnc_server_listen: 0.0.0.0
+    spice_enabled: true
+    spice_server_listen: 0.0.0.0
+  voi_settings:
+    voi_image_base_path: /var/lib/trochilus/voi/images
+    voi_vm_base_path: /var/lib/trochilus/voi/vms
+    vm_name_template: voi-%s
+  webhook_settings:
+    target_host: 0.0.0.0
+    target_port: 9003
+    target_path: /api/v1/webhook/
+    method: post
+    auth_token: abc123
+    max_retries: 5
+    retry_interval: 5
+    request_conn_timeout: 10
+    request_read_timeout: 60
+    expected_codes: 200,202,204
+
+ingress:
+  enabled: true
+  ingressClassName: nginx

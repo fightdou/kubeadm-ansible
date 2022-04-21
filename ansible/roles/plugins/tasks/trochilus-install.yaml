@@ -1,0 +1,29 @@
+- name: 创建 trochilus values 目录
+  file:
+    name: /etc/kubernetes/plugins/trochilus
+    state: directory
+
+- name: 复制 trochilus charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ charts_dir }}/"
+  loop:
+    - "trochilus"
+
+- name: 生成 trochilus values.yml
+  template:
+    src: custom-values-trochilus.yaml.j2
+    dest: /etc/kubernetes/plugins/trochilus/values.yaml
+    owner: root
+    mode: 0644
+
+- name: 安装 trochilus helm charts
+  shell: helm upgrade --install trochilus {{ charts_dir }}/trochilus -f /etc/kubernetes/plugins/trochilus/values.yaml
+
+- name: 轮询等待服务运行
+  shell: kubectl get pod --all-namespaces -o wide | grep 'trochilus' | awk '{print $4}'
+  register: trochilus_status
+  until: "'Running' in trochilus_status.stdout"
+  retries: 12
+  delay: 10
+  ignore_errors: true
