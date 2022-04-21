@@ -21,6 +21,7 @@
 [new-master]
 
 [new-worker]
+172.18.28.91
 
 [ceph-mons]
 172.18.29.170

@@ -3,7 +3,6 @@ kind: InitConfiguration
 localAPIEndpoint:
   advertiseAddress: {{ inventory_hostname }}
   bindPort: 6443
-certificateKey: {{ kubeadm_certskey }}
 nodeRegistration:
   kubeletExtraArgs:
     network-plugin: cni

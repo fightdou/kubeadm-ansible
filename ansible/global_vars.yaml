@@ -14,7 +14,6 @@ image_pull_command: "docker pull"
 # Pod根容器
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
-kubeadm_certskey: 8e611dcade5e64a403286249e70f8e6b76053f76660158c7ad2d0fcb0bd62352
 custom_hosts:
   "172.18.28.222":
   - kunlun.cluster.local
@@ -77,5 +76,3 @@ ceph:
   cephfs_storage_class_name: cephfs-general
   rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
   rbd_ceph_user: client.admin
-# MariaDB architecture (`standalone` or `replication`)
-mariadb_architecture: replication

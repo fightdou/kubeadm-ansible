@@ -4,6 +4,16 @@
     state: stopped
     enabled: yes
 
+- name: 更新 certs 证书
+  shell: kubeadm init phase upload-certs --upload-certs | tail -n 1 | sed s/[[:space:]]//g
+  register: certs
+  run_once: True
+  delegate_to: "localhost"
+
+- name: 更新变量 kubeadm_certskey
+  set_fact:
+    certificate_key: "{{ certs.stdout }}"
+
 - name: 创建 kubeadm join 配置文件
   template:
     src: kube-join.yml.j2

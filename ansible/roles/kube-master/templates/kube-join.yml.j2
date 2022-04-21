@@ -11,7 +11,7 @@ controlPlane:
   localAPIEndpoint:
     advertiseAddress: {{ inventory_hostname }}
     bindPort: 6443
-  certificateKey: {{ kubeadm_certskey }}
+  certificateKey: {{ certificate_key }}
 nodeRegistration:
   kubeletExtraArgs:
     network-plugin: cni
