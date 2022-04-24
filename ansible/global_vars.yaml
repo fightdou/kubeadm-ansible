@@ -76,3 +76,12 @@ ceph:
   cephfs_storage_class_name: cephfs-general
   rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
   rbd_ceph_user: client.admin
+
+trochilus:
+  support_flat_network: true
+  support_vlan_network: fasle
+  network_vlan_range: 100:1000
+
+mariadb:
+  root_password: 123456
+  trochilus_password: 123456

@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: trochilus-db-sync
+  namespace: {{ .Release.Namespace }}
 spec:
   template:
     spec:
@@ -33,16 +34,18 @@ spec:
           command:
             - /bin/sh
             - -c
-            - /tmp/db-sync.sh
+            - |
+              /tmp/trochilus.sh
+              /tmp/db-sync.sh
           volumeMounts:
             - mountPath: /tmp
               name: pod-tmp
             - mountPath: /tmp/db-sync.sh
               name: trochilus-bin
               subPath: db-sync.sh
-            - mountPath: /etc/trochilus/trochilus.conf
+            - mountPath: /tmp/trochilus.sh
               name: trochilus-etc
-              subPath: trochilus.conf
+              subPath: trochilus.sh
       restartPolicy: OnFailure
       serviceAccount: {{ .Values.serviceAccountName }}
       serviceAccountName: {{ .Values.serviceAccountName }}

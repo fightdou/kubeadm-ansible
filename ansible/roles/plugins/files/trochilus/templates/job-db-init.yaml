@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: trochilus-db-init
+  namespace: {{ .Release.Namespace }}
 spec:
   template:
     spec:
@@ -43,7 +44,7 @@ spec:
           - name: DB_USER_PASSWORD
             value: "{{ .Values.mariadb.password }}"
           - name: DB_HOST_NAME
-            value: "{{ .Values.mariadb.host_name }}"
+            value: "{{ include mariadb.databaseHost . }}"
           - name: DB_ROOT_PASSWORD
             value: "{{ .Values.mariadb.root_password }}"
         volumeMounts:

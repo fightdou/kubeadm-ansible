@@ -5,10 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
-  - name: api
-    port: 9001
+  - name: {{ .Values.service.trochilus_api.name }}
+    port: {{ .Values.service.trochilus_api.port }}
     protocol: TCP
-    targetPort: api
+    targetPort: {{ .Values.service.trochilus_api.name }}
   selector:
     app.kubernetes.io/name: trochilus
     app.kubernetes.io/component: trochilus

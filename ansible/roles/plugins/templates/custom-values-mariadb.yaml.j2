@@ -3,8 +3,8 @@ mariadb:
   tag: 10.5.15-debian-10-r52
   pullPolicy: IfNotPresent
 
-mariadb_password: 123456
-storageclass: cephfs-general
+mariadb_password: {{ mariadb.root_password }}
+storageclass: {{ ceph.cephfs_storage_class_name }}
 pvc:
   name: mariadb
   size: 10Gi

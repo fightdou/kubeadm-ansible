@@ -1,12 +1,12 @@
 - hosts: 
-  - all
+  - allnodes
   roles:
   - prepare/base
   - prepare/container
 
 # 安装 load-balancer
 - hosts:
-  - all
+  - allnodes
   roles:
   - load-balancer
 
@@ -24,8 +24,8 @@
   roles:
   - kube-worker
 
-# # 安装集群插件
+# 安装集群插件
 - hosts:
-  - kube-master
+  - allnodes
   roles:
   - plugins

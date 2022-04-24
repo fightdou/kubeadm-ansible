@@ -41,15 +41,52 @@ spec:
           - name: PATH
             value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/
           - name: DEPENDENCY_JOBS
-            value: {{ include "common.utils.joinListWithComma" .Values.dependencies.webhook.jobs }}
+            value: {{ include "common.utils.joinListWithComma" .Values.dependencies.api.jobs }}
       containers:
         - name: trochilus-api
           image: {{ include "trochilus_api.image" . }}
           imagePullPolicy: {{ .Values.global.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              bash /tmp/trochilus.sh
+              trochilus-api --config-file /etc/trochilus/trochilus.conf
+          env:
+            {{- range $_, $node_name := .Values.nodeInfo }}
+            {{- range $hostname, $node_info := $node_name }}
+            {{- range $conf, $info := $node_info }}
+            {{- if eq $conf "nic_info" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end }}
+            {{- if eq $conf "node_role" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end}}
+            {{- if eq $conf "system" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end}}
+            {{- if eq $conf "version" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end }}
+            {{- if eq $conf "external_nic" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           livenessProbe:
             httpGet:
               path: /
-              port: 9001
+              port: {{ .Values.service.trochilus_api.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
@@ -59,7 +96,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 9001
+              port: {{ .Values.service.trochilus_api.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
@@ -67,20 +104,85 @@ spec:
             successThreshold: 1
             timeoutSeconds: 15
           resources: {}
-          securityContext: {}
+          securityContext:
+            privileged: true
+            readOnlyRootFilesystem: false
           ports:
-            - name: api
-              containerPort: 9001
+            - name: {{ .Values.service.trochilus_api.name }}
+              containerPort: {{ .Values.service.trochilus_api.port }}
               protocol: TCP
           volumeMounts:
-          - mountPath: /etc/trochilus/trochilus.conf
+          - mountPath: /tmp/trochilus.sh
             name: trochilus-etc
-            subPath: trochilus.conf
+            subPath: trochilus.sh
+          - mountPath: /etc/libvirt/qemu
+            name: etc-libvirt-qemu
+          - mountPath: /lib/modules
+            name: libmodules
+            readOnly: true
+          - mountPath: /var/lib/libvirt
+            mountPropagation: Bidirectional
+            name: var-lib-libvirt
+          - mountPath: /run
+            name: run
+          - mountPath: /dev
+            name: dev
+          - mountPath: /sys/fs/cgroup
+            name: cgroup
+          - mountPath: /etc/machine-id
+            name: machine-id
+            readOnly: true
+          - mountPath: /etc/ceph
+            mountPropagation: Bidirectional
+            name: etc-ceph
+          - mountPath: /var/log/trochilus
+            mountPropagation: Bidirectional
+            name: log-dir
       securityContext: {}
+      dnsPolicy: ClusterFirstWithHostNet
+      hostIPC: true
+      hostNetwork: true
+      hostPID: true
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       volumes:
-      - configMap:
-          defaultMode: 420
+        - configMap:
+            defaultMode: 420
+            name: trochilus-etc
           name: trochilus-etc
-        name: trochilus-etc
+        - hostPath:
+            path: /etc/ceph
+            type: ""
+          name: etc-ceph
+        - hostPath:
+            path: /lib/modules
+            type: ""
+          name: libmodules
+        - hostPath:
+            path: /var/lib/libvirt
+            type: ""
+          name: var-lib-libvirt
+        - hostPath:
+            path: /run
+            type: ""
+          name: run
+        - hostPath:
+            path: /dev
+            type: ""
+          name: dev
+        - hostPath:
+            path: /sys/fs/cgroup
+            type: ""
+          name: cgroup
+        - hostPath:
+            path: /etc/machine-id
+            type: ""
+          name: machine-id
+        - hostPath:
+            path: /etc/libvirt/qemu
+            type: ""
+          name: etc-libvirt-qemu
+        - hostPath:
+            path: /var/log/trochilus/
+            type: ""
+          name: log-dir

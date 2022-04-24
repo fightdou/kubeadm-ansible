@@ -79,13 +79,6 @@ Return the proper trochilus agent image name
 {{- end -}}
 
 {{/*
-Return the proper trochilus webhook image name
-*/}}
-{{- define "trochilus_webhook.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.image.trochilus_webhook "global" .Values.global) -}}
-{{- end -}}
-
-{{/*
 Return the proper entrypoint image name
 */}}
 {{- define "entrypoint.image" -}}
@@ -104,4 +97,13 @@ Return the proper db_sync image name
 */}}
 {{- define "db_sync.image" -}}
 {{- include "common.images.image" (dict "imageRoot" .Values.image.db_sync "global" .Values.global) -}}
+{{- end -}}
+
+{{/*
+Return the Database host
+*/}}
+{{- define "mariadb.databaseHost" -}}
+{{- $releaseNamespace := .Release.Namespace }}
+{{- $clusterDomain := .Values.clusterDomainSuffix }}
+{{- printf "%s.%s.svc.%s" "mariadb" $releaseNamespace $clusterDomain -}}
 {{- end -}}

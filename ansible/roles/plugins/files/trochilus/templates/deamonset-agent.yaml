@@ -45,6 +45,43 @@ spec:
         - name: trochilus-agent
           image: {{ include "trochilus_agent.image" . }}
           imagePullPolicy: {{ .Values.global.pullPolicy }}
+          env:
+            {{- range $_, $node_name := .Values.nodeInfo }}
+            {{- range $hostname, $node_info := $node_name }}
+            {{- range $conf, $info := $node_info }}
+            {{- if eq $conf "nic_info" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end }}
+            {{- if eq $conf "node_role" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end}}
+            {{- if eq $conf "system" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end}}
+            {{- if eq $conf "version" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end }}
+            {{- if eq $conf "external_nic" }}
+            - name: "{{ printf "%s_%s" $hostname $conf }}"
+              value: "{{ $info }}"
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          command:
+            - /bin/sh
+            - -c
+            - |
+              bash /tmp/trochilus.sh
+              trochilus-agent --config-file /etc/trochilus/trochilus.conf
           livenessProbe:
             httpGet:
               path: /
@@ -74,9 +111,9 @@ spec:
               containerPort: 9002
               protocol: TCP
           volumeMounts:
-            - mountPath: /etc/trochilus/trochilus.conf
+            - mountPath: /tmp/trochilus.sh
               name: trochilus-etc
-              subPath: trochilus.conf
+              subPath: trochilus.sh
             - mountPath: /etc/libvirt/qemu
               name: etc-libvirt-qemu
             - mountPath: /lib/modules
@@ -89,6 +126,9 @@ spec:
               name: run
             - mountPath: /dev
               name: dev
+            - mountPath: /run/netns
+              mountPropagation: Bidirectional
+              name: runnetns
             - mountPath: /sys/fs/cgroup
               name: cgroup
             - mountPath: /etc/machine-id
@@ -139,6 +179,10 @@ spec:
             path: /sys/fs/cgroup
             type: ""
           name: cgroup
+        - hostPath:
+            path: /run/netns
+            type: ""
+          name: runnetns
         - hostPath:
             path: /etc/machine-id
             type: ""

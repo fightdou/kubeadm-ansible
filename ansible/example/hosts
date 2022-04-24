@@ -1,7 +1,11 @@
-[all]
-172.18.29.170
-172.18.29.183
-172.18.29.212
+ # 网卡配置，存在bond时，指定bond名称与对应物理网卡信息；不存在bond时，ip地址后跟随角色
+# 格式，存在bond时：nic_info = ["bond1:172.18.29.170:0011:ens4,ens5"] (bond名称:bond的IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0:组成bond的网卡名称); 
+# 多个bond时，则需配置多个nic记录
+# 没有bond时：nic_info = ["ens3:172.18.29.170:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
+[allnodes]
+172.18.29.170 nic_info="['ens3:172.18.29.170:1011', 'ens4::0100']" node_role="['control', 'compute', 'storage']" external_nic="ens4"
+172.18.29.183 nic_info="['ens3:172.18.29.183:1011', 'ens10::0100']" node_role="['control', 'compute', 'storage']" external_nic="ens10"
+172.18.29.212 nic_info="['ens3:172.18.29.212:1011', 'ens9::0100']" node_role="['control', 'compute', 'storage']" external_nic="ens9"
 
 [kube-master]
 172.18.29.170
@@ -27,3 +31,11 @@
 172.18.29.170
 172.18.29.183
 172.18.29.212
+
+[control]
+
+[compute]
+
+[storage]
+
+[voi]
