@@ -1,0 +1,92 @@
+- name: 创建 elasticsearch values 目录
+  file:
+    name: /etc/kubernetes/plugins/elasticsearch
+    state: directory
+
+- name: 复制 elasticsearch charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ charts_dir }}/"
+  loop:
+    - "elasticsearch"
+
+- name: 生成 elasticsearch values.yml
+  template:
+    src: custom-values-elasticsearch.yaml.j2
+    dest: /etc/kubernetes/plugins/elasticsearch/values.yaml
+    owner: root
+    mode: 0644
+
+- name: 安装 elasticsearch helm charts
+  shell: helm upgrade --install elasticsearch {{ charts_dir }}/elasticsearch -f /etc/kubernetes/plugins/elasticsearch/values.yaml
+
+- name: 轮询等待 elasticsearch 运行
+  shell: kubectl get pod --all-namespaces -o wide | grep 'elasticsearch' | awk '{print $4}'
+  register: elasticsearch_status
+  until: "'Running' in elasticsearch_status.stdout"
+  retries: 12
+  delay: 10
+  ignore_errors: true
+
+
+- name: 创建 fluentd values 目录
+  file:
+    name: /etc/kubernetes/plugins/fluentd
+    state: directory
+
+- name: 复制 fluentd charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ charts_dir }}/"
+  loop:
+    - "fluentd"
+
+- name: 生成 fluentd values.yml
+  template:
+    src: custom-values-fluentd.yaml.j2
+    dest: /etc/kubernetes/plugins/fluentd/values.yaml
+    owner: root
+    mode: 0644
+
+- name: 安装 fluentd helm charts
+  shell: helm upgrade --install fluentd {{ charts_dir }}/fluentd -f /etc/kubernetes/plugins/fluentd/values.yaml
+
+- name: 轮询等待 fluentd 运行
+  shell: kubectl get pod --all-namespaces -o wide | grep 'fluentd' | awk '{print $4}'
+  register: fluentd_status
+  until: "'Running' in fluentd_status.stdout"
+  retries: 12
+  delay: 10
+  ignore_errors: true
+
+
+- name: 创建 kibana values 目录
+  file:
+    name: /etc/kubernetes/plugins/kibana
+    state: directory
+
+- name: 复制 kibana charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ charts_dir }}/"
+  loop:
+    - "kibana"
+
+- name: 生成 kibana values.yml
+  template:
+    src: custom-values-kibana.yaml.j2
+    dest: /etc/kubernetes/plugins/kibana/values.yaml
+    owner: root
+    mode: 0644
+
+- name: 安装 kibana helm charts
+  shell: helm upgrade --install kibana {{ charts_dir }}/kibana -f /etc/kubernetes/plugins/kibana/values.yaml
+
+- name: 轮询等待 kibana 运行
+  shell: kubectl get pod --all-namespaces -o wide | grep 'kibana' | awk '{print $4}'
+  register: kibana_status
+  until: "'Running' in kibana_status.stdout"
+  retries: 12
+  delay: 10
+  ignore_errors: true
+ 
