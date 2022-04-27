@@ -1,0 +1,91 @@
+---
+- name: started mgr dashboard
+  tags: mgr_dashboard
+  run_once: true
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  when:
+    - mgr_dashboard |bool
+  block:
+    - name: disable dashboard
+      command: ceph mgr module disable dashboard
+
+    - name: enable dashboard
+      command: ceph mgr module enable dashboard
+      register: haha
+      until: haha is success
+
+    - name: start create-self-signed-cert
+      command: ceph dashboard create-self-signed-cert
+      when:
+        - haha is success
+        - mgr_dashboard_ssl |bool
+      register: dashboard_vars
+      until: dashboard_vars is success
+      retries: 2
+      delay: 5
+
+    - name: create mgr-dashboard directory
+      file:
+        path: /var/lib/ceph/mgr/mgr-dashboard
+        state: directory
+        owner: "root"
+        group: "root"
+        mode: "0755"
+
+    - name: mgr-dashboard config
+      shell: cd /var/lib/ceph/mgr/mgr-dashboard ; openssl req -new -nodes -x509 -subj "/O=IT/CN=ceph-mgr-dashboard" -days 3650 -keyout dashboard.key -out dashboard.crt -extensions v3_ca
+      when:
+        - mgr_dashboard_ssl |bool
+
+- name: mgr-dashboard set
+  command: "ceph config set mgr mgr/dashboard/{{ ansible_hostname }}/server_addr 0.0.0.0"
+  when:
+    - mgr_dashboard |bool
+  tags: mgr_dashboard
+
+- name: mgr-dashboard set ssl
+  command: "ceph config set mgr mgr/dashboard/ssl {{ mgr_dashboard_ssl }} "
+  when:
+    - not mgr_dashboard_ssl |bool
+    - mgr_dashboard |bool
+  tags: mgr_dashboard
+
+- name: mgr-dashboard set port
+  command: "ceph config set mgr mgr/dashboard/{{ ansible_hostname }}/server_port {{ mgr_dashboard_port }} "
+  when:
+    - not mgr_dashboard_ssl |bool
+    - mgr_dashboard |bool
+  tags: mgr_dashboard
+
+- name: mgr-dashboard set ssl_port
+  command: "ceph config set mgr mgr/dashboard/{{ ansible_hostname }}/ssl_server_port {{ mgr_dashboard_ssl_port }} "
+  when:
+    - mgr_dashboard_ssl |bool
+    - mgr_dashboard |bool
+  tags: mgr_dashboard
+
+- name: started mgr dashboard
+  tags: mgr_dashboard
+  run_once: true
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  when:
+    - mgr_dashboard |bool
+  block:
+    - name: mgr-dashboard set-login-credentials login_name and login_password
+      command: ceph dashboard ac-user-create {{ mgr_dashboard_login_name }} {{ mgr_dashboard_login_pass }} administrator
+      when:
+        - mgr_dashboard_login_name is defined
+        - mgr_dashboard_login_pass is defined
+      ignore_errors: true
+
+    - name: mgr-dashboard disable dashboard
+      command: ceph mgr module disable dashboard
+      when:
+        - mgr_dashboard_login_name is defined
+        - mgr_dashboard_login_pass is defined
+
+    - name: mgr-dashboard enable dashboard
+      command: ceph mgr module enable dashboard
+      when:
+        - mgr_dashboard_login_name is defined
+        - mgr_dashboard_login_pass is defined

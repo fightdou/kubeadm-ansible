@@ -1,0 +1,85 @@
+---
+- import_playbook: gather-facts.yml
+
+- name: set cephf_ceph_local_ip
+  hosts:
+    - ceph-mons
+    - ceph-osds
+  tasks:
+    - name: set cephf_ceph_local_ip
+      set_fact:
+        cephf_ceph_local_ip: "{{ ceph_local_ip }}"
+
+- name: Apply role ceph-mon
+  hosts: ceph-mons
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - import_role:
+        name: ceph-common
+      tags: ['ceph-common', 'ceph-mons']
+    - import_role:
+        name: ceph-config
+      tags: ['ceph-config', 'ceph-mons']
+    - import_role:
+        name: ceph-mon
+      tags: ['ceph-mon', 'ceph-mons']
+    - import_role:
+        name: ceph-mgr
+      tags: ['ceph-mgr', 'ceph-mons']
+
+- name: Apply role ceph-osd
+  hosts: ceph-osds
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - import_role:
+        name: ceph-common
+      tags: ['ceph-common', 'ceph-osds']
+    - import_role:
+        name: ceph-config
+      tags: ['ceph-config', 'ceph-osds']
+    - import_role:
+        name: ceph-osd
+      tags: ['ceph-osd', 'ceph-osds']
+
+- name: Apply role ceph-mds
+  hosts: ceph-mdss
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - import_role:
+        name: ceph-mds
+      tags: ['ceph-mds']
+
+- name: Apply role ceph-radosgw
+  hosts: ceph-radosgws
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - import_role:
+        name: ceph-common
+      tags: ['ceph-common', 'ceph-radosgws']
+      when:
+        - deploy_radosgw | bool
+        - cephx
+    - import_role:
+        name: ceph-config
+      tags: ['ceph-config', 'ceph-radosgws']
+      when:
+        - deploy_radosgw | bool
+        - cephx
+    - import_role:
+        name: ceph-radosgw
+      tags: ['ceph-radosgw', 'ceph-radosgws']
+      when:
+        - deploy_radosgw | bool
+        - cephx

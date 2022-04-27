@@ -1,0 +1,18 @@
+---
+- name: cephfile-conf
+  template:
+    src: ceph.conf.j2
+    dest: /var/lib/ceph/tmp/ceph.conf
+  register: ceph_conf
+
+- name: set_fact
+  set_fact:
+    cephf_conf: ceph_conf
+
+- name: Copy file with owner and permissions
+  copy:
+    src: /var/lib/ceph/tmp/ceph.conf
+    dest: /etc/ceph/ceph.conf
+    remote_src: "yes"
+  when:
+    - ceph_conf.changed

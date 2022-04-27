@@ -1,0 +1,20 @@
+[Unit]
+Description=Configure bcache param when the restart occurs
+StopWhenUnneeded=true
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+
+# Re-add the configuration of b-cache disk
+# demo: ExecStart=-/bin/sh -c '/bin/echo 2048 > /sys/block/sda/bcache/writeback_rate_minimum'
+
+{% for disk in backend_disks %}
+ExecStart=-/bin/sh -c '/bin/echo {{ bcache_writeback_percent }} > /sys/block/{{ disk }}/bcache/writeback_percent'
+ExecStart=-/bin/sh -c '/bin/echo {{ bcache_writeback_rate_minimum }} > /sys/block/{{ disk }}/bcache/writeback_rate_minimum'
+ExecStart=-/bin/sh -c '/bin/echo {{ bcache_mode }} > /sys/block/{{ disk }}/bcache/cache_mode'
+{% endfor %}

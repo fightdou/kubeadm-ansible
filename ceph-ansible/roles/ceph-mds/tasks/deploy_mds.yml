@@ -1,0 +1,83 @@
+---
+- name: create monitor initial keyring
+  ceph_key:
+    name: client.admin
+    secret: "{{ mons_secret.client_admin.client_admin_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ mons_secret.client_admin.client_admin_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_client_admin_keyring
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_admin_keyring: "{{ ceph_client_admin_keyring }}"
+
+- name: cp client.admin
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.admin.keyring
+    dest: /etc/ceph/ceph.client.admin.keyring
+    remote_src: "yes"
+
+- name: create mds keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  run_once: true
+  block:
+    - name: create monitor initial keyring
+      ceph_key:
+        name: "mds.{{ hostvars[item]['ansible_hostname'] }}"
+        secret: "{{ mdss_secret.mds_secret }}"
+        state: present
+        dest: "/var/lib/ceph/tmp"
+        cluster: "{{ cluster }}"
+        caps: "{{ mdss_secret.mds_ceph_authtool_cap }}"
+        import_key: False
+      when: groups['ceph-mdss'] | length > 0
+      with_items: "{{ groups['ceph-mdss'] }}"
+
+    - name: import key to ceph cluster
+      shell: "ceph auth import -i /var/lib/ceph/tmp/ceph.mds.{{ hostvars[item]['ansible_hostname'] }}.keyring"
+      with_items: "{{ groups['ceph-mdss'] }}"
+
+- name: all node syn mds.keyring
+  shell: ceph auth get mds.{{ hostvars[item]['ansible_hostname'] }} >/etc/ceph/ceph.mds.{{ hostvars[item]['ansible_hostname'] }}.keyring
+  with_items: "{{ groups['ceph-mdss'] }}"
+
+- name: create mds.service directory
+  file:
+    path: /var/lib/ceph/mds/ceph-{{ ansible_hostname }}
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: copy mds keyring
+  copy:
+    src: /etc/ceph/ceph.mds.{{ ansible_hostname }}.keyring
+    dest: /var/lib/ceph/mds/ceph-{{ ansible_hostname }}/keyring
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: "yes"
+
+- name: start the mds service
+  systemd:
+    name: ceph-mds@{{ ansible_hostname }}
+    state: restarted
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+
+- name: create pools
+  command: ceph osd pool create {{ item.value.pool_name }} {{ item.value.pg_num }} {{ item.value.pgp_num }} --cluster={{ cluster }}
+  run_once: true
+  with_dict: "{{ cephfs_pools }}"
+
+- name: config cephfs pool
+  command: ceph fs new ceph_fs {{ cephfs_pools.cephfs_metadata_pools.pool_name }} {{ cephfs_pools.cephfs_data_pools.pool_name }}
+  run_once: true
+  ignore_errors: true

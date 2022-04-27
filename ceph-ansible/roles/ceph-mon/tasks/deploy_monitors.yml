@@ -1,0 +1,143 @@
+---
+# when cephx
+- name: create monitor mon.keyring
+  ceph_key:
+    name: mon.
+    secret: "{{ mons_secret.mon.mon_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ mons_secret.mon.mon_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_mon_keyring
+  when:
+    - cephx
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_mon_keyring: "{{ ceph_mon_keyring }}"
+  when:
+    - ceph_mon_keyring.changed
+
+- name: create monitor client.admin.keyring
+  ceph_key:
+    name: client.admin
+    secret: "{{ mons_secret.client_admin.client_admin_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ mons_secret.client_admin.client_admin_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_client_admin_keyring
+  when:
+    - cephx
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_admin_keyring: "{{ ceph_client_admin_keyring }}"
+  when:
+    - ceph_client_admin_keyring.changed
+
+- name: create monitor bootstrap-osd.keyring
+  ceph_key:
+    name: client.bootstrap-osd
+    secret: "{{ mons_secret.client_bootstrap.client_bootstrap_osd_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "ceph"
+    caps: "{{ mons_secret.client_bootstrap.client_bootstrap_osd_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_client_bootstrap_osd_keyring
+  when:
+    - cephx
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_bootstrap_osd_keyring: "{{ ceph_client_bootstrap_osd_keyring }}"
+  when:
+    - ceph_client_bootstrap_osd_keyring.changed
+
+- name: import admin keyring into mon keyring
+  command: >
+    ceph-authtool
+     /var/lib/ceph/tmp/ceph.mon..keyring --import-keyring /var/lib/ceph/tmp/ceph.client.admin.keyring
+  when:
+    - ceph_mon_keyring.changed
+    - ceph_client_admin_keyring.changed
+
+- name: import bootstrap-osd keyring into mon keyring
+  command: >
+    ceph-authtool
+     /var/lib/ceph/tmp/ceph.mon..keyring --import-keyring /var/lib/ceph/tmp/ceph.client.bootstrap-osd.keyring
+  when:
+    - ceph_mon_keyring.changed
+    - ceph_client_bootstrap_osd_keyring.changed
+
+- name: stopped the monitor service
+  systemd:
+    name: ceph-mon@{{ ansible_hostname }}
+    state: stopped
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+
+- name: create monmap
+  ignore_errors: true
+  shell: cd /var/lib/ceph/tmp/ ; {{ monmaptool }}
+
+- name: Copy ceph.mon..keyring file
+  copy:
+    src: /var/lib/ceph/tmp/ceph.mon..keyring
+    dest: /etc/ceph/ceph.mon..keyring
+    remote_src: "yes"
+  when:
+    - cephx
+
+# 注意改循环
+- name: Copy keyring file
+  shell: cd /var/lib/ceph/tmp/ ; cp ceph.client.admin.keyring ceph.client.bootstrap-osd.keyring ceph.conf ceph.mon..keyring monmap /etc/ceph
+  when:
+    - cephx
+
+- name: create monitor directory
+  file:
+    path: /var/lib/ceph/mon/ceph-mon.{{ ansible_hostname }}
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    recurse: true
+
+- name: formatting mon.service
+  shell: ceph-mon  --cluster ceph --mkfs -i {{ ansible_hostname }} --monmap /var/lib/ceph/tmp/monmap --keyring /var/lib/ceph/tmp/ceph.mon..keyring
+
+- name: create monitor service done
+  file:
+    path: /var/lib/ceph/mon/ceph-mon.{{ ansible_hostname }}/done
+    state: touch
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: daemon-reload
+  shell: systemctl daemon-reload
+
+- name: start the monitor service
+  systemd:
+    name: ceph-mon@{{ ansible_hostname }}
+    state: restarted
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+
+- name: Open the mon V2 port
+  shell: ceph mon enable-msgr2

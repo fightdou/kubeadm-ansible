@@ -1,0 +1,28 @@
+---
+# mgr service start
+- name: stop the mgr service
+  systemd:
+    name: ceph-mgr@{{ ansible_hostname }}
+    state: stopped
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+
+- name: start the mgr service
+  systemd:
+    name: ceph-mgr@{{ ansible_hostname }}
+    state: started
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+  run_once: true
+  when:
+    - inventory_hostname in groups['ceph-mons'][0]
+
+- name: start all node the mgr service
+  systemd:
+    name: ceph-mgr@{{ ansible_hostname }}
+    state: started
+    enabled: yes
+    masked: no
+    daemon_reload: yes

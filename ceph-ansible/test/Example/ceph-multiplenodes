@@ -1,0 +1,48 @@
+[allnodes]
+172.18.30.169 hostname=controller1
+172.18.30.132 hostname=controller2
+172.18.30.121 hostname=controller3
+
+[allnodes:vars]
+api_interface=ens3
+# tunnel_interface=bond2
+ceph_public_interface=ens3
+ceph_cluster_interface=ens3
+external_provider_interface=ens4
+ceph_volume_data=['/dev/vdb','/dev/vdc','/dev/vdd']
+# bcache_map_list=[{'cache':'/dev/nvme0n1','data':'/dev/sda /dev/sdb /dev/sdc'}]
+interface=['ens3','ens4']
+
+[control]
+172.18.30.169
+172.18.30.132
+172.18.30.121
+
+[ceph:children]
+ceph-mons
+ceph-osds
+ceph-mdss
+ceph-mgrs
+ceph-radosgws
+
+[ceph-mons:children]
+control
+
+[ceph-osds]
+172.18.30.169
+172.18.30.132
+172.18.30.121
+
+[ceph-mdss:children]
+ceph-mons
+
+[ceph-mgrs:children]
+control
+
+[ceph-radosgws:children]
+control
+
+[compute]
+172.18.30.169
+172.18.30.132
+172.18.30.121

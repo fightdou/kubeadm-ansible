@@ -34,21 +34,33 @@
   run_once: True
   delegate_to: "localhost"
 
-- name: 部署 flannel
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
-  run_once: True
-  delegate_to: "localhost"
+# - name: 部署 flannel
+#   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+#   run_once: True
+#   delegate_to: "localhost"
 
-- name: 轮询等待 flannel 运行
-  shell: kubectl get pod --all-namespaces -o wide | grep 'flannel' | awk '{print $4}'
-  register: pod_status
-  until: "'Running' in pod_status.stdout"
-  retries: 12
-  delay: 5
-  ignore_errors: true
-  when: wait_plugins_ready|bool
+- name: Deploy flannel in yaml file
+  kubernetes.core.k8s:
+    src: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
+    namespace: default
+    state: present
+    wait: yes
+    wait_sleep: 5
+    wait_timeout: 60
   run_once: True
-  delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+
+# - name: 轮询等待 flannel 运行
+#   shell: kubectl get pod --all-namespaces -o wide | grep 'flannel' | awk '{print $4}'
+#   register: pod_status
+#   until: "'Running' in pod_status.stdout"
+#   retries: 12
+#   delay: 5
+#   ignore_errors: true
+#   when: wait_plugins_ready|bool
+#   run_once: True
+#   delegate_to: "localhost"
 
 - block:
   - name: 安装 helm

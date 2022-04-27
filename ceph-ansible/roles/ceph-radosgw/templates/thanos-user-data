@@ -1,0 +1,1 @@
+{"data": {"user_id": "thanos","display_name": "thanos","suspended": 0,"max_buckets": 1000,"keys": [{"user": "thanos","access_key": "thanos","secret_key": "thanos"}],"op_mask": "read, write, delete","default_placement": "thanos","type": "rgw"}}

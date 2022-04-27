@@ -1,0 +1,10 @@
+---
+- name: include deploy_mgr_service.yml
+  include_tasks: deploy_mgr_service.yml
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- include_tasks: start_mgr_dashboard.yml
+  when: mgr_dashboard | bool
+

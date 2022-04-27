@@ -1,0 +1,220 @@
+---
+- name: create monitor client.admin keyring
+  ceph_key:
+    name: client.admin
+    secret: "{{ mons_secret.client_admin.client_admin_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ mons_secret.client_admin.client_admin_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_client_admin_keyring
+  when:
+    - cephx
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_admin_keyring: "{{ ceph_client_admin_keyring }}"
+  when:
+    - ceph_client_admin_keyring.changed
+
+- name: cp client.admin
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.admin.keyring
+    dest: /etc/ceph/ceph.client.admin.keyring
+    remote_src: "yes"
+  when:
+    - ceph_client_admin_keyring.changed
+
+- name: 同步osd.keyring
+  shell: ceph auth get client.bootstrap-osd >/var/lib/ceph/bootstrap-osd/ceph.keyring
+  when:
+    - cephx
+
+- name: filter need map disk
+  bcache_tools:
+    bcache_map_list: "{{ hostvars[inventory_hostname]['bcache_map_list'] }}"
+    action: "filter_dev"
+  register: "need_map_disk"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: get backend disks
+  bcache_tools:
+    bcache_map_list: "{{ bcache_map_list }}"
+    action: "get_disks"
+  register: "backend_disks"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: bcache cache disk create
+  ignore_errors: true
+  bcache_tools:
+    bcache_map_list: "{{ need_map_disk.stdout }}"
+    action: "make_cache"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: bcache backing disk create
+  bcache_tools:
+    bcache_map_list: "{{ need_map_disk.stdout }}"
+    action: "make_backing"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: attach backend and cache disk
+  bcache_tools:
+    bcache_map_list: "{{ need_map_disk.stdout }}"
+    action: "attach"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: set bcache param
+  bcache_tools:
+    bcache_map_list: "{{ need_map_disk.stdout }}"
+    bcache_mode: "{{ bcache_mode }}"
+    bcache_writeback_percent: "{{ bcache_writeback_percent }}"
+    bcache_writeback_rate_minimum: "{{ bcache_writeback_rate_minimum }}"
+    action: "param_set"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: set fact of bcache param
+  set_fact:
+    backend_disks: "{{ backend_disks.stdout }}"
+  when:
+    - bcache | bool
+
+- name: copy bcache.service
+  template:
+    src: bcache-configure.service.j2
+    dest: /usr/lib/systemd/system/bcache-configure.service
+    mode: "644"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: enable bcache-configure service
+  systemd:
+    name: bcache-configure
+    state: restarted
+    enabled: True
+  when:
+    - bcache | bool
+
+- name: filter need creating osd
+  bcache_tools:
+    bcache_map_list: "{{ need_map_disk.stdout }}"
+    action: "filter_osd"
+  register: "need_create_disk"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
+- name: run 'ceph-volume lvm batch --report' to see how many osds are to be created
+  ceph_volume:
+    cluster: "{{ cluster }}"
+    batch_devices: "{{ ceph_volume_data }}"
+    report: true
+    action: "batch"
+  register: "lvm_batch_report"
+  changed_when: false
+  when:
+    - ceph_volume_data | default([]) | length > 0
+    - not bcache | bool
+
+- name: set_fact num_osds from the output of 'ceph-volume lvm batch --report'
+  set_fact:
+    cephf_num_osds: "{{ lvm_batch_report.stdout |from_json |length }}"
+  when:
+    - ceph_volume_data | default([]) | length > 0
+    - not bcache | bool
+
+- name: osd add
+  block:
+    - name: ceph_volume lvm zap
+      ignore_errors: true
+      ceph_volume:
+        cluster: "{{ cluster }}"
+        objectstore: "{{ objectstore }}"
+        data: "{{ item.data }}"
+        action: "zap"
+      loop: "{{ lvm_batch_report.stdout | from_json }}"
+      when:
+        - (cephf_num_osds is defined and cephf_num_osds|int > 0)
+
+    - name: ceph_volume lvm create
+      ignore_errors: true
+      ceph_volume:
+        cluster: "{{ cluster }}"
+        objectstore: "{{ objectstore }}"
+        data: "{{ item.data }}"
+        action: "create"
+      loop: "{{ lvm_batch_report.stdout | from_json }}"
+      when:
+        - (cephf_num_osds is defined and cephf_num_osds|int > 0)
+
+    - name: ceph_volume lvm zap (ssd)
+      ignore_errors: true
+      ceph_volume:
+        cluster: "{{ cluster }}"
+        objectstore: "{{ objectstore }}"
+        data: "{{ item.data }}"
+        action: "zap"
+      loop: "{{ lvm_batch_report_ssd.stdout | from_json }}"
+      when:
+        - (cephf_num_osds_ssd is defined and cephf_num_osds_ssd|int > 0)
+
+    - name: ceph_volume lvm create (ssd)
+      ignore_errors: true
+      ceph_volume:
+        cluster: "{{ cluster }}"
+        objectstore: "{{ objectstore }}"
+        data: "{{ item.data }}"
+        action: "create"
+      loop: "{{ lvm_batch_report_ssd.stdout | from_json }}"
+      when:
+        - (cephf_num_osds_ssd is defined and cephf_num_osds_ssd|int > 0)
+
+    - name: ceph_volume lvm zap (bcache)
+      ignore_errors: true
+      ceph_volume:
+        cluster: "{{ cluster }}"
+        objectstore: "{{ objectstore }}"
+        data: "/dev/{{ item }}"
+        action: "zap"
+      loop: "{{ need_create_disk.stdout }}"
+      when:
+        - bcache | bool
+        - bcache_map_list is defined
+
+    - name: ceph_volume lvm create  (bcache)
+      ignore_errors: true
+      ceph_volume:
+        cluster: "{{ cluster }}"
+        objectstore: "{{ objectstore }}"
+        data: "/dev/{{ item }}"
+        action: "create"
+      loop: "{{ need_create_disk.stdout }}"
+      when:
+        - bcache | bool
+        - bcache_map_list is defined
+
+- name: include type_osd_crush_rules.yaml
+  include_tasks: type_osd_crush_rules.yaml
+  when:
+    - ceph_aio | bool
+
+- name: include trochilus_config.yml
+  include_tasks: trochilus_config.yml
+  when:
+    - trochilus_config | bool

@@ -1,0 +1,12 @@
+---
+- name: Checking variable for ceph-config
+  run_once: True
+  local_action: fail msg="Ceph -config lacks the necessary parameters"
+  when:
+    - item
+  with_items:
+    - cluster is not defined
+    - fsid is not defined
+    - cephx is not defined
+    - ceph_public_network is not defined
+    - osd_pool_default_pg_num is not defined

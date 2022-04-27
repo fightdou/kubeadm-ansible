@@ -1,0 +1,90 @@
+---
+- name: create monitor initial keyring
+  ceph_key:
+    name: client.admin
+    secret: "{{ mons_secret.client_admin.client_admin_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ mons_secret.client_admin.client_admin_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_client_admin_keyring
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_admin_keyring: "{{ ceph_client_admin_keyring }}"
+
+- name: cp client.admin
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.admin.keyring
+    dest: /etc/ceph/ceph.client.admin.keyring
+    remote_src: "yes"
+
+- name: create radosgw keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  run_once: true
+  block:
+    - name: create monitor initial keyring
+      ceph_key:
+        name: "client.rgw.{{ hostvars[item]['ansible_hostname'] }}"
+        secret: "{{ radosgws_secret.radosgw_secret }}"
+        state: present
+        dest: "/var/lib/ceph/tmp"
+        cluster: "{{ cluster }}"
+        caps: "{{ radosgws_secret.radosgw_ceph_authtool_cap }}"
+        import_key: False
+      when: groups['ceph-radosgws'] | length > 0
+      with_items: "{{ groups['ceph-radosgws'] }}"
+
+    - name: import key to ceph cluster
+      shell: ceph auth import -i /var/lib/ceph/tmp/ceph.client.rgw.{{ hostvars[item]['ansible_hostname'] }}.keyring
+      with_items: "{{ groups['ceph-radosgws'] }}"
+
+- name: all node syn client.rgw.keyring
+  shell: "ceph auth get client.rgw.{{ hostvars[item]['ansible_hostname'] }} >/var/lib/ceph/tmp/ceph.client.rgw.{{ hostvars[item]['ansible_hostname'] }}.keyring"
+  with_items: "{{ groups['ceph-radosgws'] }}"
+
+- name: create ceph.client.radosgw.keyring
+  shell: ceph-authtool --create-keyring /var/lib/ceph/tmp/ceph.client.radosgw.keyring
+  with_items: "{{ groups['ceph-radosgws'] }}"
+
+- name: import client.rgw into client.radosgw keyring
+  shell: "ceph-authtool /var/lib/ceph/tmp/ceph.client.radosgw.keyring --import-keyring /var/lib/ceph/tmp/ceph.client.rgw.{{ hostvars[item]['ansible_hostname'] }}.keyring"
+  with_items: "{{ groups['ceph-radosgws'] }}"
+
+- name: cp client.radosgw
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.radosgw.keyring
+    dest: /etc/ceph/ceph.client.radosgw.keyring
+    remote_src: "yes"
+
+- name: restart all node the radosgw service
+  systemd:
+    name: ceph-radosgw@rgw.{{ ansible_hostname }}
+    state: restarted
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+
+- name: create pools
+  command: ceph osd pool create {{ item.value.pool_name }} {{ item.value.pg_num }} {{ item.value.pgp_num }} --cluster={{ cluster }}
+  run_once: true
+  with_dict: "{{ radosgw_pools }}"
+
+- name: enable pool application osd_pools
+  command: ceph osd pool application enable "{{ item.value.pool_name }}" "{{ item.value.pool_app }}"
+  when:
+    - osd_pool_application
+    - item.value.pool_name is defined
+    - item.value.pool_app is defined
+  run_once: true
+  ignore_errors: true
+  with_dict: "{{ radosgw_pools }}"
+
+- name: include deploy_s3cmd.yml
+  include_tasks: deploy_s3cmd.yml
+  when:
+    - deploy_s3cmd | bool

@@ -1,0 +1,49 @@
+---
+- name: Checking free port for ceph-mgrs services
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "6800"
+    connect_timeout: 1
+    timeout: 1
+    state: stopped
+  when:
+    - inventory_hostname in groups['ceph-mons']
+
+- name: Checking free port for ceph-mgrs dashboard modules
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "7000"
+    connect_timeout: 1
+    timeout: 1
+    state: stopped
+  when:
+    - inventory_hostname in groups['ceph-mons']
+
+- name: Checking variable on mgr_dashboard
+  run_once: True
+  local_action: fail msg="mgr_dashboard lacks the necessary parameters"
+  when:
+    - item
+    - mgr_dashboard | bool
+  with_items:
+    - mgr_dashboard_login_name is not defined
+
+- name: Checking variable on mgr_dashboard
+  run_once: True
+  local_action: fail msg="mgr_dashboard lacks the necessary parameters"
+  when:
+    - item
+    - mgr_dashboard | bool
+    - mgr_dashboard_ssl | bool
+  with_items:
+    - mgr_dashboard_ssl_port is not defined
+
+- name: Checking variable on mgr_dashboard
+  run_once: True
+  local_action: fail msg="mgr_dashboard lacks the necessary parameters"
+  when:
+    - item
+    - mgr_dashboard | bool
+    - not mgr_dashboard_ssl | bool
+  with_items:
+    - mgr_dashboard_port is not defined

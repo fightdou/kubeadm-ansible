@@ -1,0 +1,10 @@
+---
+- name: Checking free port for ceph-mons
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "6789"
+    connect_timeout: 1
+    timeout: 1
+    state: stopped
+  when:
+    - inventory_hostname in groups['ceph-mons']

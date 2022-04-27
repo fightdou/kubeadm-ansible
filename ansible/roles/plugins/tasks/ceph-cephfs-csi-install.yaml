@@ -18,20 +18,29 @@
     mode: 0644
 
 - name: 安装 ceph-csi-cephfs helm charts
-  shell: helm upgrade --install ceph-csi-cephfs {{ charts_dir }}/ceph-csi-cephfs -f /etc/kubernetes/plugins/csi-cephfs/values.yaml
+  kubernetes.core.helm:
+    atomic: no
+    name: ceph-csi-cephfs
+    chart_ref: "{{ charts_dir }}/ceph-csi-cephfs"
+    values_files:
+      - /etc/kubernetes/plugins/csi-cephfs/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 180
+  # shell: helm upgrade --install ceph-csi-cephfs {{ charts_dir }}/ceph-csi-cephfs -f /etc/kubernetes/plugins/csi-cephfs/values.yaml
 
-- name: 轮询等待 cephfs-provisioner 运行
-  shell: kubectl get pod --all-namespaces -o wide | grep 'cephfs-provisioner' | awk '{print $4}'
-  register: cephfs_provisioner_status
-  until: "'Running' in cephfs_provisioner_status.stdout"
-  retries: 12
-  delay: 5
-  ignore_errors: true
+# - name: 轮询等待 cephfs-provisioner 运行
+#   shell: kubectl get pod --all-namespaces -o wide | grep 'cephfs-provisioner' | awk '{print $4}'
+#   register: cephfs_provisioner_status
+#   until: "'Running' in cephfs_provisioner_status.stdout"
+#   retries: 12
+#   delay: 5
+#   ignore_errors: true
 
-- name: 轮询等待 cephfs-nodeplugin 运行
-  shell: kubectl get pod --all-namespaces -o wide | grep 'cephfs-nodeplugin' | awk '{print $4}'
-  register: cephfs_nodeplugin_status
-  until: "'Running' in cephfs_nodeplugin_status.stdout"
-  retries: 12
-  delay: 5
-  ignore_errors: true
+# - name: 轮询等待 cephfs-nodeplugin 运行
+#   shell: kubectl get pod --all-namespaces -o wide | grep 'cephfs-nodeplugin' | awk '{print $4}'
+#   register: cephfs_nodeplugin_status
+#   until: "'Running' in cephfs_nodeplugin_status.stdout"
+#   retries: 12
+#   delay: 5
+#   ignore_errors: true

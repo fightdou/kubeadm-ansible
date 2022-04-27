@@ -1,0 +1,67 @@
+---
+- name: create monitor initial keyring
+  ceph_key:
+    name: client.admin
+    secret: "{{ mons_secret.client_admin.client_admin_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ mons_secret.client_admin.client_admin_ceph_authtool_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0644"
+  register: ceph_client_admin_keyring
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_admin_keyring: "{{ ceph_client_admin_keyring }}"
+
+- name: cp client.admin
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.admin.keyring
+    dest: /etc/ceph/ceph.client.admin.keyring
+    remote_src: "yes"
+
+- name: create mgr keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  run_once: true
+  block:
+    - name: create monitor initial keyring
+      ceph_key:
+        name: "mgr.{{ hostvars[item]['ansible_hostname'] }}"
+        secret: "{{ mgrs_secret.mgr_secret }}"
+        state: present
+        dest: "/var/lib/ceph/tmp"
+        cluster: "{{ cluster }}"
+        caps: "{{ mgrs_secret.mgr_ceph_authtool_cap }}"
+        import_key: False
+      when: groups['ceph-mgrs'] | length > 0
+      with_items: "{{ groups['ceph-mgrs'] }}"
+
+    - name: import key to ceph cluster
+      shell: "ceph auth import -i /var/lib/ceph/tmp/ceph.mgr.{{ hostvars[item]['ansible_hostname'] }}.keyring"
+      with_items: "{{ groups['ceph-mgrs'] }}"
+
+- name: all node syn mgr.keyring
+  shell: ceph auth get mgr.{{ hostvars[item]['ansible_hostname'] }} >/etc/ceph/ceph.mgr.{{ hostvars[item]['ansible_hostname'] }}.keyring
+  with_items: "{{ groups['ceph-mgrs'] }}"
+
+- name: create mgr.service directory
+  file:
+    path: /var/lib/ceph/mgr/ceph-mgr.{{ ansible_hostname }}
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: copy mgr keyring
+  copy:
+    src: /etc/ceph/ceph.mgr.{{ ansible_hostname }}.keyring
+    dest: /var/lib/ceph/mgr/ceph-mgr.{{ ansible_hostname }}/keyring
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: "yes"
+
+- include_tasks: "deploy_mgr_service_package.yml"

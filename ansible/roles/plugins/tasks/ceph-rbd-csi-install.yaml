@@ -17,21 +17,32 @@
     owner: root
     mode: 0644
 
-- name: 安装 ceph-csi-rbd helm charts
-  shell: helm upgrade --install ceph-csi-rbd {{ charts_dir }}/ceph-csi-rbd -f /etc/kubernetes/plugins/csi-rbd/values.yaml
+# - name: 安装 ceph-csi-rbd helm charts
+#   shell: helm upgrade --install ceph-csi-rbd {{ charts_dir }}/ceph-csi-rbd -f /etc/kubernetes/plugins/csi-rbd/values.yaml
 
-- name: 轮询等待 ceph-csi-rbd-provisioner 运行
-  shell: kubectl get pod --all-namespaces -o wide | grep 'rbd-provisioner' | awk '{print $4}'
-  register: provisioner_status
-  until: "'Running' in provisioner_status.stdout"
-  retries: 12
-  delay: 5
-  ignore_errors: true
+- name: Install ceph-csi-rbd helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: ceph-csi-rbd
+    chart_ref: "{{ charts_dir }}/ceph-csi-rbd"
+    values_files:
+      - /etc/kubernetes/plugins/csi-rbd/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 180
 
-- name: 轮询等待 ceph-csi-rbd-nodeplugin 运行
-  shell: kubectl get pod --all-namespaces -o wide | grep 'rbd-nodeplugin' | awk '{print $4}'
-  register: nodeplugin_status
-  until: "'Running' in nodeplugin_status.stdout"
-  retries: 12
-  delay: 5
-  ignore_errors: true
+# - name: 轮询等待 ceph-csi-rbd-provisioner 运行
+#   shell: kubectl get pod --all-namespaces -o wide | grep 'rbd-provisioner' | awk '{print $4}'
+#   register: provisioner_status
+#   until: "'Running' in provisioner_status.stdout"
+#   retries: 12
+#   delay: 5
+#   ignore_errors: true
+
+# - name: 轮询等待 ceph-csi-rbd-nodeplugin 运行
+#   shell: kubectl get pod --all-namespaces -o wide | grep 'rbd-nodeplugin' | awk '{print $4}'
+#   register: nodeplugin_status
+#   until: "'Running' in nodeplugin_status.stdout"
+#   retries: 12
+#   delay: 5
+#   ignore_errors: true

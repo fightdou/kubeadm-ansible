@@ -1,0 +1,64 @@
+---
+# - name: Checking variable is enabled for Backups_pools
+#   run_once: True
+#   local_action: fail msg="Please enable variable when enabling Backups_pools"
+#   when:
+#     - item
+#     # - openstack_cinder_backup | bool
+#   with_items:
+#     - osd_pools.backups_pools.pool_name is not defined
+#     - osd_pools.backups_pools.pg_num is not defined
+#     - osd_pools.backups_pools.pgp_num is not defined
+#     - osd_pools.backups_pools.pool_app is not defined
+#     - osd_pools.backups_pools.pool_cursh_rule is not defined
+
+- name: Checking variable is enabled for trochilus_config
+  run_once: True
+  local_action: fail msg="Please enable variable when enabling trochilus_config"
+  when:
+    - item.value.pool_name is not defined
+    - item.value.cache_pg_num is not defined
+    - item.value.cache_pgp_num is not defined
+    - item.value.pool_cursh_rule is not defined
+    - trochilus_config | bool
+  with_dict: "{{ osd_pools }}"
+
+- name: Checking variable is enabled for osd_pool_application
+  run_once: True
+  local_action: fail msg="Please enable variable when enabling osd_pool_application"
+  when:
+    - item.value.pool_app is not defined
+    - osd_pool_application | bool
+    - trochilus_config | bool
+    - osd_pools is defined
+  with_dict: "{{ osd_pools }}"
+
+- name: check ceph_volume_data device | hdd
+  shell: "ls {{ item }}"
+  with_items: "{{ ceph_volume_data }}"
+  register: device_info
+  any_errors_fatal: true
+
+- name: check device pvs info | hdd
+  shell: "pvs |grep {{ item }} |grep 'ceph-'|wc -l"
+  with_items: "{{ ceph_volume_data }}"
+  register: check_osd_info
+  until: check_osd_info.stdout == "0"
+  any_errors_fatal: true
+
+- name: check ceph_ssd_volume_data device | ssd
+  shell: "ls {{ item }}"
+  with_items: "{{ ceph_ssd_volume_data }}"
+  register: device_info
+  any_errors_fatal: true
+  when:
+    - ceph_ssd_volume_data is defined
+
+- name: check device pvs info | ssd
+  shell: "pvs |grep {{ item }} |grep 'ceph-'|wc -l"
+  with_items: "{{ ceph_ssd_volume_data }}"
+  register: check_osd_info
+  until: check_osd_info.stdout == "0"
+  when:
+    - ceph_ssd_volume_data is defined
+  any_errors_fatal: true

@@ -1,0 +1,97 @@
+---
+- name: create pools
+  command: ceph osd pool create {{ item.value.pool_name }} {{ item.value.pg_num }} {{ item.value.pgp_num }} --cluster={{ cluster }}
+  run_once: true
+  with_dict: "{{ osd_pools }}"
+
+- name: enable pool application osd_pools
+  ignore_errors: true
+  command: ceph osd pool application enable "{{ item.value.pool_name }}" "{{ item.value.pool_app }}"
+  run_once: true
+  when:
+    - osd_pool_application
+    - item.value.pool_name is defined
+    - item.value.pool_app is defined
+  with_dict: "{{ osd_pools }}"
+
+- name: Set pool size
+  command: ceph osd pool set "{{ item.value.pool_name }}" size "{{ item.value.size}}"
+  when:
+    - item.value.pool_name is defined
+    - item.value.size is defined
+  with_dict: "{{ osd_pools }}"
+  run_once: true
+
+- name: create client_images keyring
+  ceph_key:
+    name: client.images
+    secret: "{{ osds_pool_secret.client_images.client_images_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ client_images_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0777"
+  register: ceph_client_images_keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  when:
+    - cephx
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_images_keyring: "{{ ceph_client_images_keyring }}"
+  when:
+    - ceph_client_images_keyring.changed
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+
+- name: cp client.images
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.images.keyring
+    dest: /etc/ceph/ceph.client.images.keyring
+    remote_src: "yes"
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+
+- name: create client_volumes keyring
+  ceph_key:
+    name: client.volumes
+    secret: "{{ osds_pool_secret.client_volumes.client_volumes_secret }}"
+    state: present
+    dest: "/var/lib/ceph/tmp/"
+    cluster: "{{ cluster }}"
+    caps: "{{ client_volumes_cap }}"
+    import_key: False
+    owner: "ceph"
+    group: "ceph"
+    mode: "0777"
+  register: ceph_client_volumes_keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  when:
+    - cephx
+
+- name: set_fact
+  set_fact:
+    cephf_ceph_client_volumes_keyring: "{{ ceph_client_volumes_keyring }}"
+  when:
+    - ceph_client_volumes_keyring.changed
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+
+- name: cp client_volumes_keyring
+  copy:
+    src: /var/lib/ceph/tmp/ceph.client.volumes.keyring
+    dest: /etc/ceph/ceph.client.volumes.keyring
+    remote_src: "yes"
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+
+- name: client.images import key to ceph cluster
+  command: ceph auth import -i /var/lib/ceph/tmp/ceph.client.images.keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  when:
+    - cephx
+
+- name: client.volumes import key to ceph cluster
+  command: ceph auth import -i /var/lib/ceph/tmp/ceph.client.volumes.keyring
+  delegate_to: "{{ groups['ceph-mons'][0] }}"
+  when:
+    - cephx

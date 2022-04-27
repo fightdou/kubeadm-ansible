@@ -1,0 +1,10 @@
+---
+- name: create and set aio crush_rules
+  delegate_to: "{{ groups['ceph-osds'][0] }}"
+  run_once: true
+  block:
+    - name: remove default crush_rule "replicated_rule"
+      command: ceph osd crush rule rm "replicated_rule"
+
+    - name: create default crush_rule "replicated_rule" with type osd
+      command: ceph osd crush rule create-replicated replicated_rule default osd

@@ -1,31 +1,81 @@
-- hosts: 
-  - allnodes
+- name: Apply role baremetal
+  gather_facts: true
+  hosts: baremetal
   roles:
-  - prepare/base
-  - prepare/container
+    - { role: baremetal,
+        tags: baremetal }
 
-# 安装 load-balancer
-- hosts:
-  - allnodes
+
+- name: Apply role prepare
+  gather_facts: true
+  hosts: all
   roles:
-  - load-balancer
+    - { role: prepare/base,
+        tags: base }
+    - { role: prepare/container,
+        tags: container}
+
+- name: Apply role load-balancer
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: load-balancer,
+        tags: load-balancer }
+
+- name: Apply role kube-master
+  gather_facts: true
+  hosts: 
+    - kube-master
+    - new-master
+  roles:
+    - { role: kube-master,
+        tags: kube-master }
+
+- name: Apply role kube-worker
+  gather_facts: true
+  hosts: 
+    - kube-worker
+    - new-worker
+  roles:
+    - { role: kube-worker,
+        tags: kube-worker }
+
+
+- name: Apply role plugins
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: plugins,
+        tags: plugins }
+
+# - hosts: 
+#   - allnodes
+#   roles:
+#   - prepare/base
+#   - prepare/container
+
+# # 安装 load-balancer
+# - hosts:
+#   - allnodes
+#   roles:
+#   - load-balancer
 
 # 初始化master节点
-- hosts:
-  - kube-master
-  - new-master
-  roles:
-  - kube-master
+# - hosts:
+#   - kube-master
+#   - new-master
+#   roles:
+#   - kube-master
 
 # 初始化worker节点
-- hosts:
-  - kube-worker
-  - new-worker
-  roles:
-  - kube-worker
+# - hosts:
+#   - kube-worker
+#   - new-worker
+#   roles:
+#   - kube-worker
 
 # 安装集群插件
-- hosts:
-  - allnodes
-  roles:
-  - plugins
+# - hosts:
+#   - allnodes
+#   roles:
+#   - plugins

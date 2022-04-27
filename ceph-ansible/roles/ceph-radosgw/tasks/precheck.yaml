@@ -1,0 +1,11 @@
+---
+- name: Checking free port for ceph-radosgw
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: "7408"
+    connect_timeout: 1
+    timeout: 1
+    state: stopped
+  when:
+    - inventory_hostname in groups['ceph-radosgws']
+    - deploy_radosgw | bool

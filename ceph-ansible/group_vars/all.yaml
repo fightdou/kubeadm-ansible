@@ -1,0 +1,76 @@
+---
+# default action
+action: "deploy"
+ceph_mons_hosts: "{% for host in groups['ceph-mons'] %} {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
+{% endfor %}"
+ceph_osds_hosts: "{% for host in groups['ceph-osds'] %} {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
+{% endfor %}"
+ceph_mgrs_hosts: "{% for host in groups['ceph-mgrs'] %} {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
+{% endfor %}"
+ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}"
+monmaptool: "monmaptool --create  {% for host in groups['ceph-mons'] %} --add {{ hostvars[host]['ansible_hostname']}}  {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }}:6789 {% endfor %}    --fsid {{ fsid }} monmap "
+client_images_cap: "{{ osds_pool_secret.client_images.client_images_ceph_authtool_cap }}"
+client_volumes_cap: "{{ osds_pool_secret.client_volumes.client_volumes_ceph_authtool_cap }}"
+
+## monitor service keyring和subsystemd权限
+mons_secret:
+  mon:
+    mon_secret: AQAhettdAAAAABAAh2KuoKPIBz2D3wJIkC8jhw==
+    mon_ceph_authtool_cap:
+      mon: allow *
+  client_admin:
+    client_admin_secret: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
+    client_admin_ceph_authtool_cap:
+      mon: allow *
+      osd: allow *
+      mds: allow *
+      mgr: allow *
+  client_bootstrap:
+    client_bootstrap_osd_secret: AQAiettdAAAAABAAQvMLY+7LEZwGdGHGCTv+1g==
+    client_bootstrap_osd_ceph_authtool_cap:
+      mon: allow profile bootstrap-osd
+
+## osd pool keyring。
+osds_pool_secret:
+  client_images:
+    client_images_secret: AQAhettdAAAAABAAh2KuoKPIBz2D3wJIkC8jhw==
+    client_images_ceph_authtool_cap:
+      mon: allow r
+      osd: allow class-read object_prefix rbd_children,  allow rwx pool=images
+  client_volumes:
+    client_volumes_secret: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
+    client_volumes_ceph_authtool_cap:
+      mon: allow *
+      osd: allow *
+      mds: allow *
+      mgr: allow *
+  # client_cinder_backup:
+  #   client_cinder_backup_secret: AQCLZvhdTRUINxAAlZB+NFdIFq2L4KjqcEL6GQ==
+  #   client_cinder_backup_ceph_authtool_cap:
+  #     mon: profile rbd
+  #     osd: profile rbd pool=backups
+
+## mgr service keyring和subsystemd权限
+mgrs_secret:
+  mgr_secret: AQBdg9tdAAAAABAAhq6kwp8y12k0TYXMUew3Pg==
+  mgr_ceph_authtool_cap:
+    mon: allow profile mgr
+    osd: allow *
+    mds: allow *
+
+## radosgw service keyring
+radosgws_secret:
+  radosgw_secret: AQD6yf1eTRzlIhAA+wSFxh3HeHk3kffT8ZiC5Q==
+  radosgw_ceph_authtool_cap:
+    mon: allow *
+    osd: allow *
+
+mdss_secret:
+  mds_secret: AQDp22RhIefTJRAAIReXi2/m1BSh/mmu+mKuvA==
+  mds_ceph_authtool_cap:
+    mon: allow profile mds
+    mgr: allow profile mds
+    osd: allow *
+    mds: allow *
+
+# gfs_hosts: "[{% for host in groups['glusterfs-bricks'] %}'{{ hostvars[host]['ansible_' + glusterfs_api_interface]['ipv4']['address'] }}',{% endfor %}]"

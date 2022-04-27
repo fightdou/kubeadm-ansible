@@ -1,0 +1,80 @@
+---
+
+- name: radosgw-admin create admin user
+  command: "radosgw-admin user create --uid={{ admin_user_id }} --display-name='{{ admin_display_name }}' --access-key={{ admin_user_id }} --secret-key={{ rgw_admin_password }}"
+  run_once: true
+  when:
+    - create_admin_user | bool
+
+- name: radosgw-admin add admin caps
+  command: "radosgw-admin --id {{ admin_user_id }} caps add --caps={{ admin_caps }} --uid={{ admin_user_id }}"
+  run_once: true
+  when:
+    - create_admin_user | bool
+
+- name: radosgw-admin add zonegroup placement
+  command: "radosgw-admin zonegroup placement add --rgw-zonegroup {{ rgw_zonegroup }} --placement-id {{ rgw_placement_id }}"
+  run_once: true
+  when:
+    - create_thanos_user | bool
+
+- name: radosgw-admin add zone placement
+  command: "radosgw-admin zone placement add --rgw-zone {{ rgw_zone }} --placement-id {{ rgw_placement_id }} --data-pool {{ radosgw_pools.thanos_data_pools.pool_name }} --index-pool {{ radosgw_pools.thanos_index_pools.pool_name }} --data-extra-pool {{ radosgw_pools.thanos_non_ec_pools.pool_name }}"
+  run_once: true
+  when:
+    - create_thanos_user | bool
+
+- name: radosgw-admin create user
+  command: "radosgw-admin user create --uid={{ thanos_user_uid }} --display-name={{ thanos_user_uid }} --access-key={{ thanos_user_access_key }} --secret-key={{ thanos_user_secret_key }}"
+  run_once: true
+  when:
+    - create_thanos_user | bool
+
+- name: thanos-user-data-conf
+  template:
+    src: thanos-user-data
+    dest: /tmp/thanos-user-data
+  run_once: true
+  when:
+    - create_thanos_user | bool
+
+- name: radosgw-admin put metadata
+  shell: "radosgw-admin metadata put user:thanos < /tmp/thanos-user-data"
+  run_once: true
+  when:
+    - create_thanos_user | bool
+
+- name: restart all node the ceph-radosgw.target service
+  systemd:
+    name: ceph-radosgw.target
+    state: restarted
+  when:
+    - create_thanos_user | bool
+
+- name: s3cfg-conf
+  template:
+    src: s3cfg.j2
+    dest: /tmp/s3cfg
+  register: s3cfg_conf
+
+- name: Copy s3cfg file
+  copy:
+    src: /tmp/s3cfg
+    dest: /root/.s3cfg
+    mode: "600"
+    remote_src: "yes"
+  when:
+    - create_thanos_user | bool
+    - s3cfg_conf.changed
+
+# Note (LinPW): 修改以下任务时需要注意: ../ansible/roles/ceph/tasks/supplement_rgw_deploy.yml
+- name: create S3 buckets
+  shell: s3cmd mb s3://thanosbucket
+  delegate_to: "{{ groups['ceph-radosgws'][0] }}"
+  run_once: true
+  when:
+    - create_thanos_user | bool
+  register: result
+  until: result is success
+  retries: "10"
+  delay: "5"
