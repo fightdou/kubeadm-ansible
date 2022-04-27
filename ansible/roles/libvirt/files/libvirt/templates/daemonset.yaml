@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
       - name: libvirt
-        image: "{{ .Values.libvirt.repository }}:{{ .Values.libvirt.tag }}"
-        imagePullPolicy: "{{ .Values.libvirt.pullPolicy }}"
+        image: "{{ .Values.image.libvirt }}"
+        imagePullPolicy: IfNotPresent
         env:
           - name: KOLLA_CONFIG_STRATEGY
             value: "COPY_ALWAYS"

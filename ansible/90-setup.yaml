@@ -39,3 +39,8 @@
 #   - prometheus
 #   roles:
 #   - prometheus
+
+# - hosts:
+#   - compute
+#   roles:
+#   - libvirt

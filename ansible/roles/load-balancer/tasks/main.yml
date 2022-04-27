@@ -15,7 +15,7 @@
     shell: "ip a|grep '{{ current_host_ip }}/'|awk '{print $NF}'"
     register: lb_keepalived_interface
   - name: keepalived | 拉取相关镜像
-    shell: "{{ image_pull_command }} {{ item }}"
+    shell: "docker pull {{ item }}"
     with_items:
     - "{{ lb_keepalived_image }}"
   - name: keepalived | 生成 static pod 文件

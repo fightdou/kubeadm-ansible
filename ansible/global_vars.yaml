@@ -1,5 +1,15 @@
 firewalld_disabled: true
+timezone: Asia/Shanghai
 use_domain_name_deploy: true
+custom_hosts:
+  "172.18.28.222":
+  - kunlun.cluster.local
+api_interface: ens3
+harbor_address: 172.18.31.155
+
+####################
+# Kubernetes options
+####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
 kube_image_repository: 172.18.31.155/kubernetes
@@ -9,20 +19,25 @@ kubelet_root_dir: "/var/lib/kubelet"
 wait_plugins_ready: false
 docker_storage_dir: "/var/lib/docker"
 kube_pod_subnet: 10.244.0.0/16
-timezone: Asia/Shanghai
 kube_dns_domain: cluster.local
-image_pull_command: "docker pull"
+# 设置 flannel 后端, vxlan, host-gw, udp
+flannel_backend: "host-gw"
 # Pod根容器
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
-custom_hosts:
-  "172.18.28.222":
-  - kunlun.cluster.local
-harbor_address: 172.18.31.155
-# 设置 flannel 后端, vxlan, host-gw, udp
-flannel_backend: "host-gw"
+# 节点的角色名称，默认values为enabled
+control_node_role_name: control_role
+compute_node_role_name: compute_role
+storage_node_role_name: storage_role
+node_role_value: enabled
 
-api_interface: ens3
+helm_install_namespace: default
+helm_charts_dir: /opt/helm-charts
+
+#################
+# Haproxy options
+#################
+
 # 使用haproxy进行apiserver负载时使用的haproxy镜像
 lb_haproxy_image: "{{ kube_image_repository }}/haproxy:2.4.15-alpine"
 # haproxy监控绑定端口
@@ -42,6 +57,9 @@ lb_haproxy_stats_password: "admin"
 # "uri": 基于请求的URI
 lb_haproxy_balance_alg: "roundrobin"
 
+####################
+# Keepalived options
+####################
 # 负载均衡的vip
 lb_kube_apiserver_ip: 172.18.28.222
 # 使用负载均衡后集群 apiserver port
@@ -57,6 +75,10 @@ lb_kube_apiserver_healthcheck_port: 8081
 # 默认所有节点权重 120
 lb_keepalived_priority: "120"
 
+
+##############
+# Etcd options
+##############
 # Etcd 数据根目录
 etcd_data_dir: "/var/lib/etcd"
 # Etcd 每日备份时间，默认3，即凌晨3点，取值范围0-23
@@ -66,6 +88,9 @@ etcd_backup_expiry: "7"
 # etcd 备份目录
 etcd_backup_dir: "/var/lib/etcd/backup"
 
+##################
+# Ceph csi Options
+##################
 # kubernetes ceph csi
 ceph:
   install_ceph_rbd_csi: true
@@ -79,7 +104,16 @@ ceph:
   rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
   rbd_ceph_user: client.admin
 
-# trochilus相关
+#################
+# Libvirt Options
+#################
+ceph_rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
+ceph_rbd_ceph_user: client.admin
+ceph_admin_keyring: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
+
+###################
+# Trochilus Options
+###################
 trochilus_support_flat_network: true
 trochilus_flat_network_nic: ""
 trochilus_support_vlan_network: false
@@ -89,12 +123,15 @@ trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 
-# mariadb 相关
+#################
+# Mariadb Options
+#################
 mariadb_root_password: 123456
 mariadb_trochilus_password: 123456
 
-
-# prometheus 相关
+####################
+# Prometheus Options
+####################
 # 数据存放目录，需挂载共享存储
 prometheus_alert_rule_dir: /opt/prometheus/rules
 prometheus_query_port: 9003
@@ -109,9 +146,8 @@ prometheus_collectd_exporter_port: 9103
 prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
 
-# java 相关
+##############
+# Java Options
+##############
 java_webhook_port: 9030
 java_webhook_token: abc123
-
-helm_install_namespace: default
-helm_charts_dir: /opt/helm-charts
