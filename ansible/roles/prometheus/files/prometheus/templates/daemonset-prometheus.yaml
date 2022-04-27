@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: prometheus-k8s
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: prometheus
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: {{ .Values.affinity.key }}
+                operator: In
+                values:
+                - {{ .Values.affinity.value }}
+            weight: 100
+      containers:
+      - name: prometheus
+        args:
+        - --web.listen-address=$(NODE_ID):{{ .Values.service.prometheus.port }}
+        - --config.file=/etc/prometheus/prometheus.yaml
+        - --storage.tsdb.path=/etc/prometheus/data
+        - --web.enable-lifecycle
+        - --web.enable-admin-api
+        - --storage.tsdb.no-lockfile
+        - --query.max-concurrency=1000
+        - --web.route-prefix=/
+        - --storage.tsdb.retention.time=7d
+        image: {{ .Values.image.prometheus }}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        ports:
+        - containerPort: {{ .Values.service.prometheus.port }}
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /-/ready
+            port: web
+            scheme: HTTP
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 10
+        resources:
+          limits:
+            cpu: "4"
+            memory: 2Gi
+          requests:
+            cpu: 200m
+            memory: 400Mi
+        volumeMounts:
+          - mountPath: {{ .Values.alert_rule_dir }}
+            name: rule-file
+          - mountPath: /etc/prometheus
+            name: prometheus-etc
+      - name: thanos-sidecar
+        image: {{ .Values.image.thanos }}
+        args:
+        - sidecar
+        - --prometheus.url=http://$(NODE_ID):{{ .Values.service.prometheus.port }}
+        - --tsdb.path=/etc/prometheus/data
+        - --http-address=$(NODE_ID):{{ .Values.service.sidecar.http_port }}
+        - --grpc-address=$(NODE_ID):{{ .Values.service.sidecar.grpc_port }}
+        env:
+        - name: NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        ports:
+          - name: http-sidecar
+            containerPort: {{ .Values.service.sidecar.http_port }}
+          - name: grpc-sidecar
+            containerPort: {{ .Values.service.sidecar.grpc_port }}
+        volumeMounts:
+          - name: prometheus-etc
+            mountPath: /etc/prometheus
+      restartPolicy: Always
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+      volumes:
+      - hostPath:
+          path: /etc/prometheus
+          type: ""
+        name: prometheus-etc
+      - hostPath:
+          path: {{ .Values.alert_rule_dir }}
+          type: ""
+        name: rule-file
+

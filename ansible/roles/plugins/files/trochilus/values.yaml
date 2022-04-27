@@ -11,10 +11,12 @@ nodeInfo: []
 
 networkConfig:
   support_vlan_network: false
-  network_vlan_type: vlan1
-  network_vlan_range: ""
+  vlan_network_type: vlan1
+  vlan_network_range: ""
+  vlan_network_nic: ""
   support_flat_network: true
-  network_flat_type: flat1
+  flat_network_type: flat1
+  flat_network_nic: ""
 
 image:
   trochilus_api:
@@ -31,8 +33,7 @@ image:
     tag: yoga
   db_sync:
     repository: trochilus-agent
-
-serviceAccountName: trochilus
+    
 clusterDomainSuffix: cluster.local
 replicaCount: 1
 
@@ -56,16 +57,13 @@ service:
     name: agent
 
 mariadb:
-  root_password: {{ mariadb.root_password }}
+  root_password: {{ mariadb_root_password }}
   username: trochilus
-  password: {{ mariadb.trochilus_password }}
+  password: {{ mariadb_trochilus_password }}
   database: trochilus
 
 conf:
-  agent_settings:
-    bind_port: 9002
   api_settings:
-    bind_port: 9001
     enabled_volume_backends: rbd1
   image_settings:
     enabled_image_store: rbd
@@ -89,7 +87,7 @@ conf:
     vm_name_template: voi-%s
   webhook_settings:
     target_host: ""
-    target_port: 9003
+    target_port: ""
     target_path: /api/v1/webhook/
     method: post
     auth_token: abc123

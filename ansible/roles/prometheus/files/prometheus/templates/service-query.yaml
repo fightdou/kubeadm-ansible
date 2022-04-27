@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: thanos-query
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  ports:
+  - name: http
+    port: {{ .Values.service.query.port }}
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: thanos-query
+    thanos: query
+  type: ClusterIP

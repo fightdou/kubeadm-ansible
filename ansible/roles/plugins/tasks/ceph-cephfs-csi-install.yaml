@@ -6,7 +6,7 @@
 - name: 复制 charts 目录
   copy:
     src: "{{ item }}"
-    dest: "{{ charts_dir }}/"
+    dest: "{{ helm_charts_dir }}/"
   loop:
     - "ceph-csi-cephfs"
 
@@ -18,7 +18,7 @@
     mode: 0644
 
 - name: 安装 ceph-csi-cephfs helm charts
-  shell: helm upgrade --install ceph-csi-cephfs {{ charts_dir }}/ceph-csi-cephfs -f /etc/kubernetes/plugins/csi-cephfs/values.yaml
+  shell: helm upgrade --install ceph-csi-cephfs {{ helm_charts_dir }}/ceph-csi-cephfs -f /etc/kubernetes/plugins/csi-cephfs/values.yaml
 
 - name: 轮询等待 cephfs-provisioner 运行
   shell: kubectl get pod --all-namespaces -o wide | grep 'cephfs-provisioner' | awk '{print $4}'

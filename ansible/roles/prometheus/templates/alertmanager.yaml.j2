@@ -1,0 +1,24 @@
+global:
+  resolve_timeout: "5m"
+route:
+  group_by:
+    - "serverRule"
+    - "desktopRule"
+  group_wait: "10s"
+  group_interval: "10s"
+  repeat_interval: "10m"
+  receiver: "web.hook"
+receivers:
+  - name: "web.hook"
+    webhook_configs:
+    - url: "http://{{ lb_kube_apiserver_ip }}:{{ java_webhook_port }}/api/v1/alarm/log/webhook"
+inhibit_rules:
+- source_match:
+    severity: "critical"
+  target_match:
+    severity: "warning"
+  equal:
+  - "serverRule"
+  - "desktopRule"
+  - "dev"
+  - "instance"

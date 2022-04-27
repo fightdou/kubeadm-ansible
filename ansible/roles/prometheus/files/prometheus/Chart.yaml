@@ -1,0 +1,7 @@
+apiVersion: v2
+description: Deploy prometheus service
+name: prometheus
+version: 0.0.1
+home: https://kungze.github.io/charts/
+maintainers:
+  - name: fightdou

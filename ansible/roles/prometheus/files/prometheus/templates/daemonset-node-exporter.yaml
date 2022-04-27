@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: node-exporter
+    spec:
+      containers:
+      - args:
+        - --web.listen-address=0.0.0.0:{{ .Values.service.node_exporter.port }}
+        - --path.procfs=/host/proc
+        - --path.sysfs=/host/sys
+        - --path.rootfs=/host/root
+        - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+)($|/)
+        - --collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$
+        image: {{ .Values.image.node_exporter }}
+        imagePullPolicy: IfNotPresent
+        name: node-exporter
+        ports:
+          - containerPort: {{ .Values.service.node_exporter.port }}
+            name: http
+            protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: 102m
+            memory: 180Mi
+        volumeMounts:
+        - mountPath: /host/proc
+          name: proc
+          readOnly: true
+        - mountPath: /host/sys
+          name: sys
+          readOnly: true
+        - mountPath: /host/root
+          mountPropagation: HostToContainer
+          name: root
+          readOnly: true
+      hostPID: true
+      hostNetwork: true
+      restartPolicy: Always
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+      volumes:
+      - hostPath:
+          path: /proc
+          type: ""
+        name: proc
+      - hostPath:
+          path: /sys
+          type: ""
+        name: sys
+      - hostPath:
+          path: /
+          type: ""
+        name: root

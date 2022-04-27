@@ -1,0 +1,65 @@
+Interval 10
+FQDNLookup false
+
+LoadPlugin syslog
+LoadPlugin aggregation
+LoadPlugin cpu
+LoadPlugin disk
+LoadPlugin interface
+LoadPlugin memory
+LoadPlugin network
+LoadPlugin virt
+
+<Plugin aggregation>
+	<Aggregation>
+        Plugin "cpu"
+        Type "cpu"
+
+        GroupBy "Host"
+        GroupBy "TypeInstance"
+
+        CalculateNum false
+        CalculateSum false
+        CalculateAverage true
+        CalculateMinimum false
+        CalculateMaximum false
+        CalculateStddev false
+    </Aggregation>
+</Plugin>
+
+<Plugin cpu>
+	ReportByCpu true
+  	ReportByState true
+  	ValuesPercentage true
+</Plugin>
+
+<Plugin disk>
+  	Disk "/^sd[a-z]$/"
+  	Disk "/^hd[a-z]$/"
+  	Disk "/^vd[a-z]$/"
+  	IgnoreSelected false
+</Plugin>
+
+<Plugin "interface">
+  IgnoreSelected false
+</Plugin>
+
+<Plugin memory>
+	ValuesAbsolute true
+  	ValuesPercentage false
+</Plugin>
+
+<Plugin virt>
+  	Connection "qemu:///system"
+  	RefreshInterval 10
+  	HostnameFormat uuid
+  	PluginInstanceFormat name
+  	BlockDevice "/:hd[a-z]/"
+ 	IgnoreSelected true
+        ExtraStats "cpu_util disk disk_err domain_state job_stats_background pcpu perf vcpupin memory vcpu"
+</Plugin>
+
+<Plugin "network">
+    Server "localhost" "{{ prometheus_collectd_udp_port }}"
+</Plugin>
+

@@ -1,0 +1,58 @@
+global:
+  scrape_interval: 20s
+  scrape_timeout: 20s
+  evaluation_interval: 20s
+  external_labels:
+    monitor: '{{ ansible_hostname }}'
+alerting:
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - alertmanager.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_alertmanager_port }}
+
+rule_files:
+- /etc/prometheus/rules/*rule.yaml
+- {{ prometheus_alert_rule_dir }}/*rule.yaml
+scrape_configs:
+  - job_name: 'prometheus'
+    metrics_path: /metrics
+    static_configs:
+    - targets:
+      - prometheus.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_server_port }}
+
+  - job_name: 'pushgateway'
+    metrics_path: /metrics
+    static_configs:
+    - targets:
+      - pushgateway.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_pushgateway_port }}
+
+  - job_name: node-exporter
+    static_configs:
+{% for host in groups['prometheus-node-exporter'] %}
+      - targets:
+        - '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ hostvars[host]['prometheus_node_exporter_port'] }}'
+        labels:
+          host: '{{ hostvars[host]['ansible_hostname'] }}'
+          host_ip: '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}'
+          twatch: node
+{% endfor %}
+
+  - job_name: host-exporter
+    static_configs:
+{% for host in groups['prometheus-host-exporter'] %}
+      - targets:
+        - '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ hostvars[host]['prometheus_host_exporter_port'] }}'
+        labels:
+          host: '{{ hostvars[host]['ansible_hostname'] }}'
+          host_ip: '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}'
+{% endfor %}
+
+  - job_name: collectd-exporter
+    static_configs:
+{% for host in groups['prometheus-collectd-exporter'] %}
+      - targets:
+        - '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:{{ hostvars[host]['prometheus_collectd_exporter_port'] }}'
+        labels:
+          host: '{{ hostvars[host]['ansible_hostname'] }}'
+          host_ip: '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}'
+{% endfor %}

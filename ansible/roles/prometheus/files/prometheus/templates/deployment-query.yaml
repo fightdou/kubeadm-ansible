@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-query
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replica.query }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos-query
+      thanos: query
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: thanos-query
+        thanos: query
+    spec:
+      containers:
+      - name: thanos-qurey
+        args:
+        - query
+        - --query.replica-label=monitor
+        - --query.auto-downsampling
+        - --http-address=0.0.0.0:{{ .Values.service.query.port }}
+        {{- range $key, $value := .Values.prometheusServerIP }}
+        - --store={{ $value }}:{{ $.Values.service.sidecar.grpc_port }}
+        {{- end }}
+        image: {{ .Values.image.thanos }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.service.query.port }}
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: http
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: thanos
+                    operator: In
+                    values:
+                    - query
+              topologyKey: 'kubernetes.io/hostname'
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: {{ .Values.affinity.key }}
+                operator: In
+                values:
+                - {{ .Values.affinity.value }}
+            weight: 100
+      restartPolicy: Always
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}

@@ -1,4 +1,3 @@
-charts_dir: /opt/helm-charts
 ceph_admin_keyring:
 ceph_cluster_id:
 ceph_fs_name:

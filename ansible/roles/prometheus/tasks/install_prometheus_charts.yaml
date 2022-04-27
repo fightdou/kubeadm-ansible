@@ -1,0 +1,29 @@
+- name: 创建 prometheus values 目录
+  file:
+    name: /etc/kubernetes/plugins/prometheus
+    state: directory
+  
+- name: 复制 prometheus charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "prometheus"
+
+- name: 生成 prometheus values.yml
+  template:
+    src: custom-values-prometheus.yaml.j2
+    dest: /etc/kubernetes/plugins/prometheus/values.yaml
+    owner: root
+    mode: 0644
+
+- name: 安装 prometheus helm charts
+  shell: helm upgrade --install prometheus {{ helm_charts_dir }}/prometheus -f /etc/kubernetes/plugins/prometheus/values.yaml
+
+- name: 轮询等待服务运行
+  shell: kubectl get pod --all-namespaces -o wide | grep 'prometheus' | awk '{print $4}'
+  register: prometheus_status
+  until: "'Running' in prometheus_status.stdout"
+  retries: 12
+  delay: 10
+  ignore_errors: true

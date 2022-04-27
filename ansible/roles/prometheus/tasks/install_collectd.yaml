@@ -1,0 +1,42 @@
+- name: Install Collectd deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - collectd
+      - collectd-core
+      - collectd-dev
+
+- name: Copy collectd.conf
+  template:
+    src: collectd.conf.j2
+    dest: /etc/collectd/collectd.conf
+    mode: 0644
+    backup: yes
+
+- name: Copy checkLibvirtForCollectd.sh
+  copy:
+    src: checkLibvirtForCollectd.sh
+    dest: /etc/collectd/checkLibvirtForCollectd.sh
+    mode: 0777
+
+- name: Create check libvirt collectd script service
+  copy:
+    src: check_libvirt_collectd.service
+    dest: /etc/systemd/system/check_libvirt_collectd.service
+    mode: "755"
+
+- name: Start check libvirt collectd script service
+  service:
+    enabled: yes
+    state: restarted
+    name: check_libvirt_collectd
+    daemon_reload: yes
+
+- name: Start collectd service
+  systemd:
+    name: collectd.service
+    state: restarted
+    enabled: no
+    daemon_reload: yes

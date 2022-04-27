@@ -1,31 +1,36 @@
-- hosts: 
-  - allnodes
-  roles:
-  - prepare/base
-  - prepare/container
+# - hosts: 
+#   - allnodes
+#   roles:
+#   - prepare/base
+#   - prepare/container
 
-# 安装 load-balancer
-- hosts:
-  - allnodes
-  roles:
-  - load-balancer
+# # 安装 load-balancer
+# - hosts:
+#   - allnodes
+#   roles:
+#   - load-balancer
 
-# 初始化master节点
-- hosts:
-  - kube-master
-  - new-master
-  roles:
-  - kube-master
+# # 初始化master节点
+# - hosts:
+#   - kube-master
+#   - new-master
+#   roles:
+#   - kube-master
 
-# 初始化worker节点
-- hosts:
-  - kube-worker
-  - new-worker
-  roles:
-  - kube-worker
+# # 初始化worker节点
+# - hosts:
+#   - kube-worker
+#   - new-worker
+#   roles:
+#   - kube-worker
 
-# 安装集群插件
+# # 安装集群插件
+# - hosts:
+#   - allnodes
+#   roles:
+#   - plugins
+
 - hosts:
-  - allnodes
+  - prometheus
   roles:
-  - plugins
+  - prometheus

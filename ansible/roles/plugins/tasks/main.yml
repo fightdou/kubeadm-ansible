@@ -1,16 +1,12 @@
 ---
 - name: 创建 charts 目录
   file:
-    name: "{{ charts_dir }}"
+    name: "{{ helm_charts_dir }}"
     state: directory
 
 - import_tasks: set-ceph-vars.yaml
   run_once: True
   delegate_to: "localhost"
-
-- import_tasks: get-run-node-info.yaml
-  when:
-  - inventory_hostname in groups['allnodes']
 
 - import_tasks: ceph-rbd-csi-install.yaml
   when: 

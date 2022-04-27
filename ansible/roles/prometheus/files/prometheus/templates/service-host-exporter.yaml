@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: host-exporter
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  ports:
+  - name: http
+    port: {{ .Values.service.host_exporter.port }}
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: host-exporter
+  type: ClusterIP

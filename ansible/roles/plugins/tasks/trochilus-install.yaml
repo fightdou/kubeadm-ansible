@@ -6,7 +6,7 @@
 - name: 复制 trochilus charts 目录
   copy:
     src: "{{ item }}"
-    dest: "{{ charts_dir }}/"
+    dest: "{{ helm_charts_dir }}/"
   loop:
     - "trochilus"
 
@@ -18,7 +18,7 @@
     mode: 0644
 
 - name: 安装 trochilus helm charts
-  shell: helm upgrade --install trochilus {{ charts_dir }}/trochilus -f /etc/kubernetes/plugins/trochilus/values.yaml
+  shell: helm upgrade --install trochilus {{ helm_charts_dir }}/trochilus -f /etc/kubernetes/plugins/trochilus/values.yaml
 
 - name: 轮询等待服务运行
   shell: kubectl get pod --all-namespaces -o wide | grep 'trochilus' | awk '{print $4}'

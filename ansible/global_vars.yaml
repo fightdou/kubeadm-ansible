@@ -3,6 +3,7 @@ use_domain_name_deploy: true
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
 kube_image_repository: 172.18.31.155/kubernetes
+kube_image_tag: latest
 kubelet_cgroup_driver: systemd
 kubelet_root_dir: "/var/lib/kubelet"
 wait_plugins_ready: false
@@ -21,6 +22,7 @@ harbor_address: 172.18.31.155
 # 设置 flannel 后端, vxlan, host-gw, udp
 flannel_backend: "host-gw"
 
+api_interface: ens3
 # 使用haproxy进行apiserver负载时使用的haproxy镜像
 lb_haproxy_image: "{{ kube_image_repository }}/haproxy:2.4.15-alpine"
 # haproxy监控绑定端口
@@ -77,11 +79,39 @@ ceph:
   rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
   rbd_ceph_user: client.admin
 
-trochilus:
-  support_flat_network: true
-  support_vlan_network: fasle
-  network_vlan_range: 100:1000
+# trochilus相关
+trochilus_support_flat_network: true
+trochilus_flat_network_nic: ens4
+trochilus_support_vlan_network: false
+trochilus_network_vlan_range: 100:1000
+trochilus_vlan_network_nic: ens4
+trochilus_libvirt_driver: qemu
+trochilus_api_listen_port: 9001
+trochilus_agent_listen_port: 9002
 
-mariadb:
-  root_password: 123456
-  trochilus_password: 123456
+# mariadb 相关
+mariadb_root_password: 123456
+mariadb_trochilus_password: 123456
+
+
+# prometheus 相关
+# 数据存放目录，需挂载共享存储
+prometheus_alert_rule_dir: /opt/prometheus/rules
+prometheus_query_port: 9003
+prometheus_server_port: 9004
+thanos_sidecar_http_port: 19092
+thanos_sidecar_grpc_port: 19091
+prometheus_alertmanager_port: 9005
+prometheus_alertmanager_cluster_port: 9094
+prometheus_pushgateway_port: 9091
+prometheus_node_exporter_port: 9100
+prometheus_collectd_exporter_port: 9103
+prometheus_collectd_udp_port: 25826
+prometheus_host_exporter_port: 9104
+
+# java 相关
+java_webhook_port: 9030
+java_webhook_token: abc123
+
+helm_install_namespace: default
+helm_charts_dir: /opt/helm-charts

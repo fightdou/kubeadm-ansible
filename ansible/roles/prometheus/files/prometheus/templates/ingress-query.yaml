@@ -1,0 +1,40 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: thanos-query
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  rules:
+  - host: thanos-query
+    http:
+      paths:
+      - backend:
+          service:
+            name: thanos-query
+            port:
+              name: http
+        path: /
+        pathType: ImplementationSpecific
+  - host: thanos-query.{{ .Release.Namespace }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: thanos-query
+            port:
+              name: http
+        path: /
+        pathType: ImplementationSpecific
+  - host: thanos-query.{{ .Release.Namespace }}.svc.cluster.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: thanos-query
+            port:
+              name: http
+        path: /
+        pathType: ImplementationSpecific
+{{- end }}

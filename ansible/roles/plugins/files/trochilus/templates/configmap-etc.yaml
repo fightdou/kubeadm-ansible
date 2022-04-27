@@ -12,13 +12,13 @@ data:
     [agent_rest_client]
     [agent_settings]
     bind_host = ${NODE_ID}
-    bind_port = {{ .Values.conf.agent_settings.bind_port }}
+    bind_port = {{ .Values.service.trochilus_agent.name }}
     system =
     version =
     role =
     [api_settings]
     bind_host = ${NODE_ID}
-    bind_port = {{ .Values.conf.api_settings.bind_port }}
+    bind_port = {{ .Values.service.trochilus_api.name }}
     enabled_volume_backends = {{ .Values.conf.api_settings.enabled_volume_backends }}
     supported_instance_metadatas = k1, k2
     [database]
@@ -72,7 +72,8 @@ data:
       role=`eval echo '$'${HOSTNAME}"_node_role"`
       system=`eval echo '$'${HOSTNAME}"_system"`
       version=`eval echo '$'${HOSTNAME}"_version"`
-      ext_nic=`eval echo '$'${HOSTNAME}"_external_nic"`
+      flat_nic=`eval echo '$'${HOSTNAME}"flat_network_nic"`
+      vlan_nic=`eval echo '$'${HOSTNAME}"vlan_network_nic"`
     fi
 
     nics_info=`(echo $nic | sed "s/,/\ /g")`
@@ -86,9 +87,9 @@ data:
     sed -i "s/version =/version = $version/g" /etc/trochilus/trochilus.conf
 
     {{- if and .Values.networkConfig.support_vlan_network .Values.networkConfig.support_flat_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.support_vlan_physicals }}:$ext_nic, {{ .Values.conf.network_settings.support_flat_physicals }}:$ext_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.support_vlan_physicals }}:$vlan_nic, {{ .Values.conf.network_settings.support_flat_physicals }}:$flat_nic/g" /etc/trochilus/trochilus.conf
     {{- else if .Values.networkConfig.support_vlan_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.network_vlan_type }}:$ext_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.vlan_network_type }}:$vlan_nic/g" /etc/trochilus/trochilus.conf
     {{- else if .Values.networkConfig.support_flat_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.network_flat_type }}:$ext_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.flat_network_type }}:$flat_nic/g" /etc/trochilus/trochilus.conf
     {{- end }}

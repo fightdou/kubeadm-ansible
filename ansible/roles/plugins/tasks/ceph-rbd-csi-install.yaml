@@ -6,7 +6,7 @@
 - name: 复制 charts 目录
   copy:
     src: "{{ item }}"
-    dest: "{{ charts_dir }}/"
+    dest: "{{ helm_charts_dir }}/"
   loop:
     - "ceph-csi-rbd"
 
@@ -18,7 +18,7 @@
     mode: 0644
 
 - name: 安装 ceph-csi-rbd helm charts
-  shell: helm upgrade --install ceph-csi-rbd {{ charts_dir }}/ceph-csi-rbd -f /etc/kubernetes/plugins/csi-rbd/values.yaml
+  shell: helm upgrade --install ceph-csi-rbd {{ helm_charts_dir }}/ceph-csi-rbd -f /etc/kubernetes/plugins/csi-rbd/values.yaml
 
 - name: 轮询等待 ceph-csi-rbd-provisioner 运行
   shell: kubectl get pod --all-namespaces -o wide | grep 'rbd-provisioner' | awk '{print $4}'
