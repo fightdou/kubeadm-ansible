@@ -92,17 +92,16 @@ etcd_backup_dir: "/var/lib/etcd/backup"
 # Ceph csi Options
 ##################
 # kubernetes ceph csi
-ceph:
-  install_ceph_rbd_csi: true
-  create_rbd_storage_class: true
-  rbd_storage_class_name: general
-  rbd_pool_name: "kubernetes"
-  install_ceph_cephfs_csi: true
-  create_cephfs_storage_class: true
-  cephfs_pool_name: "cephfs_data"
-  cephfs_storage_class_name: cephfs-general
-  rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
-  rbd_ceph_user: client.admin
+install_ceph_rbd_csi: true
+create_rbd_storage_class: true
+rbd_storage_class_name: general
+rbd_pool_name: "kubernetes"
+install_ceph_cephfs_csi: true
+create_cephfs_storage_class: true
+cephfs_pool_name: "cephfs_data"
+cephfs_storage_class_name: cephfs-general
+rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
+rbd_ceph_user: client.admin
 
 #################
 # Libvirt Options
@@ -128,6 +127,9 @@ trochilus_agent_listen_port: 9002
 #################
 mariadb_root_password: 123456
 mariadb_trochilus_password: 123456
+mariadb_storage_size: 10Gi
+mariadb_toleration_seconds: 10
+mariadb_pvc_name: mariadb-pvc
 
 ####################
 # Prometheus Options

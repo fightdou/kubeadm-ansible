@@ -44,14 +44,14 @@ nodeplugin:
   registrar:
     image:
       repository: {{ kube_image_repository }}/csi-node-driver-registrar
-      tag: v2.4.0
+      tag: {{ kube_image_tag }}
       pullPolicy: IfNotPresent
     resources: {}
 
   plugin:
     image:
       repository: {{ kube_image_repository }}/cephcsi
-      tag: canary
+      tag: {{ kube_image_tag }}
       pullPolicy: IfNotPresent
     resources: {}
 
@@ -94,7 +94,7 @@ provisioner:
   provisioner:
     image:
       repository: {{ kube_image_repository }}/csi-provisioner
-      tag: v3.0.0
+      tag: {{ kube_image_tag }}
       pullPolicy: IfNotPresent
     resources: {}
 
@@ -103,7 +103,7 @@ provisioner:
     enabled: true
     image:
       repository: {{ kube_image_repository }}/csi-attacher
-      tag: v3.3.0
+      tag: {{ kube_image_tag }}
       pullPolicy: IfNotPresent
     resources: {}
 
@@ -112,17 +112,18 @@ provisioner:
     enabled: true
     image:
       repository: {{ kube_image_repository }}/csi-resizer
-      tag: v1.3.0
+      tag: {{ kube_image_tag }}
       pullPolicy: IfNotPresent
     resources: {}
 
   snapshotter:
     image:
       repository: {{ kube_image_repository }}/csi-snapshotter
-      tag: v4.2.1
+      tag: {{ kube_image_tag }}
       pullPolicy: IfNotPresent
     resources: {}
-  nodeSelector: {}
+  nodeSelector:
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
   affinity: {}
   podSecurityPolicy:
@@ -137,12 +138,12 @@ topology:
     - failure-domain/zone
 
 storageClass:
-  create: "{{ ceph.create_cephfs_storage_class }}"
-  name: "{{ ceph.cephfs_storage_class_name }}"
+  create: "{{ create_cephfs_storage_class }}"
+  name: "{{ cephfs_storage_class_name }}"
   annotations: {}
   clusterID: {{ ceph_cluster_id }}
   fsName: {{ ceph_fs_name }}
-  pool: "{{ ceph.cephfs_pool_name }}"
+  pool: "{{ cephfs_pool_name }}"
   fuseMountOptions: ""
   kernelMountOptions: ""
   mounter: ""

@@ -24,23 +24,27 @@
 #   roles:
 #   - kube-worker
 
-# # 安装集群插件
 # - hosts:
 #   - allnodes
 #   roles:
-#   - plugins
+#   - ceph-csi
 
-# - hosts:
-#   - trochilus
-#   roles:
-#   - trochilus
+- hosts:
+  - allnodes
+  roles:
+  - mariadb
 
-# - hosts:
-#   - prometheus
-#   roles:
-#   - prometheus
+- hosts:
+  - compute
+  roles:
+  - libvirt
 
-# - hosts:
-#   - compute
-#   roles:
-#   - libvirt
+- hosts:
+  - trochilus
+  roles:
+  - trochilus
+
+- hosts:
+  - prometheus
+  roles:
+  - prometheus
