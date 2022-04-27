@@ -8,8 +8,8 @@ spec:
     spec:
       containers:
       - name: trochilus-db-init
-        image: {{ include "db_init.image" . }}
-        imagePullPolicy: {{ .Values.global.pullPolicy }}
+        image: {{ .Values.image.db_init }}
+        imagePullPolicy: IfNotPresent
         command:
           - /bin/sh
           - -c
@@ -44,7 +44,7 @@ spec:
           - name: DB_USER_PASSWORD
             value: "{{ .Values.mariadb.password }}"
           - name: DB_HOST_NAME
-            value: "{{ include mariadb.databaseHost . }}"
+            value: {{ include "mariadb.databaseHost" . }}
           - name: DB_ROOT_PASSWORD
             value: "{{ .Values.mariadb.root_password }}"
         volumeMounts:

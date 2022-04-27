@@ -81,10 +81,10 @@ ceph:
 
 # trochilus相关
 trochilus_support_flat_network: true
-trochilus_flat_network_nic: ens4
+trochilus_flat_network_nic: ""
 trochilus_support_vlan_network: false
 trochilus_network_vlan_range: 100:1000
-trochilus_vlan_network_nic: ens4
+trochilus_vlan_network_nic: ""
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002

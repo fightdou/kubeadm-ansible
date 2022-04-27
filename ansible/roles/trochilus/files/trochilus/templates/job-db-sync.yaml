@@ -8,8 +8,8 @@ spec:
     spec:
       initContainers:
         - name: init
-          image: {{ include "entrypoint.image" . }}
-          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          image: {{ .Values.image.entrypoint }}
+          imagePullPolicy: IfNotPresent
           command:
             - kubernetes-entrypoint
           env:
@@ -29,8 +29,8 @@ spec:
               value: {{ include "common.utils.joinListWithComma" .Values.dependencies.db_sync.jobs }}
       containers:
         - name: trochilus-db-sync
-          image: {{ include "db_sync.image" . }}
-          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          image: {{ .Values.image.db_sync }}
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
             - -c

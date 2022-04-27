@@ -22,8 +22,8 @@ spec:
         - command:
           - kubernetes-entrypoint
           name: init
-          image: {{ include "entrypoint.image" . }}
-          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          image: {{ .Values.image.entrypoint }}
+          imagePullPolicy: IfNotPresent
           env:
           - name: POD_NAME
             valueFrom:
@@ -43,8 +43,8 @@ spec:
             value: {{ include "common.utils.joinListWithComma" .Values.dependencies.agent.jobs }}
       containers:
         - name: trochilus-agent
-          image: {{ include "trochilus_agent.image" . }}
-          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          image: {{ .Values.image.trochilus_agent }}
+          imagePullPolicy: IfNotPresent
           env:
             {{- range $_, $node_name := .Values.nodeInfo }}
             {{- range $hostname, $node_info := $node_name }}
@@ -150,7 +150,7 @@ spec:
       hostNetwork: true
       hostPID: true
       {{- if .Values.nodeSelector }}
-      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector.trochilus_agent "context" $) | nindent 8 }}
       {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}

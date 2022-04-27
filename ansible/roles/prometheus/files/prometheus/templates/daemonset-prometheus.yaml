@@ -12,16 +12,6 @@ spec:
       labels:
         app.kubernetes.io/name: prometheus
     spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: {{ .Values.affinity.key }}
-                operator: In
-                values:
-                - {{ .Values.affinity.value }}
-            weight: 100
       containers:
       - name: prometheus
         args:
@@ -90,6 +80,9 @@ spec:
       restartPolicy: Always
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       volumes:

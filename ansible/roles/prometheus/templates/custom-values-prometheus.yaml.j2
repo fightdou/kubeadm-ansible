@@ -12,6 +12,14 @@ size: 10
 
 replica:
   query: 2
+  pushgateway: 2
+
+nodeSelector:
+  control_role: enabled
+
+affinity:
+  key: control_role
+  value: enabled
 
 prometheusServerIP:
   {% for host in groups['prometheus'] -%}
@@ -25,10 +33,6 @@ pushgateway_cleaner_job:
   history:
     success: 3
     failed: 1
-
-affinity:
-  key: node_role
-  value: controller
 
 ingress: 
   enabled: true

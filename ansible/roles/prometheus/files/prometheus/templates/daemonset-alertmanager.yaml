@@ -12,16 +12,6 @@ spec:
       labels:
         app.kubernetes.io/name: alertmanager
     spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: {{ .Values.affinity.key }}
-                operator: In
-                values:
-                - {{ .Values.affinity.value }}
-            weight: 100
       containers:
       - args:
         - --config.file=/etc/alertmanager/alertmanager.yaml
@@ -91,6 +81,9 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       restartPolicy: Always
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       volumes:

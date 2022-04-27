@@ -11,9 +11,12 @@ image:
 storageclass: general
 size: 10
 
+nodeSelector:
+  control_role: enabled
+
 replica:
   query: 2
-  pushgateway: 1
+  pushgateway: 2
 
 prometheusServerIP: []
 alert_rule_dir: ""
@@ -27,12 +30,12 @@ pushgateway_cleaner_job:
     failed: 1
 
 affinity:
-  key: node_role
-  value: controller
+  key: control_role
+  value: enabled
 
 ingress: 
   enabled: true
-  ingressClassName: 
+  ingressClassName: nginx
 
 service:
   query:

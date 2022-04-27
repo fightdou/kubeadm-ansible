@@ -10,7 +10,8 @@ spec:
       app.kubernetes.io/component: trochilus
       app.kubernetes.io/release_group: trochilus
       port: trochilus-api
-  replicas: {{ .Values.replicaCount }}
+      trochilus: api
+  replicas: {{ .Values.replica }}
   template:
     metadata:
       labels:
@@ -18,13 +19,24 @@ spec:
         app.kubernetes.io/component: trochilus
         app.kubernetes.io/release_group: trochilus
         port: trochilus-api
+        trochilus: api
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: trochilus
+                    operator: In
+                    values:
+                    - api
+              topologyKey: 'kubernetes.io/hostname'
       initContainers:
         - command:
           - kubernetes-entrypoint
           name: init
-          image: {{ include "entrypoint.image" . }}
-          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          image: {{ .Values.image.entrypoint }}
+          imagePullPolicy: IfNotPresent
           env:
           - name: POD_NAME
             valueFrom:
@@ -44,8 +56,8 @@ spec:
             value: {{ include "common.utils.joinListWithComma" .Values.dependencies.api.jobs }}
       containers:
         - name: trochilus-api
-          image: {{ include "trochilus_api.image" . }}
-          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          image: {{ .Values.image.trochilus_api }}
+          imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
             - -c
@@ -144,9 +156,10 @@ spec:
             name: log-dir
       securityContext: {}
       dnsPolicy: ClusterFirstWithHostNet
-      hostIPC: true
       hostNetwork: true
-      hostPID: true
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector.trochilus_api "context" $) | nindent 8 }}
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       volumes:

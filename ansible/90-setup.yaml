@@ -30,7 +30,12 @@
 #   roles:
 #   - plugins
 
-- hosts:
-  - prometheus
-  roles:
-  - prometheus
+# - hosts:
+#   - trochilus
+#   roles:
+#   - trochilus
+
+# - hosts:
+#   - prometheus
+#   roles:
+#   - prometheus

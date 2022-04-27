@@ -38,3 +38,6 @@ spec:
           restartPolicy: OnFailure
           serviceAccount: {{ .Values.serviceAccountName}}
           serviceAccountName: {{ .Values.serviceAccountName}}
+          {{- if .Values.nodeSelector }}
+          nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 12 }}
+          {{- end }}

@@ -12,17 +12,17 @@ data:
     [agent_rest_client]
     [agent_settings]
     bind_host = ${NODE_ID}
-    bind_port = {{ .Values.service.trochilus_agent.name }}
+    bind_port = {{ .Values.service.trochilus_agent.port }}
     system =
     version =
     role =
     [api_settings]
     bind_host = ${NODE_ID}
-    bind_port = {{ .Values.service.trochilus_api.name }}
+    bind_port = {{ .Values.service.trochilus_api.port }}
     enabled_volume_backends = {{ .Values.conf.api_settings.enabled_volume_backends }}
     supported_instance_metadatas = k1, k2
     [database]
-    connection = mysql+pymysql://{{ .Values.mariadb.database }}:{{ .Values.mariadb.password }}@{{ include mariadb.databaseHost . }}:3306/{{ .Values.mariadb.database }}
+    connection = mysql+pymysql://{{ .Values.mariadb.database }}:{{ .Values.mariadb.password }}@{{ include "mariadb.databaseHost" . }}:3306/{{ .Values.mariadb.database }}
     [image_settings]
     enabled_image_store = {{ .Values.conf.image_settings.enabled_image_store }}
     rbd_store_config_file = /etc/ceph/ceph.conf
@@ -39,8 +39,8 @@ data:
     rados_connect_timeout = -1
     volume_driver = {{ .Values.conf.rbd1.volume_driver }}
     [network_settings]
-    support_flat_physicals = {{ .Values.networkConfig.network_flat_type }}
-    physical_vlan_ranges = {{ .Values.networkConfig.network_vlan_type }}:{{ .Values.networkConfig.network_vlan_range }}
+    support_flat_physicals = {{ .Values.networkConfig.flat_network_type }}
+    physical_vlan_ranges = {{ .Values.networkConfig.vlan_network_type }}:{{ .Values.networkConfig.network_vlan_range }}
     physical_interface_mappings =
     [vm_settings]
     virt_type = {{ .Values.conf.vm_settings.virt_type }}
@@ -72,8 +72,8 @@ data:
       role=`eval echo '$'${HOSTNAME}"_node_role"`
       system=`eval echo '$'${HOSTNAME}"_system"`
       version=`eval echo '$'${HOSTNAME}"_version"`
-      flat_nic=`eval echo '$'${HOSTNAME}"flat_network_nic"`
-      vlan_nic=`eval echo '$'${HOSTNAME}"vlan_network_nic"`
+      flat_nic=`eval echo '$'${HOSTNAME}"_flat_network_nic"`
+      vlan_nic=`eval echo '$'${HOSTNAME}"_vlan_network_nic"`
     fi
 
     nics_info=`(echo $nic | sed "s/,/\ /g")`
@@ -87,9 +87,9 @@ data:
     sed -i "s/version =/version = $version/g" /etc/trochilus/trochilus.conf
 
     {{- if and .Values.networkConfig.support_vlan_network .Values.networkConfig.support_flat_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.support_vlan_physicals }}:$vlan_nic, {{ .Values.conf.network_settings.support_flat_physicals }}:$flat_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.networkConfig.support_vlan_physicals }}:$vlan_nic, {{ .Values.networkConfig.support_flat_physicals }}:$flat_nic/g" /etc/trochilus/trochilus.conf
     {{- else if .Values.networkConfig.support_vlan_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.vlan_network_type }}:$vlan_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.networkConfig.vlan_network_type }}:$vlan_nic/g" /etc/trochilus/trochilus.conf
     {{- else if .Values.networkConfig.support_flat_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.conf.network_settings.flat_network_type }}:$flat_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.networkConfig.flat_network_type }}:$flat_nic/g" /etc/trochilus/trochilus.conf
     {{- end }}

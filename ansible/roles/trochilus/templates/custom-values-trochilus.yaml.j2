@@ -1,29 +1,37 @@
-global:
-  imageRegistry: "172.18.31.155/kubernetes"
-  imageTag: "latest"
-  pullPolicy: "IfNotPresent"
+#jinja2: trim_blocks: False
+image:
+  trochilus_api: {{ kube_image_repository }}/trochilus-api:{{ kube_image_tag }}
+  trochilus_agent: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
+  entrypoint: {{ kube_image_repository }}/kubernetes-entrypoint:{{ kube_image_tag }}
+  db_init: {{ kube_image_repository }}/centos-source-kolla-toolbox:{{ kube_image_tag }}
+  db_sync: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
 
 serviceAccountName: trochilus
 nodeSelector:
-  compute_plane: enabled
+  trochilus_agent:
+    compute_role: enabled
+  trochilus_api:
+    control_role: enabled
+clusterDomainSuffix: cluster.local
+replica: 2
 
 nodeInfo:
-  {% for host in groups['allnodes'] -%}
+  {% for host in groups['trochilus-agent'] -%}
   - {{ hostvars[host]['ansible_nodename'] }}:
       system: "{{ hostvars[host]['ansible_distribution'] }}"
       version: "{{ hostvars[host]['ansible_distribution_version'] }}"
       node_role: "{{ hostvars[host]['node_role'] | join(',') }}"
       nic_info: "{{ hostvars[host]['nic_info'] | join(',') }}"
-      {% if {{ hostvars[host]['vlan_network_nic'] }} == "" and {{ trochilus_vlan_network_nic }} != "" %}
-      vlan_network_nic: {{ trochilus_vlan_network_nic }}
-      {% else %}
+      {% if hostvars[host]['vlan_network_nic'] == "" and trochilus_vlan_network_nic != "" -%}
+      vlan_network_nic: "{{ trochilus_vlan_network_nic }}"
+      {%- else -%}
       vlan_network_nic: "{{ hostvars[host]['vlan_network_nic'] }}"
-      {% end %}
-      {% if {{ hostvars[host]['flat_network_nic'] }} == "" and {{ trochilus_flat_network_nic }} != "" %}
+      {% endif -%}
+      {% if hostvars[host]['flat_network_nic'] == "" and trochilus_flat_network_nic != "" -%}
+      flat_network_nic: "{{ trochilus_flat_network_nic }}"
+      {%- else -%}
       flat_network_nic: "{{ hostvars[host]['flat_network_nic'] }}"
-      {% else %}
-      flat_network_nic: {{ trochilus_flat_network_nic }}
-      {% end %}
+      {% endif %}
   {% endfor %}
 
 networkConfig:
@@ -35,23 +43,6 @@ networkConfig:
   flat_network_type: flat1
   flat_network_nic: {{ trochilus_flat_network_nic }}
 
-image:
-  trochilus_api:
-    repository: trochilus-api
-  trochilus_agent:
-    repository: trochilus-agent
-  entrypoint:
-    registry: "quay.io/airshipit"
-    repository: "kubernetes-entrypoint"
-    tag: "v1.0.0"
-  db_init:
-    registry: kolla
-    repository: centos-source-kolla-toolbox
-    tag: yoga
-  db_sync:
-    repository: trochilus-agent
-
-replicaCount: 1
 dependencies:
   db_sync:
     jobs:
@@ -93,7 +84,7 @@ conf:
     rados_connect_timeout: -1
     volume_driver: trochilus.agent.storage.volume.drivers.rbd.RBDVolumeDriver
   vm_settings:
-    virt_type: {{ trochilus.libvirt_driver }}
+    virt_type: {{ trochilus_libvirt_driver }}
     default_root_disk_backend: rbd1
     rbd_secret_uuid: {{ ceph.rbd_secret_uuid }}
   voi_settings:
