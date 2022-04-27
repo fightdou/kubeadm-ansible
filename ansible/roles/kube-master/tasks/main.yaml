@@ -66,6 +66,24 @@
   run_once: True
   delegate_to: "localhost"
 
+- name: 设置 control node lables
+  shell: kubectl label node {{ item }} {{ control_node_role_name }}={{ node_role_value }}
+  with_items: groups['control']
+  run_once: True
+  delegate_to: "localhost"
+
+- name: 设置 compute node lables
+  shell: kubectl label node {{ item }} {{ compute_node_role_name }}={{ node_role_value }}
+  with_items: groups['compute']
+  run_once: True
+  delegate_to: "localhost"
+
+- name: 设置 storage node lables
+  shell: kubectl label node {{ item }} {{ storage_node_role_name }}={{ node_role_value }}
+  with_items: groups['storage']
+  run_once: True
+  delegate_to: "localhost"
+
 # 备份etcd
 - block:
   - name: 第一个 etcd 节点创建 etcd 备份目录

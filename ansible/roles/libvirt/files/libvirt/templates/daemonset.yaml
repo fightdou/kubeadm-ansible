@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
       - name: libvirt
-        image: "{{ .Values.libvirt.repository }}:{{ .Values.libvirt.tag }}"
-        imagePullPolicy: "{{ .Values.libvirt.pullPolicy }}"
+        image: "{{ .Values.image.libvirt }}"
+        imagePullPolicy: IfNotPresent
         env:
           - name: KOLLA_CONFIG_STRATEGY
             value: "COPY_ALWAYS"
@@ -126,9 +126,6 @@ spec:
       hostNetwork: true
       hostPID: true
       restartPolicy: Always
-      {{- if .Values.nodeSelector }}
-      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
-      {{- end }}
       serviceAccount: libvirt
       serviceAccountName: libvirt
       volumes:
@@ -170,3 +167,7 @@ spec:
             path: /etc/libvirt/qemu
             type: ""
           name: etc-libvirt-qemu
+{{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 -}}
+{{- end -}}

@@ -1,0 +1,30 @@
+- name: 创建 csi-rbd values 目录
+  file:
+    name: /etc/kubernetes/plugins/csi-rbd
+    state: directory
+
+- name: 复制 charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "ceph-csi-rbd"
+
+- name: 生成 ceph-csi-rbd values.yml
+  template:
+    src: custom-values-ceph-csi-rbd.yaml.j2
+    dest: /etc/kubernetes/plugins/csi-rbd/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install ceph-csi-rbd helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: ceph-csi-rbd
+    chart_ref: "{{ helm_charts_dir }}/ceph-csi-rbd"
+    values_files:
+      - /etc/kubernetes/plugins/csi-rbd/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 120s
+    release_namespace: "{{ helm_install_namespace }}"

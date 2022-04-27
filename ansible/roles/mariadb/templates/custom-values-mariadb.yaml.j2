@@ -1,0 +1,11 @@
+image:
+  mariadb: {{ kube_image_repository }}/mariadb:{{ kube_image_tag }}
+
+mariadb_password: {{ mariadb_root_password }}
+storageclass: {{ cephfs_storage_class_name }}
+pvc:
+  name: {{ mariadb_pvc_name }}
+  size: {{ mariadb_storage_size }}
+tolerationSeconds: {{ mariadb_toleration_seconds }}
+nodeSelector:
+  {{ control_node_role_name }}: {{ node_role_value }}
