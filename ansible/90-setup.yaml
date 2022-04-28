@@ -1,56 +1,56 @@
-# - hosts: 
-#   - allnodes
-#   roles:
-#   - prepare/base
-#   - prepare/container
+- hosts: 
+  - allnodes
+  roles:
+  - prepare/base
+  - prepare/container
 
-# # 安装 load-balancer
-# - hosts:
-#   - allnodes
-#   roles:
-#   - load-balancer
+# 安装 load-balancer
+- hosts:
+  - allnodes
+  roles:
+  - load-balancer
 
-# # 初始化master节点
-# - hosts:
-#   - kube-master
-#   - new-master
-#   roles:
-#   - kube-master
+# 初始化master节点
+- hosts:
+  - kube-master
+  - new-master
+  roles:
+  - kube-master
 
-# # 初始化worker节点
-# - hosts:
-#   - kube-worker
-#   - new-worker
-#   roles:
-#   - kube-worker
+# 初始化worker节点
+- hosts:
+  - kube-worker
+  - new-worker
+  roles:
+  - kube-worker
 
-# - hosts:
-#   - allnodes
-#   roles:
-#   - ceph-csi
+- hosts:
+  - allnodes
+  roles:
+  - ceph-csi
 
 - hosts:
   - allnodes
   roles:
   - ingress
 
-# - hosts:
-#   - allnodes
-#   roles:
-#   - mariadb
+- hosts:
+  - allnodes
+  roles:
+  - mariadb
 
-# - hosts:
-#   - compute
-#   roles:
-#   - libvirt
+- hosts:
+  - compute
+  roles:
+  - libvirt
 
-# - hosts:
-#   - trochilus-api
-#   - trochilus-agent
-#   roles:
-#   - trochilus
+- hosts:
+  - trochilus-api
+  - trochilus-agent
+  roles:
+  - trochilus
 
-# - hosts:
-#   - prometheus
-#   roles:
-#   - prometheus
+- hosts:
+  - prometheus
+  roles:
+  - prometheus
