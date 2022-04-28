@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-etc
+  namespace: {{ .Release.Namespace }}
+data:
+  host-exporter.yml: |
+    targets: 
+      {{- range $key, $values := .Values.prometheusServerIP }}
+      - {{ $values }}
+      {{- end }}
+    ping:
+      interval: 2s
+      timeout: 3s
+      history-size: 42
+      payload-size: 120

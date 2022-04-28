@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: alertmanager
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alertmanager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: alertmanager
+    spec:
+      containers:
+      - args:
+        - --config.file=/etc/alertmanager/alertmanager.yaml
+        - --storage.path=/alertmanager
+        - --data.retention=120h
+        - --cluster.listen-address=[$(POD_IP)]:9094
+        - --web.listen-address=$(NODE_ID):{{ .Values.service.alertmanager.port }}
+        - --web.route-prefix=/
+        {{- range $key, $value := .Values.prometheusServerIP }}
+        - --cluster.peer={{ $value }}:{{ $.Values.service.alertmanager_cluster.port }}
+        {{- end }}
+        - --cluster.reconnect-timeout=5m
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: {{ .Values.image.alertmanager }}
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /-/healthy
+            port: web
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: alertmanager
+        ports:
+        - containerPort: {{ .Values.service.alertmanager.port }}
+          name: web
+          protocol: TCP
+        - containerPort: {{ .Values.service.alertmanager_cluster.port }}
+          name: mesh-tcp
+          protocol: TCP
+        - containerPort: {{ .Values.service.alertmanager_cluster.port }}
+          name: mesh-udp
+          protocol: UDP
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /-/ready
+            port: web
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 20m
+            memory: 30Mi
+        volumeMounts:
+        - mountPath: /alertmanager
+          name: alertmanager-main-db
+        - mountPath: /etc/alertmanager/alertmanager.yaml
+          name: alertmanager-etc
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      restartPolicy: Always
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+      volumes:
+      - emptyDir: {}
+        name: alertmanager-main-db
+      - hostPath:
+          path: {{ .Values.alert_rule_dir }}/alertmanager.yaml
+          type: ""
+        name: alertmanager-etc

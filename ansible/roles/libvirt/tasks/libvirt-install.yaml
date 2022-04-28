@@ -1,0 +1,30 @@
+- name: 创建 libvirt values 目录
+  file:
+    name: /etc/kubernetes/plugins/libvirt
+    state: directory
+
+- name: 复制 libvirt charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "libvirt"
+
+- name: 生成 libvirt values.yml
+  template:
+    src: custom-values-libvirt.yaml.j2
+    dest: /etc/kubernetes/plugins/libvirt/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install libvirt helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: libvirt
+    chart_ref: "{{ helm_charts_dir }}/libvirt"
+    values_files:
+      - /etc/kubernetes/plugins/libvirt/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 120s
+    release_namespace: "{{ helm_install_namespace }}"

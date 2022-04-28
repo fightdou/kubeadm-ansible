@@ -1,0 +1,13 @@
+- import_tasks: install_collectd.yaml
+  when:
+  - inventory_hostname in groups['prometheus-collectd-exporter']
+
+- import_tasks: config.yaml
+  when:
+  - inventory_hostname in groups['prometheus']
+
+- import_tasks: install_prometheus_charts.yaml
+  run_once: True
+  delegate_to: "localhost"
+  when:
+  - inventory_hostname in groups['prometheus']

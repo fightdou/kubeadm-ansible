@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: host-exporter
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: host-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: host-exporter
+    spec:
+      containers:
+      - name: host-exporter
+        image: {{ .Values.image.host_exporter }}
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+          readOnlyRootFilesystem: false
+        args:
+          - --web.listen-address=0.0.0.0:{{ .Values.service.host_exporter.port }}
+          - --config.path=/opt/config.yml
+        ports:
+          - containerPort: {{ .Values.service.host_exporter.port }}
+            name: http
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 180Mi
+          requests:
+            cpu: 102m
+            memory: 180Mi
+        volumeMounts:
+          - mountPath: /dev
+            name: dev
+          - mountPath: /sys
+            name: sys
+          - mountPath: /opt/config.yml
+            name: prometheus-etc
+            subPath: host-exporter.yml
+      restartPolicy: Always
+      hostNetwork: true
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+      volumes:
+        - hostPath:
+            path: /dev
+            type: ""
+          name: dev
+        - hostPath:
+            path: /sys
+            type: ""
+          name: sys
+        - configMap:
+            name: prometheus-etc
+            defaultMode: 0644
+          name: prometheus-etc

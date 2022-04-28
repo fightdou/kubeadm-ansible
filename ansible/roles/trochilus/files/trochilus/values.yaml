@@ -1,0 +1,91 @@
+image:
+  trochilus_api: 172.18.31.155/kubernetes/trochilus-api:latest
+  trochilus_agent: 172.18.31.155/kubernetes/trochilus-agent:latest
+  entrypoint: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
+  db_init: kolla/centos-source-kolla-toolbox:yoga
+  db_sync: 172.18.31.155/kubernetes/trochilus-agent:latest
+
+serviceAccountName: trochilus
+nodeSelector:
+  trochilus_agent:
+    compute_role: enabled
+  trochilus_api:
+    control_role: enabled
+
+nodeInfo: []
+
+networkConfig:
+  support_vlan_network: false
+  vlan_network_type: vlan1
+  vlan_network_range: ""
+  vlan_network_nic: ""
+  support_flat_network: true
+  flat_network_type: flat1
+  flat_network_nic: ""
+    
+clusterDomainSuffix: cluster.local
+replica: 2
+
+dependencies:
+  db_sync:
+    jobs:
+      - trochilus-db-init
+  api:
+    jobs:
+      - trochilus-db-sync
+  agent:
+    jobs:
+      - trochilus-db-sync
+
+service:
+  trochilus_api:
+    port: 9001
+    name: api
+  trochilus_agent:
+    port: 9002
+    name: agent
+
+mariadb:
+  root_password: 123456
+  username: trochilus
+  password: 123456
+  database: trochilus
+
+conf:
+  api_settings:
+    enabled_volume_backends: rbd1
+  image_settings:
+    enabled_image_store: rbd
+    rbd_store_config_file: /etc/ceph/ceph.conf
+    rbd_store_user: admin
+    rbd_store_pool: images
+  rbd1:
+    rbd_ceph_conf: /etc/ceph/ceph.conf
+    rbd_pool: volumes
+    rbd_user: admin
+    rbd_keyring_conf: /etc/ceph/ceph.client.admin.keyring
+    rados_connect_timeout: -1
+    volume_driver: trochilus.agent.storage.volume.drivers.rbd.RBDVolumeDriver
+  vm_settings:
+    virt_type: qemu
+    default_root_disk_backend: rbd1
+    rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
+  voi_settings:
+    voi_image_base_path: /var/lib/trochilus/voi/images
+    voi_vm_base_path: /var/lib/trochilus/voi/vms
+    vm_name_template: voi-%s
+  webhook_settings:
+    target_host: ""
+    target_port: ""
+    target_path: /api/v1/webhook/
+    method: post
+    auth_token: abc123
+    max_retries: 5
+    retry_interval: 5
+    request_conn_timeout: 10
+    request_read_timeout: 60
+    expected_codes: 200,202,204
+
+ingress:
+  enabled: true
+  ingressClassName: nginx

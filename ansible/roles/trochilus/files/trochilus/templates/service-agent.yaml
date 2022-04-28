@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trochilus-agent
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: {{ .Values.service.trochilus_agent.name }}
+    port: {{ .Values.service.trochilus_agent.port }}
+    protocol: TCP
+    targetPort: {{ .Values.service.trochilus_agent.name }}
+  selector:
+    app.kubernetes.io/name: trochilus
+    app.kubernetes.io/component: trochilus
+    app.kubernetes.io/release_group: trochilus
+    port: trochilus-agent
+  type: ClusterIP

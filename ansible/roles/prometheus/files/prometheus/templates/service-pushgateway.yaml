@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pushgateway
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  ports:
+  - name: http
+    port: {{ .Values.service.pushgateway.port }}
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: pushgateway
+  type: ClusterIP

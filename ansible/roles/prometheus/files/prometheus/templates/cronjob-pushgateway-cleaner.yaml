@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pushgateway-cleaner
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  schedule: {{ .Values.pushgateway_cleaner_job.cron | quote }}
+  successfulJobsHistoryLimit: {{ .Values.pushgateway_cleaner_job.history.success }}
+  failedJobsHistoryLimit: {{ .Values.pushgateway_cleaner_job.history.failed }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                  - key: {{ .Values.affinity.key }}
+                    operator: In
+                    values:
+                    - {{ .Values.affinity.value }}
+                weight: 100
+          containers:
+          - name: pushgateway-cleaner
+            image: {{ .Values.image.pushgateway_cleaner }}
+            imagePullPolicy: IfNotPresent
+            args:
+              - --metric-url=http://pushgateway.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.pushgateway.port }}/metrics
+            resources:
+              limits:
+                cpu: "1"
+                memory: 500Mi
+              requests:
+                cpu: 102m
+                memory: 180Mi
+          restartPolicy: OnFailure
+          serviceAccount: {{ .Values.serviceAccountName}}
+          serviceAccountName: {{ .Values.serviceAccountName}}
+          {{- if .Values.nodeSelector }}
+          nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 12 }}
+          {{- end }}

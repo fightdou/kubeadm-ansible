@@ -1,0 +1,238 @@
+groups:
+  - name: twatch.rule
+    rules:
+    # host
+    - record: TWatch:Host::CPUAllUsedUtilization
+      expr: (sum(100 - collectd_cpu_percent{cpu="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100
+
+    - record: TWatch:Host::CPUAllIdleUtilization
+      expr: (sum(collectd_cpu_percent{host!="",cpu="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100
+
+    - record: TWatch:Host::MemoryUsedInPercent
+      expr: (sum(collectd_memory{memory="used", host!=""}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100
+
+    - record: TWatch:Host::MemoryFreeInPercent
+      expr: (sum(collectd_memory{host!="",memory!="used"}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100
+
+    - record: TWatch:Host::CPUAllUsedUtilizationAVG
+      expr: avg((sum(100 - collectd_cpu_percent{cpu="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100)
+
+    - record: TWatch:Host::CPUAllIdleUtilizationAVG
+      expr: avg((sum(collectd_cpu_percent{host!="",cpu="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100)
+
+    - record: TWatch:Host::MemoryUsedInPercentAVG
+      expr: avg((sum(collectd_memory{memory="used", host!=""}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100)
+
+    - record: TWatch:Host::MemoryFreeInPercentAVG
+      expr: avg((sum(collectd_memory{host!="",memory!="used"}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100)
+
+    - record: TWatch:Host::NetworkAllInBytes
+      expr: sum(irate(node_network_receive_bytes_total{host!="",device=~"${nic_card}"}[2m]))by(host,host_ip)
+
+    - record: TWatch:Host::NetworkAllOutBytes
+      expr: sum(irate(node_network_transmit_bytes_total{host!="",device=~"${nic_card}"}[2m]))by(host,host_ip)
+
+    - record: TWatch:Host::NetworkAllInPackets
+      expr: sum(irate(node_network_receive_packets_total{host!="",device=~"${nic_card}"}[2m]))by(host,host_ip)
+
+    - record: TWatch:Host::NetworkAllOutPackets
+      expr: sum(irate(node_network_transmit_packets_total{host!="",device=~"${nic_card}"}[2m]))by(host,host_ip)
+
+    - record: TWatch:Host::NetworkAllInErrors
+      expr: sum(irate(node_network_receive_errs_total{host!="",device=~"${nic_card}"}[2m]))by(host,host_ip)
+
+    - record: TWatch:Host::NetworkAllOutErrors
+      expr: sum(irate(node_network_transmit_errs_total{host!="",device=~"${nic_card}"}[2m]))by(host,host_ip)
+
+    - record: TWatch:Host::DiskUsageRate
+      expr: avg ((node_filesystem_size_bytes{device=~"/.*"} - node_filesystem_avail_bytes{device=~"/.*"}) / node_filesystem_size_bytes{device=~"/.*"} * 100) by (host, host_ip)
+
+    - record: TWatch:Host::CPUAverageUsedUtilization
+      expr: avg((sum(100 - collectd_cpu_percent{cpu="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100) by (host,host_ip)
+
+    - record: TWatch:Host::CPUUsedUtilization
+      expr: abs(100 - collectd_cpu_percent{cpu="idle", host!=""})
+
+    - record: TWatch:Host::CPUUserUtilization
+      expr: collectd_cpu_percent{cpu="user", host!=""}
+
+    - record: TWatch:Host::CPUWaitUtilization
+      expr: collectd_cpu_percent{cpu="wait", host!=""}
+
+    - record: TWatch:Host::CPUSystemUtilization
+      expr: collectd_cpu_percent{cpu="system", host!=""}
+
+    - record: TWatch:Host::CPUIdleUtilization
+      expr: collectd_cpu_percent{cpu="idle", host!=""}
+
+    - record: TWatch:Host::MemoryUsedBytes
+      expr: collectd_memory{memory="used", host!=""}
+
+    - record: TWatch:Host::MemoryFreeBytes
+      expr:  sum(collectd_memory{memory!="used", host!=""}) by (host,host_ip)
+
+    - record: TWatch:Host::DiskAllReadBytes
+      expr: sum(irate(collectd_disk_disk_octets_0_total{host!=""}[1m])) by(host,host_ip)
+
+    - record: TWatch:Host::DiskAllWriteBytes
+      expr: sum(irate(collectd_disk_disk_octets_1_total{host!=""}[1m])) by(host,host_ip)
+
+    - record: TWatch:Host::DiskAllReadOps
+      expr: sum(irate(collectd_disk_disk_ops_0_total{host!=""}[1m])) by(host,host_ip)
+
+    - record: TWatch:Host::DiskAllWriteOps
+      expr: sum(irate(collectd_disk_disk_ops_1_total{host!=""}[1m])) by(host,host_ip)
+
+    - record: TWatch:Host::DiskReadBytes
+      expr: irate(collectd_disk_disk_octets_0_total{host!=""}[1m])
+
+    - record: TWatch:Host::DiskReadOps
+      expr: irate(collectd_disk_disk_ops_0_total{host!=""}[1m])
+
+    - record: TWatch:Host::DiskWriteBytes
+      expr: irate(collectd_disk_disk_octets_1_total{host!=""}[1m])
+
+    - record: TWatch:Host::DiskWriteOps
+      expr: irate(collectd_disk_disk_ops_1_total{host!=""}[1m])
+
+    - record: TWatch:Host::DiskSwapUsageRate
+      expr: (1 - ((node_memory_SwapFree_bytes{host!=""} + 1)/ (node_memory_SwapTotal_bytes{host!=""} + 1))) * 100
+
+    - record: TWatch:Host::DiskAllUsedCapacityInPercent
+      expr: (sum(node_filesystem_size_bytes{host!="", fstype!="rootfs"} - node_filesystem_avail_bytes{host!="", fstype!="rootfs"}) by(host,host_ip) / sum(node_filesystem_size_bytes{host!="", fstype!="rootfs"}) by(host,host_ip)) * 100
+
+    - record: TWatch:Host::DiskAllUsedCapacityInBytes
+      expr: sum(node_filesystem_size_bytes{host!="", fstype!="rootfs"} - node_filesystem_avail_bytes{host!="", fstype!="rootfs"}) by(host,host_ip)
+
+    - record: TWatch:Host::NetworkInBytes
+      expr: irate(collectd_interface_if_octets_0_total{host!=""}[1m])
+
+    - record: TWatch:Host::NetworkInPackets
+      expr: irate(collectd_interface_if_packets_0_total{host!=""}[1m])
+
+    - record: TWatch:Host::NetworkInErrors
+      expr: irate(collectd_interface_if_errors_0_total{host!=""}[1m])
+
+    - record: TWatch:Host::NetworkOutBytes
+      expr: irate(collectd_interface_if_octets_1_total{host!=""}[1m])
+
+    - record: TWatch:Host::NetworkOutPackets
+      expr: irate(collectd_interface_if_packets_1_total{host!=""}[1m])
+
+    - record: TWatch:Host::NetworkOutErrors
+      expr: irate(collectd_interface_if_errors_1_total{host!=""}[1m])
+
+    - record: TWatch:Host::CPUTemperature
+      expr: host_cpu_temp_status
+
+    - record: TWatch:Host::NicConnStatus
+      expr: host_net_target_conn_status
+
+    - record: TWatch:Host::RaidCardWorkStatus
+      expr: host_raid_card_status
+
+    - record: TWatch:Host::ServerOnline
+      expr: up{job="node-exporter"}
+
+    - record: TWatch:Host::NicOnline
+      expr: host_nic_on_line
+
+    - record: TWatch:Host::DiskOps
+      expr: host_disk_io_util_percent{disk=~"sd.*"}
+
+    - record: TWatch:Host::DiskDelay
+      expr: host_disk_io_await{disk=~"sd.*"}
+
+    - record: TWatch:Host::DiskWorkStatus
+      expr: host_physical_drives_status
+
+    # VM
+    - record: TWatch:VM::CPUAllUsedUtilization
+      expr: irate(collectd_virt_virt_cpu_total_total[1m]) / 1e+07
+
+    - record: TWatch:VM::CPUAllIdleUtilization
+      expr: 100 - (irate(collectd_virt_virt_cpu_total_total[1m]) / 1e+07)
+
+    - record: TWatch:VM::MemoryUsedInPercent
+      expr: ((collectd_virt_memory{type="available"} - on(exported_instance,virt,host,host_ip) collectd_virt_memory{type="unused"}) / on(exported_instance,virt,host,host_ip) collectd_virt_memory{type="available"}) * 100
+
+    - record: TWatch:VM::MemoryFreeInPercent
+      expr: (collectd_virt_memory{type="unused"} / on(exported_instance,virt,host,host_ip) collectd_virt_memory{type="available"}) * 100
+
+    - record: TWatch:VM::NetworkAllInBytes
+      expr: sum(irate(collectd_virt_if_octets_0_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::NetworkAllOutBytes
+      expr: sum(irate(collectd_virt_if_octets_1_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::NetworkAllInPackets
+      expr: sum(irate(collectd_virt_if_packets_0_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::NetworkAllOutPackets
+      expr: sum(irate(collectd_virt_if_packets_1_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::NetworkAllInErrors
+      expr: sum(irate(collectd_virt_if_errors_0_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::NetworkAllOutErrors
+      expr: sum(irate(collectd_virt_if_errors_1_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::DiskUsageRate
+      expr: sum(collectd_virt_disk_used) by (virt)/sum(collectd_virt_disk_total) by (virt)*100
+
+    - record: TWatch:VM::DiskAllReadBytes
+      expr: sum(irate(collectd_virt_disk_octets_0_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::DiskAllWriteBytes
+      expr: sum(irate(collectd_virt_disk_octets_1_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::DiskAllReadOps
+      expr: sum(irate(collectd_virt_disk_ops_0_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::DiskAllWriteOps
+      expr: sum(irate(collectd_virt_disk_ops_1_total[1m])) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::CPUAverageUsedUtilization
+      expr: avg(irate(collectd_virt_virt_vcpu_total[1m]) / 1e+07) by (exported_instance,virt,host_ip)
+
+    - record: TWatch:VM::CPUUsedUtilization
+      expr: irate(collectd_virt_virt_vcpu_total[1m]) / 1e+07
+
+    - record: TWatch:VM::CPUIdleUtilization
+      expr: 100 - (irate(collectd_virt_virt_vcpu_total[1m]) / 1e+07)
+
+    - record: TWatch:VM::MemoryUsedBytes
+      expr: collectd_virt_memory{type="available"} - on(exported_instance,virt,host,host_ip) collectd_virt_memory{type="unused"}
+
+    - record: TWatch:VM::MemoryFreeBytes
+      expr: collectd_virt_memory{type="unused"}
+
+    - record: TWatch:VM::DiskReadBytes
+      expr: irate(collectd_virt_disk_octets_0_total[1m])
+
+    - record: TWatch:VM::DiskReadOps
+      expr: irate(collectd_virt_disk_ops_0_total[1m])
+
+    - record: TWatch:VM::DiskWriteBytes
+      expr: irate(collectd_virt_disk_octets_1_total[1m])
+
+    - record: TWatch:VM::DiskWriteOps
+      expr: irate(collectd_virt_disk_ops_1_total[1m])
+
+    - record: TWatch:VM::NetworkInBytes
+      expr: irate(collectd_virt_if_octets_0_total[1m])
+
+    - record: TWatch:VM::NetworkInPackets
+      expr: irate(collectd_virt_if_packets_0_total[1m])
+
+    - record: TWatch:VM::NetworkInErrors
+      expr: irate(collectd_virt_if_errors_0_total[1m])
+
+    - record: TWatch:VM::NetworkOutBytes
+      expr: irate(collectd_virt_if_octets_1_total[1m])
+
+    - record: TWatch:VM::NetworkOutPackets
+      expr: irate(collectd_virt_if_packets_1_total[1m])
+
+    - record: TWatch:VM::NetworkOutErrors
+      expr: irate(collectd_virt_if_errors_1_total[1m])

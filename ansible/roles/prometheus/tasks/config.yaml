@@ -1,0 +1,28 @@
+- name: 创建 prometheus rule 存储目录
+  file:
+    name: /etc/prometheus/rules
+    state: directory
+    recurse: yes
+    mode: 0755
+
+- name: 创建 prometheus 数据存储目录
+  file:
+    name: /etc/prometheus/data
+    state: directory
+    recurse: yes
+    mode: 0777
+
+- name: 生成 prometheus 配置文件
+  template:
+    src: prometheus.yaml.j2
+    dest: /etc/prometheus/prometheus.yaml
+
+- name: 复制 prometheus rule 文件
+  copy:
+    src: twatch-rule.yaml
+    dest: /etc/prometheus/rules/twatch-rule.yaml
+
+- name: 生成 alertmanager 配置文件
+  template:
+    src: alertmanager.yaml.j2
+    dest: "{{ prometheus_alert_rule_dir }}/alertmanager.yaml"

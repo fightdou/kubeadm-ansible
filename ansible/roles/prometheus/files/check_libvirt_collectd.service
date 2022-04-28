@@ -1,0 +1,11 @@
+[Unit]
+Description= Control collectd to start the service
+After= NetworkManager.service docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash /etc/collectd/checkLibvirtForCollectd.sh
+
+[Install]
+WantedBy=multi-user.target

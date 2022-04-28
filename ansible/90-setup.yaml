@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 - name: Apply role baremetal
   gather_facts: true
   hosts: baremetal
@@ -79,3 +80,55 @@
 #   - allnodes
 #   roles:
 #   - plugins
+=======
+# - hosts: 
+#   - allnodes
+#   roles:
+#   - prepare/base
+#   - prepare/container
+
+# # 安装 load-balancer
+# - hosts:
+#   - allnodes
+#   roles:
+#   - load-balancer
+
+# # 初始化master节点
+# - hosts:
+#   - kube-master
+#   - new-master
+#   roles:
+#   - kube-master
+
+# # 初始化worker节点
+# - hosts:
+#   - kube-worker
+#   - new-worker
+#   roles:
+#   - kube-worker
+
+# - hosts:
+#   - allnodes
+#   roles:
+#   - ceph-csi
+
+- hosts:
+  - allnodes
+  roles:
+  - mariadb
+
+- hosts:
+  - compute
+  roles:
+  - libvirt
+
+- hosts:
+  - trochilus
+  roles:
+  - trochilus
+
+- hosts:
+  - prometheus
+  roles:
+  - prometheus
+>>>>>>> c0b8a394785540829e9cd2cda9b13e41a366a8ef

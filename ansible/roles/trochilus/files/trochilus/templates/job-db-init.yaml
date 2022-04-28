@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: trochilus-db-init
+  namespace: {{ .Release.Namespace }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: trochilus-db-init
+        image: {{ .Values.image.db_init }}
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - /tmp/db-init.sh
+        env:
+          - name: KOLLA_CONFIG_STRATEGY
+            value: "COPY_ALWAYS"
+          - name: ANSIBLE_LIBRARY
+            value: /usr/share/ansible
+          - name: KOLLA_SERVICE_NAME
+            value: "kolla-toolbox"
+          - name: PATH
+            value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          - name: LANG
+            value: "en_US.UTF-8"
+          - name: KOLLA_BASE_DISTRO
+            value: "ubuntu"
+          - name: KOLLA_DISTRO_PYTHON_VERSION
+            value: "3.8"
+          - name: KOLLA_BASE_ARCH
+            value: "x86_64"
+          - name: SETUPTOOLS_USE_DISTUTILS
+            value: "stdlib"
+          - name: PS1
+            value: "$(tput bold)($(printenv KOLLA_SERVICE_NAME))$(tput sgr0)[$(id -un)@$(hostname -s) $(pwd)]$ "
+          - name: DB_PORT
+            value: "3306"
+          - name: DB_NAME
+            value: "{{ .Values.mariadb.database }}"
+          - name: DB_USER
+            value: "{{ .Values.mariadb.username }}"
+          - name: DB_USER_PASSWORD
+            value: "{{ .Values.mariadb.password }}"
+          - name: DB_HOST_NAME
+            value: {{ include "mariadb.databaseHost" . }}
+          - name: DB_ROOT_PASSWORD
+            value: "{{ .Values.mariadb.root_password }}"
+        volumeMounts:
+          - mountPath: /tmp
+            name: pod-tmp
+          - mountPath: /tmp/db-init.sh
+            name: trochilus-bin
+            subPath: db-init.sh
+          - mountPath: /etc/sudoers.d/kolla_ansible_sudoers
+            name: trochilus-bin
+            subPath: kolla-toolbox-sudoer
+      restartPolicy: OnFailure
+      serviceAccount: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      volumes:
+        - emptyDir: {}
+          name: pod-tmp
+        - configMap:
+            defaultMode: 0755
+            name: trochilus-bin
+          name: trochilus-bin

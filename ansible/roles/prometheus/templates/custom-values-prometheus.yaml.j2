@@ -1,0 +1,61 @@
+image:
+  prometheus: {{ kube_image_repository }}/prometheus:{{ kube_image_tag }}
+  pushgateway: {{ kube_image_repository }}/pushgateway:{{ kube_image_tag }}
+  alertmanager: {{ kube_image_repository }}/alertmanager:{{ kube_image_tag }}
+  node_exporter: {{ kube_image_repository }}/node-exporter:{{ kube_image_tag }}
+  collectd_exporter: {{ kube_image_repository }}/collectd-exporter:{{ kube_image_tag }}
+  host_exporter: {{ kube_image_repository }}/host-exporter:{{ kube_image_tag }}
+  pushgateway_cleaner: {{ kube_image_repository }}/prometheus-pushgateway-cleaner:{{ kube_image_tag }}
+
+storageclass: general
+size: 10
+
+replica:
+  query: 2
+  pushgateway: 2
+
+nodeSelector:
+  control_role: enabled
+
+affinity:
+  key: control_role
+  value: enabled
+
+prometheusServerIP:
+  {% for host in groups['prometheus'] -%}
+  - "{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}"
+  {% endfor %}
+
+alert_rule_dir: "{{ prometheus_alert_rule_dir }}"
+serviceAccountName: prometheus
+pushgateway_cleaner_job:
+  cron: "1 * * * *"
+  history:
+    success: 3
+    failed: 1
+
+ingress: 
+  enabled: true
+  ingressClassName: nginx
+
+service:
+  query:
+    port: {{ prometheus_query_port }}
+  prometheus:
+    port: {{ prometheus_server_port }}
+  sidecar:
+    http_port: {{ thanos_sidecar_http_port }}
+    grpc_port: {{ thanos_sidecar_grpc_port }}
+  alertmanager:
+    port: {{ prometheus_alertmanager_port }}
+  alertmanager_cluster:
+    port: {{ prometheus_alertmanager_cluster_port }}
+  pushgateway:
+    port: {{ prometheus_pushgateway_port }}
+  node_exporter:
+    port: {{ prometheus_node_exporter_port }}
+  collectd_exporter:
+    port: {{ prometheus_collectd_exporter_port }}
+    udp_port: {{ prometheus_collectd_udp_port }}
+  host_exporter:
+    port: {{ prometheus_host_exporter_port }}

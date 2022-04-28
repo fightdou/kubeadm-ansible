@@ -1,0 +1,60 @@
+image:
+  prometheus: prom/prometheus:v2.26.0
+  pushgateway: prom/pushgateway:latest
+  alertmanager: prom/alertmanager:v0.21.0
+  node_exporter: prom/node-exporter:v0.18.1
+  collectd_exporter: prom/collectd-exporter:latest
+  host_exporter: douyali/host-exporter:latest
+  pushgateway_cleaner: jorinvo/prometheus-pushgateway-cleaner:latest
+  thanos: thanosio/thanos:v0.25.2
+
+storageclass: general
+size: 10
+
+nodeSelector:
+  control_role: enabled
+
+replica:
+  query: 2
+  pushgateway: 2
+
+prometheusServerIP: []
+alert_rule_dir: ""
+
+serviceAccountName: prometheus
+
+pushgateway_cleaner_job:
+  cron: "1 * * * *"
+  history:
+    success: 3
+    failed: 1
+
+affinity:
+  key: control_role
+  value: enabled
+
+ingress: 
+  enabled: true
+  ingressClassName: nginx
+
+service:
+  query:
+    port: 9003
+  prometheus:
+    port: 9004
+  sidecar:
+    http_port: 10902
+    grpc_port: 10901
+  alertmanager:
+    port: 9005
+  alertmanager_cluster:
+    port: 9094
+  pushgateway:
+    port: 9091
+  node_exporter:
+    port: 9100
+  collectd_exporter:
+    port: 9103
+    udp_port: 25826
+  host_exporter:
+    port: 9104

@@ -1,0 +1,16 @@
+image:
+  libvirt: kolla/ubuntu-source-nova-libvirt:yoga
+
+libvirt_tls: false
+nova_libvirt_port: 16509
+# The number of max files qemu can open
+qemu_max_files: 32768
+# The number of max processes qemu can open
+qemu_max_processes: 131072
+secret:
+  rbd_secret_uuid: ""
+  secret_user: ""
+  ceph_admin_keyring: ""
+serviceAccountName: libvirt
+nodeSelector:
+  compute_role: enabled

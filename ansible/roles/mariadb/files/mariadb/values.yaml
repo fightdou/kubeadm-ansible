@@ -1,0 +1,11 @@
+image:
+  mariadb: bitnami/mariadb:10.5.15-debian-10-r52
+mariadb_password: 123456
+storageclass: cephfs-general
+pvc:
+  name: mariadb
+  size: 10Gi
+tolerationSeconds: 30
+
+nodeSelector:
+  control_role: enabled
