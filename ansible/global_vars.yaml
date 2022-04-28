@@ -104,6 +104,13 @@ rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
 rbd_ceph_user: client.admin
 
 #################
+# Ingress Options
+#################
+ingress_pod_label_key: app
+ingress_pod_label_value: ingress-api
+ingress_controller_classname: "k8s.io/ingress-nginx"
+
+#################
 # Libvirt Options
 #################
 ceph_rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
