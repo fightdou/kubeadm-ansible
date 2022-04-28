@@ -39,11 +39,6 @@ objectstore: bluestore
 ## 对接 openstack config
 trochilus_config: true
 
-# # 该参数是为 nova 虚拟光驱设计的：http://172.27.124.201:8090/pages/viewpage.action?pageId=16288955
-# # 如果部署 openstack 时需要开启虚拟光驱功能，即：/etc/kolla/globals.yml 中
-# # enable_nova_iso_driver 设置为 yes 时，该参数也必须开启。
-# upload_empty_iso: true
-
 ## 是否开启aio模式，默认为false
 ## aio模式意味着osd节点小于3(一台或两台的集群都认为是aio)，
 ## aio模式下默认规则采取host隔离，3副本池将永久降级且安全性降低，
@@ -105,12 +100,6 @@ osd_pools:
     pgp_num: "16"
     pool_app: "{{ unify_osd_pool_app }}"
     pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
-  # backups_pools:
-  #   pool_name: backups
-  #   pg_num: "{{ osd_pool_pg_num }}"
-  #   pgp_num: "{{ osd_pool_pgp_num }}"
-  #   pool_app: "{{ unify_osd_pool_app }}"
-  #   pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
 
 ###########
 # mgrs #
@@ -148,7 +137,7 @@ cephfs_pools:
 ###########
 
 ## 部署ceph-radosgw服务
-deploy_radosgw: true
+deploy_radosgw: false
 
 radosgw_port: "7408"
 
