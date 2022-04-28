@@ -1,0 +1,86 @@
+---
+- name: Apply to the all mds Service Node
+  hosts: "{{ groups['ceph-mdss'] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: Umount cephfs share dir
+      mount:
+        path: "{{ desktop_mount_dir }}"
+        state: absent
+      ignore_errors: True
+
+    - name: Cleaning ceph-mds.control service
+      shell: systemctl stop ceph-mds@*
+      ignore_errors: True
+
+- name: Apply to the all mon Service Node
+  hosts: "{{ groups['ceph-mons'] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: rm /var/lib/ceph/tmp/monmap
+      command: rm -rf /var/lib/ceph/tmp/monmap
+
+    - name: Stop ceph-mon service
+      shell: systemctl stop ceph-mon@*
+
+    - name: Cleaning ceph-mon.control service
+      shell: rm -rf /var/lib/ceph/mon/ceph-mon.{{ ansible_hostname }}/*
+
+- name: Apply to the all mgr Service Node
+  hosts: "{{ groups['ceph-mgrs'] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: Cleaning ceph-mgr.control service
+      shell: systemctl stop ceph-mgr@*
+
+- name: Apply to the all osd Service Node
+  hosts: "{{ groups['ceph-osds'] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: Cleaning ceph-osd.control service
+      shell: systemctl stop ceph-osd@*
+
+    - name: Cleaning ceph-osd.control service
+      shell: rm /var/run/ceph/ceph-osd.* -rf
+
+    - name: Retrieve Ceph VGS information
+      shell: "vgs |grep ceph- |awk '{print $1}'"
+      register: ceph_vgs_info
+
+    - name: Vg remove
+      command: vgremove -y {{ item }}
+      with_items: "{{ ceph_vgs_info.stdout_lines }}"
+
+    - name: get bcache mapping remove cmds
+      bcache_tools:
+        bcache_map_list: "{{ bcache_map_list }}"
+        action: "clean"
+      register: "clean_cmds"
+      when:
+        - bcache | bool
+        - bcache_map_list is defined
+
+    - name: execute bcache mapping remove cmds
+      shell: "{{ item }}"
+      loop: "{{ clean_cmds.cmd }}"
+      when:
+        - bcache | bool
+        - bcache_map_list is defined
+      ignore_errors: true
+
+- name: Apply to the all radosgw Service Node
+  hosts: "{{ groups['ceph-radosgws'] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: Cleaning ceph-radosgw.control service
+      shell: systemctl stop ceph-radosgw@*

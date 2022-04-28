@@ -1,0 +1,78 @@
+firewalld_disabled: true
+use_domain_name_deploy: true
+kubernetes_domain_name: kunlun.cluster.local
+kubernetes_version: 1.23.5
+kube_image_repository: 172.18.31.155/kubernetes
+kubelet_cgroup_driver: systemd
+kubelet_root_dir: "/var/lib/kubelet"
+wait_plugins_ready: false
+docker_storage_dir: "/var/lib/docker"
+kube_pod_subnet: 10.244.0.0/16
+timezone: Asia/Shanghai
+kube_dns_domain: cluster.local
+image_pull_command: "docker pull"
+# Pod根容器
+pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
+kubeadm_token: ceky52.rec2keii98oke7sl
+custom_hosts:
+  "172.18.28.222":
+  - kunlun.cluster.local
+harbor_address: 172.18.31.155
+# 设置 flannel 后端, vxlan, host-gw, udp
+flannel_backend: "host-gw"
+
+# 使用haproxy进行apiserver负载时使用的haproxy镜像
+lb_haproxy_image: "{{ kube_image_repository }}/haproxy:2.4.15-alpine"
+# haproxy监控绑定端口
+lb_haproxy_stats_bind_address: 9090
+# haproxy监控访问路径
+lb_haproxy_stats_uri: "/stats"
+# haproxy监控自动刷新时间（秒）
+lb_haproxy_stats_refresh: 10
+# haproxy监控用户名
+lb_haproxy_stats_user: "admin"
+# haproxy监控用户密码
+lb_haproxy_stats_password: "admin"
+# haproxy负载均衡算法，常见如下：
+# "roundrobin": 基于服务器权重的轮询
+# "leastconn": 基于服务器最小连接数
+# "source": 基于请求源IP地址
+# "uri": 基于请求的URI
+lb_haproxy_balance_alg: "roundrobin"
+
+# 负载均衡的vip
+lb_kube_apiserver_ip: 172.18.28.222
+# 使用负载均衡后集群 apiserver port
+lb_kube_apiserver_port: 8443
+# 使用 vip 负载时使用的 keepalived 镜像
+lb_keepalived_image: "{{ kube_image_repository }}/keepalived:2.0.20"
+# keepalived auth_type 的 password
+lb_keepalived_password: "d0cker"
+# 区分多个 instance 的 VRRP 组播，同网段不能重复，取值在0-255之间
+lb_keepalived_router_id: 51
+# 负载均衡器健康检查端口
+lb_kube_apiserver_healthcheck_port: 8081
+# 默认所有节点权重 120
+lb_keepalived_priority: "120"
+
+# Etcd 数据根目录
+etcd_data_dir: "/var/lib/etcd"
+# Etcd 每日备份时间，默认3，即凌晨3点，取值范围0-23
+etcd_backup_hour: "3"
+# Etcd 每日备份文件保留时长，默认7天
+etcd_backup_expiry: "7"
+# etcd 备份目录
+etcd_backup_dir: "/var/lib/etcd/backup"
+
+# kubernetes ceph csi
+ceph:
+  install_ceph_rbd_csi: true
+  create_rbd_storage_class: true
+  rbd_storage_class_name: general
+  rbd_pool_name: "kubernetes"
+  install_ceph_cephfs_csi: true
+  create_cephfs_storage_class: true
+  cephfs_pool_name: "cephfs_data"
+  cephfs_storage_class_name: cephfs-general
+  rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
+  rbd_ceph_user: client.admin

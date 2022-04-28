@@ -1,0 +1,38 @@
+---
+- name: Apply to the first mon Service Node
+  hosts: "{{ groups['ceph-mons'][0] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: Uninstall the cache pool
+      command: "ceph osd tier remove-overlay {{ item.value.pool_name }}"
+      with_dict: "{{ osd_pools }}"
+      when:
+        - cache_tiering | bool
+        - item.value.pool_name is defined
+        - item.value.cache_name is defined
+    - name: The cache pool is stripped from the base pool
+      command: "ceph osd tier remove {{ item.value.pool_name }} {{ item.value.cache_name }} "
+      with_dict: "{{ osd_pools }}"
+      when:
+        - item.value.pool_name is defined
+        - cache_tiering | bool
+        - item.value.cache_name is defined
+    - name: Delete base pool
+      command: "ceph osd pool delete {{ item.value.pool_name }} {{ item.value.pool_name }} --yes-i-really-really-mean-it"
+      with_dict: "{{ osd_pools }}"
+      when:
+        - item.value.pool_name is defined
+    - name: Delete cache pool
+      command: "ceph osd pool delete {{ item.value.cache_name }} {{ item.value.cache_name }} --yes-i-really-really-mean-it"
+      with_dict: "{{ osd_pools }}"
+      when:
+        - cache_tiering | bool
+        - item.value.cache_name is defined
+    - name: Delete radosgw pool
+      command: "ceph osd pool delete {{ item.value.pool_name }} {{ item.value.pool_name }} --yes-i-really-really-mean-it"
+      with_dict: "{{ radosgw_pools }}"
+      when:
+        - item.value.pool_name is defined
+        - deploy_radosgw | bool

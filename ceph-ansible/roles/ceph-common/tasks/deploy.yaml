@@ -1,0 +1,157 @@
+---
+- name: Disable ufw
+  become: True
+  service:
+    name: "ufw"
+    enabled: false
+    state: stopped
+
+- name: modprobe bcache
+  shell: "modprobe bcache"
+  any_errors_fatal: true
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+
+# ceph package
+- name: Install common deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - "{% if ansible_python.version.major == 3 %}python3-netaddr{% else %}python-netaddr{% endif %}"
+      - libibverbs1
+      - libbabeltrace1
+      - libfuse2
+      - libleveldb1d
+      - "{% if ansible_python.version.major == 3 %}python3-prettytable{% else %}python-prettytable{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-requests{% else %}python-requests{% endif %}"
+      - cryptsetup
+      - psmisc
+      - "{% if ansible_python.version.major == 3 %}python3-setuptools{% else %}python-setuptools{% endif %}"
+      - gdisk
+      - "{% if ansible_python.version.major == 3 %}python3-flask{% else %}python-flask{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-openssl{% else %}python-openssl{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-cherrypy3{% else %}python-cherrypy3{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-pecan{% else %}python-pecan{% endif %}"
+      - librados2
+      - python3-rados
+      - librbd1
+      - python3-rbd
+      - libcephfs2
+      - python3-cephfs
+      - librgw2
+      - libradosstriper1
+      - libradosstriper-dev
+      - python3-rgw
+      - ceph-common
+      - ceph-base
+      - ceph-mds
+      - ceph
+      - radosgw
+
+- name: Install mon deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - ceph-mon
+  when:
+    - inventory_hostname in groups['ceph-mons']
+
+- name: Install osd deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - ceph-osd
+  when:
+    - inventory_hostname in groups['ceph-osds']
+
+- name: Install bcache-tools depend on deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - libblkid-dev
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+
+- name: Install bcache-tools deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - bcache-tools
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+
+- name: Install mgr deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - ceph-mgr
+  when:
+    - inventory_hostname in groups['ceph-mgrs']
+
+- name: Install radosgw deb packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - s3cmd
+  when:
+    - inventory_hostname in groups['ceph-radosgws']
+    - deploy_radosgw | bool
+
+- name: Generate ceph-mon@.service config file
+  template:
+    src: ceph-mon@.service.j2
+    dest: /usr/lib/systemd/system/ceph-mon@.service
+    mode: "644"
+  when:
+    - inventory_hostname in groups['ceph-mons']
+
+- name: Generate ceph-osd@.service config file
+  template:
+    src: ceph-osd@.service.j2
+    dest: /usr/lib/systemd/system/ceph-osd@.service
+    mode: "644"
+  when:
+    - inventory_hostname in groups['ceph-osds']
+
+- name: Generate ceph-mds@.service config file
+  template:
+    src: ceph-mds@.service.j2
+    dest: /usr/lib/systemd/system/ceph-mds@.service
+    mode: "644"
+
+- name: Generate ceph-mgr@.service config file
+  template:
+    src: ceph-mgr@.service.j2
+    dest: /usr/lib/systemd/system/ceph-mgr@.service
+    mode: "644"
+  when:
+    - inventory_hostname in groups['ceph-mgrs']
+
+- name: Generate ceph-radosgw@.service config file
+  template:
+    src: ceph-radosgw@.service.j2
+    dest: /usr/lib/systemd/system/ceph-radosgw@.service
+    mode: "644"

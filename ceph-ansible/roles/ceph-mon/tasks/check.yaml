@@ -1,0 +1,10 @@
+---
+- name: Waiting to check the status of the ceph cluster
+  command: "ceph -s"
+  when:
+    - inventory_hostname in groups['ceph-mons']
+  register: mysql_result
+  until: mysql_result is success
+  changed_when: False
+  retries: 2
+  delay: 2

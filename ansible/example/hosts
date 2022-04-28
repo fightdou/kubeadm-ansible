@@ -32,6 +32,14 @@
 172.18.29.183
 172.18.29.212
 
+[baremetal:children]
+kube-master
+kube-worker
+load-balancer
+new-master
+new-worker
+
+
 [control]
 172.18.29.170
 172.18.29.183

@@ -1,0 +1,9 @@
+---
+- name: Reload kernal parameters from sysctl.conf
+  command: sysctl -p
+
+- name: Restart chronyd
+  service:
+    enabled: yes
+    state: restarted
+    name: chronyd

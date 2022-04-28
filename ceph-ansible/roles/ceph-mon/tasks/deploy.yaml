@@ -1,0 +1,3 @@
+---
+- name: include deploy_monitors.yml
+  include_tasks: deploy_monitors.yml

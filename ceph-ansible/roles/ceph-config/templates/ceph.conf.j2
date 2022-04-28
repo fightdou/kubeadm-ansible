@@ -1,0 +1,108 @@
+[global]
+cluster                     = {{ cluster }}
+fsid                        = {{ fsid }}
+public network              = {{ ceph_public_network }}
+{% if ceph_cluster_network is defined %}cluster network             = {{ ceph_cluster_network }}  {% endif %}
+
+auth cluster required       = {% if cephx %}cephx  {%- else -%} none {% endif %}
+
+auth service required       = {% if cephx %}cephx  {%- else -%} none {% endif %}
+
+auth client required        = {% if cephx %}cephx  {%- else -%} none {% endif %}
+
+osd pool default size       = {{ osd_pool_default_size }}
+osd pool default min size   = {{ osd_pool_default_min_size }}
+
+osd pool default pg num     = {{ osd_pool_default_pg_num }}
+osd pool default pgp num    = {{ osd_pool_default_pgp_num }}
+
+osd pool default crush rule = 0
+osd crush chooseleaf type   = 1
+
+admin socket                = /var/run/ceph/$cluster-$name.asock
+pid file                    = /var/run/ceph/$cluster-$name.pid
+log file                    = /var/log/ceph/$cluster-$name.log
+log to syslog               = false
+
+max open files              = 131072
+ms bind ipv6                = false
+
+debug_lockdep = {{ ceph_config_debug_default }}
+debug_context = {{ ceph_config_debug_default }}
+debug_crush = {{ ceph_config_debug_default }}
+debug_buffer = {{ ceph_config_debug_default }}
+debug_timer = {{ ceph_config_debug_default }}
+debug_filer = {{ ceph_config_debug_default }}
+debug_objecter = {{ ceph_config_debug_default }}
+debug_rados = {{ ceph_config_debug_default }}
+debug_rbd = {{ ceph_config_debug_default }}
+debug_journaler = {{ ceph_config_debug_default }}
+debug_objectcatcher = {{ ceph_config_debug_default }}
+debug_client = {{ ceph_config_debug_default }}
+debug_osd = {{ ceph_config_debug_default }}
+debug_optracker = {{ ceph_config_debug_default }}
+debug_objclass = {{ ceph_config_debug_default }}
+debug_filestore = {{ ceph_config_debug_default }}
+debug_journal = {{ ceph_config_debug_default }}
+debug_ms = {{ ceph_config_debug_default }}
+debug_mon = {{ ceph_config_debug_default }}
+debug_monc = {{ ceph_config_debug_default }}
+debug_tp = {{ ceph_config_debug_default }}
+debug_auth = {{ ceph_config_debug_default }}
+debug_finisher = {{ ceph_config_debug_default }}
+debug_heartbeatmap = {{ ceph_config_debug_default }}
+debug_perfcounter = {{ ceph_config_debug_default }}
+debug_asok = {{ ceph_config_debug_default }}
+debug_throttle = {{ ceph_config_debug_default }}
+debug_paxos = {{ ceph_config_debug_default }}
+debug_rgw = {{ ceph_config_debug_default }}
+
+[mgr]
+mgr data                     = /var/lib/ceph/mgr/$cluster-$name
+
+[osd]
+osd data                     = /var/lib/ceph/osd/$cluster-$id
+osd recovery max active      = 3
+osd max backfills            = 10
+osd_recovery_max_single_start= 3
+osd_recovery_sleep           = 0.1
+osd max scrubs               = 2
+osd mkfs type = xfs
+osd mkfs options xfs = -f -i size=1024
+osd mount options xfs = rw,noatime,inode64,logbsize=256k,delaylog
+filestore max sync interval  = 5
+osd op threads               = 2
+
+[mon]
+mon initial members = {% for host in groups['ceph-mons'] %}{{ hostvars[host]['ansible_hostname'] }}{% if not loop.last %},{% endif %}
+{% endfor %}
+
+mon host = {% for host in groups['ceph-mons'] %}{{ hostvars[host]['cephf_ceph_local_ip'] }}:6789{% if not loop.last %},{% endif %}
+{% endfor %}
+
+mon data                     = /var/lib/ceph/mon/$cluster-$name
+mon clock drift allowed      = 10
+mon clock drift warn backoff = 30
+
+mon osd full ratio           = .95
+mon osd nearfull ratio       = .85
+
+mon osd down out interval    = 600
+mon osd report timeout       = 900
+
+mon allow pool delete      = true  ; without this, you cannot delete pool
+{% for host in groups['ceph-mons'] %}
+[mon.{{ hostvars[host]['ansible_hostname'] }}]
+host    =    {{ hostvars[host]['ansible_hostname'] }}
+mon addr   =    {{ hostvars[host]['cephf_ceph_local_ip'] }}:6789
+{% endfor %}
+
+{% if deploy_radosgw %}
+{% for host in groups['ceph-radosgws'] %}
+[client.rgw.{{ hostvars[host]['ansible_hostname'] }}]
+host = {{ hostvars[host]['ansible_hostname'] }}
+keyring=/etc/ceph/ceph.client.radosgw.keyring
+log file=/var/log/radosgw/client.radosgw.gateway.log
+rgw_frontends = civetweb port={{ hostvars[host]['cephf_ceph_local_ip'] }}:{{ radosgw_port }}
+{% endfor %}
+{% endif %}

@@ -1,0 +1,15 @@
+---
+- name: modprobe bcache
+  shell: "modprobe bcache"
+  any_errors_fatal: true
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+
+- name: check kernel bcache supports
+  shell: "ls /sys/fs/bcache/register"
+  any_errors_fatal: true
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+

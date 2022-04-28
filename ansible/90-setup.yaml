@@ -1,56 +1,87 @@
-- hosts: 
-  - allnodes
+- name: Apply role baremetal
+  gather_facts: true
+  hosts: baremetal
   roles:
-  - prepare/base
-  - prepare/container
+    - { role: baremetal,
+        tags: baremetal }
 
-# 安装 load-balancer
-- hosts:
-  - allnodes
+
+- name: Apply role prepare
+  gather_facts: true
+  hosts: all
   roles:
-  - load-balancer
+    - { role: prepare/base,
+        tags: base }
+    - { role: prepare/container,
+        tags: container}
 
-# 初始化master节点
-- hosts:
-  - kube-master
-  - new-master
+- name: Apply role load-balancer
+  gather_facts: true
+  hosts: all
   roles:
-  - kube-master
+    - { role: load-balancer,
+        tags: load-balancer }
 
-# 初始化worker节点
-- hosts:
-  - kube-worker
-  - new-worker
+- name: Apply role kube-master
+  gather_facts: true
+  hosts: 
+    - kube-master
+    - new-master
   roles:
-  - kube-worker
+    - { role: kube-master,
+        tags: kube-master }
 
-- hosts:
-  - allnodes
+- name: Apply role kube-worker
+  gather_facts: true
+  hosts: 
+    - kube-worker
+    - new-worker
   roles:
-  - ceph-csi
+    - { role: kube-worker,
+        tags: kube-worker }
 
-- hosts:
-  - allnodes
+- name: Apply role plugins
+  gather_facts: true
+  hosts: all
   roles:
-  - ingress
+    - { role: plugins,
+        tags: plugins }
 
-- hosts:
-  - allnodes
+- name: Apply role ceph-csi
+  gather_facts: true
+  hosts: all
   roles:
-  - mariadb
+    - { role: ceph-csi,
+        tags: ceph-csi }
 
-- hosts:
-  - compute
-  roles:
-  - libvirt
-
+- name: Apply role mariadb
+  gather_facts: true
+  hosts: all
 - hosts:
   - trochilus-api
   - trochilus-agent
   roles:
-  - trochilus
+    - { role: mariadb,
+        tags: mariadb }
 
-- hosts:
-  - prometheus
+- name: Apply role libvirt
+  gather_facts: true
+  hosts: all
   roles:
-  - prometheus
+    - { role: libvirt,
+        tags: libvirt }
+
+- name: Apply role trochilus
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: trochilus,
+        tags: trochilus }
+
+- name: Apply role prometheus
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: prometheus,
+        tags: prometheus }
+
