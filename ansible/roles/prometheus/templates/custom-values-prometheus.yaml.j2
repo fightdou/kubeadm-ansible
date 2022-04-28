@@ -36,7 +36,7 @@ pushgateway_cleaner_job:
 
 ingress: 
   enabled: true
-  ingressClassName: nginx
+  ingressClassName: {{ ingress_class_name }}
 
 service:
   query:

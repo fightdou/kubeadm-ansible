@@ -30,11 +30,11 @@ nodeplugin:
 
   httpMetrics:
     enabled: true
-    containerPort: 8080
+    containerPort: {{ rbd_check_port }}
 
     service:
       enabled: true
-      servicePort: 8080
+      servicePort: {{ rbd_service_port }}
       type: ClusterIP
       annotations: {}
       clusterIP: ""
@@ -86,11 +86,11 @@ provisioner:
   priorityClassName: system-cluster-critical
   httpMetrics:
     enabled: true
-    containerPort: 8080
+    containerPort: {{ rbd_check_port }}
 
     service:
       enabled: true
-      servicePort: 8080
+      servicePort: {{ rbd_service_port }}
       type: ClusterIP
       annotations: {}
 

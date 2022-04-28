@@ -26,11 +26,11 @@ nodeplugin:
 
   httpMetrics:
     enabled: true
-    containerPort: 8081
+    containerPort: {{ cephfs_check_port }}
 
     service:
       enabled: true
-      servicePort: 8080
+      servicePort: {{ cephfs_service_port }}
       type: ClusterIP
       annotations: {}
       clusterIP: ""
@@ -76,11 +76,11 @@ provisioner:
 
   httpMetrics:
     enabled: true
-    containerPort: 8081
+    containerPort: {{ cephfs_check_port }}
 
     service:
       enabled: true
-      servicePort: 8080
+      servicePort: {{ cephfs_service_port }}
       type: ClusterIP
       annotations: {}
       clusterIP: ""

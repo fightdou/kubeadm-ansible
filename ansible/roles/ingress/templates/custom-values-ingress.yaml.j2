@@ -25,10 +25,10 @@ electionID: ingress-controller-leader
 reportNodeInternalIp: false
 watchIngressWithoutClass: false
 ingressClassResource:
-  name: nginx
+  name: {{ ingress_class_name }}
   enabled: true
   default: false
-  controllerClass: {{ ingress_controller_classname }}
+  controllerClass: {{ ingress_controller_class }}
   parameters: {}
 publishService:
   enabled: false
@@ -101,8 +101,7 @@ readinessProbe:
 customLivenessProbe: {}
 customReadinessProbe: {}
 lifecycle: {}
-podLabels:
-  {{ ingress_pod_label_key }}: {{ ingress_pod_label_value }}
+podLabels: {}
 podAnnotations: {}
 priorityClassName: ""
 hostNetwork: false
