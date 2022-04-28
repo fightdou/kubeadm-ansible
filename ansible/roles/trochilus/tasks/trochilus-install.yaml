@@ -17,13 +17,8 @@
     owner: root
     mode: 0644
 
-<<<<<<< HEAD:ansible/roles/plugins/tasks/trochilus-install.yaml
-# - name: 安装 trochilus helm charts
-#   shell: helm upgrade --install trochilus {{ charts_dir }}/trochilus -f /etc/kubernetes/plugins/trochilus/values.yaml
-=======
 - name: 安装 trochilus helm charts
   shell: helm upgrade --install trochilus {{ helm_charts_dir }}/trochilus -f /etc/kubernetes/plugins/trochilus/values.yaml
->>>>>>> c0b8a394785540829e9cd2cda9b13e41a366a8ef:ansible/roles/trochilus/tasks/trochilus-install.yaml
 
 - name: Install trochilus helm charts
   kubernetes.core.helm:
