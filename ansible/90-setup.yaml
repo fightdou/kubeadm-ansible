@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 - name: Apply role baremetal
   gather_facts: true
   hosts: baremetal
@@ -41,7 +40,6 @@
     - { role: kube-worker,
         tags: kube-worker }
 
-
 - name: Apply role plugins
   gather_facts: true
   hosts: all
@@ -49,86 +47,38 @@
     - { role: plugins,
         tags: plugins }
 
-# - hosts: 
-#   - allnodes
-#   roles:
-#   - prepare/base
-#   - prepare/container
-
-# # 安装 load-balancer
-# - hosts:
-#   - allnodes
-#   roles:
-#   - load-balancer
-
-# 初始化master节点
-# - hosts:
-#   - kube-master
-#   - new-master
-#   roles:
-#   - kube-master
-
-# 初始化worker节点
-# - hosts:
-#   - kube-worker
-#   - new-worker
-#   roles:
-#   - kube-worker
-
-# 安装集群插件
-# - hosts:
-#   - allnodes
-#   roles:
-#   - plugins
-=======
-# - hosts: 
-#   - allnodes
-#   roles:
-#   - prepare/base
-#   - prepare/container
-
-# # 安装 load-balancer
-# - hosts:
-#   - allnodes
-#   roles:
-#   - load-balancer
-
-# # 初始化master节点
-# - hosts:
-#   - kube-master
-#   - new-master
-#   roles:
-#   - kube-master
-
-# # 初始化worker节点
-# - hosts:
-#   - kube-worker
-#   - new-worker
-#   roles:
-#   - kube-worker
-
-# - hosts:
-#   - allnodes
-#   roles:
-#   - ceph-csi
-
-- hosts:
-  - allnodes
+- name: Apply role ceph-csi
+  gather_facts: true
+  hosts: all
   roles:
-  - mariadb
+    - { role: ceph-csi,
+        tags: ceph-csi }
 
-- hosts:
-  - compute
+- name: Apply role mariadb
+  gather_facts: true
+  hosts: all
   roles:
-  - libvirt
+    - { role: mariadb,
+        tags: mariadb }
 
-- hosts:
-  - trochilus
+- name: Apply role libvirt
+  gather_facts: true
+  hosts: all
   roles:
-  - trochilus
+    - { role: libvirt,
+        tags: libvirt }
 
-- hosts:
-  - prometheus
+- name: Apply role trochilus
+  gather_facts: true
+  hosts: all
   roles:
-  - prometheus
->>>>>>> c0b8a394785540829e9cd2cda9b13e41a366a8ef
+    - { role: trochilus,
+        tags: trochilus }
+
+- name: Apply role prometheus
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: prometheus,
+        tags: prometheus }
+
