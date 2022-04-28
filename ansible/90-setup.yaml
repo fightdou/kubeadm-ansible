@@ -24,27 +24,33 @@
 #   roles:
 #   - kube-worker
 
-- hosts:
-  - allnodes
-  roles:
-  - ceph-csi
+# - hosts:
+#   - allnodes
+#   roles:
+#   - ceph-csi
 
 - hosts:
   - allnodes
   roles:
-  - mariadb
+  - ingress
 
-- hosts:
-  - compute
-  roles:
-  - libvirt
+# - hosts:
+#   - allnodes
+#   roles:
+#   - mariadb
 
-- hosts:
-  - trochilus
-  roles:
-  - trochilus
+# - hosts:
+#   - compute
+#   roles:
+#   - libvirt
 
-- hosts:
-  - prometheus
-  roles:
-  - prometheus
+# - hosts:
+#   - trochilus-api
+#   - trochilus-agent
+#   roles:
+#   - trochilus
+
+# - hosts:
+#   - prometheus
+#   roles:
+#   - prometheus

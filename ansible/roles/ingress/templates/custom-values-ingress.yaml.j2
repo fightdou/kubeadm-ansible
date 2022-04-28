@@ -1,0 +1,262 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+commonLabels: {}
+commonAnnotations: {}
+extraDeploy: []
+image:
+  registry: {{ kube_image_repository }}
+  repository: nginx-ingress-controller
+  tag: {{ kube_image_tag }}
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+containerPorts:
+  http: 80
+  https: 443
+  metrics: 10254
+hostAliases: []
+config: {}
+proxySetHeaders: {}
+addHeaders: {}
+defaultBackendService: ""
+electionID: ingress-controller-leader
+reportNodeInternalIp: false
+watchIngressWithoutClass: false
+ingressClassResource:
+  name: nginx
+  enabled: true
+  default: false
+  controllerClass: {{ ingress_controller_classname }}
+  parameters: {}
+publishService:
+  enabled: false
+  pathOverride: ""
+scope:
+  enabled: false
+configMapNamespace: ""
+tcpConfigMapNamespace: ""
+udpConfigMapNamespace: ""
+maxmindLicenseKey: ""
+dhParam: ""
+tcp: {}
+udp: {}
+command: []
+args: []
+extraArgs: {}
+extraEnvVars: []
+extraEnvVarsCM: ""
+extraEnvVarsSecret: ""
+kind: DaemonSet
+daemonset:
+  useHostPort: true
+  hostPorts:
+    http: 80
+    https: 443
+replicaCount: 1
+updateStrategy: {}
+revisionHistoryLimit: 10
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+containerSecurityContext:
+  enabled: true
+  allowPrivilegeEscalation: true
+  runAsUser: 1001
+  capabilities:
+    drop: ["ALL"]
+    add: ["NET_BIND_SERVICE"]
+minReadySeconds: 0
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+     cpu: 250m
+     memory: 256Mi
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /healthz
+    port: 10254
+    scheme: HTTP
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /healthz
+    port: 10254
+    scheme: HTTP
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+
+customLivenessProbe: {}
+customReadinessProbe: {}
+lifecycle: {}
+podLabels:
+  {{ ingress_pod_label_key }}: {{ ingress_pod_label_value }}
+podAnnotations: {}
+priorityClassName: ""
+hostNetwork: false
+dnsPolicy: ClusterFirst
+terminationGracePeriodSeconds: 60
+podAffinityPreset: ""
+podAntiAffinityPreset: soft
+nodeAffinityPreset:
+  type: ""
+  key: ""
+  values: []
+affinity: {}
+nodeSelector: {}
+tolerations: []
+extraVolumes: []
+extraVolumeMounts: []
+initContainers: []
+sidecars: []
+customTemplate:
+  configMapName: ""
+  configMapKey: ""
+topologySpreadConstraints: []
+podSecurityPolicy:
+  enabled: false
+defaultBackend:
+  enabled: true
+  hostAliases: []
+  image:
+    registry: {{ kube_image_repository }}
+    repository: nginx
+    tag: {{ kube_image_tag }}
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  extraArgs: {}
+  containerPort: 8080
+  serverBlockConfig: |-
+    location /healthz {
+      return 200;
+    }
+
+    location / {
+      return 404;
+    }
+  replicaCount: 1
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+  resources:
+    limits:
+       cpu: 250m
+       memory: 256Mi
+    requests:
+       cpu: 250m
+       memory: 256Mi
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: http
+      scheme: HTTP
+    failureThreshold: 3
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  readinessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: http
+      scheme: HTTP
+    failureThreshold: 6
+    initialDelaySeconds: 0
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 5
+  podLabels: {}
+  podAnnotations: {}
+  priorityClassName: ""
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  service:
+    type: ClusterIP
+    port: 80
+  pdb:
+    create: false
+    minAvailable: 1
+    maxUnavailable: ""
+
+service:
+  type: ClusterIP
+  ports:
+    http: 80
+    https: 443
+  targetPorts:
+    http: http
+    https: https
+  nodePorts:
+    http: ""
+    https: ""
+    tcp: {}
+    udp: {}
+  annotations: {}
+  labels: {}
+  clusterIP: ""
+  externalIPs: []
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: ""
+  healthCheckNodePort: 0
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+rbac:
+  create: true
+
+pdb:
+  create: false
+  minAvailable: 1
+  maxUnavailable: ""
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 11
+  targetCPU: ""
+  targetMemory: ""
+
+metrics:
+  enabled: false
+  service:
+    type: ClusterIP
+    port: 9913
+    annotations: {}
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    scrapeTimeout: ""
+    selector: {}
+  prometheusRule:
+    enabled: false
+    additionalLabels: {}
+    namespace: ""
+    rules: []
