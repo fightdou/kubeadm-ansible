@@ -24,10 +24,10 @@
 #   roles:
 #   - kube-worker
 
-# - hosts:
-#   - allnodes
-#   roles:
-#   - ceph-csi
+- hosts:
+  - allnodes
+  roles:
+  - ceph-csi
 
 - hosts:
   - allnodes
