@@ -96,12 +96,22 @@ install_ceph_rbd_csi: true
 create_rbd_storage_class: true
 rbd_storage_class_name: general
 rbd_pool_name: "kubernetes"
+rbd_service_port: 9081
+rbd_check_port: 9082
 install_ceph_cephfs_csi: true
 create_cephfs_storage_class: true
 cephfs_pool_name: "cephfs_data"
+cephfs_check_port: 9083
+cephfs_service_port: 9084
 cephfs_storage_class_name: cephfs-general
 rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
 rbd_ceph_user: client.admin
+
+#################
+# Ingress Options
+#################
+ingress_class_name: nginx
+ingress_controller_class: "k8s.io/ingress-nginx"
 
 #################
 # Libvirt Options

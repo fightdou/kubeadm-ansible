@@ -23,7 +23,7 @@
     name: ceph-csi-cephfs
     chart_ref: "{{ helm_charts_dir }}/ceph-csi-cephfs"
     values_files:
-      - /etc/kubernetes/plugins/ceph-csi-cephfs/values.yaml
+      - /etc/kubernetes/plugins/csi-cephfs/values.yaml
     state: present
     wait: yes
     wait_timeout: 120s

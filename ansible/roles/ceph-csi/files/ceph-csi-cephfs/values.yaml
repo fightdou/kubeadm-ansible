@@ -49,7 +49,7 @@ nodeplugin:
     # Specifies whether http metrics should be exposed
     enabled: true
     # The port of the container to expose the metrics
-    containerPort: 8081
+    containerPort: 9081
 
     service:
       # Specifies whether a service should be created for the metrics
@@ -130,7 +130,7 @@ provisioner:
     # Specifies whether http metrics should be exposed
     enabled: true
     # The port of the container to expose the metrics
-    containerPort: 8081
+    containerPort: 9081
 
     service:
       # Specifies whether a service should be created for the metrics

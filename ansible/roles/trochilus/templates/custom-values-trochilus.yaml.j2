@@ -86,7 +86,7 @@ conf:
   vm_settings:
     virt_type: {{ trochilus_libvirt_driver }}
     default_root_disk_backend: rbd1
-    rbd_secret_uuid: {{ ceph.rbd_secret_uuid }}
+    rbd_secret_uuid: {{ ceph_rbd_secret_uuid }}
   voi_settings:
     voi_image_base_path: /var/lib/trochilus/voi/images
     voi_vm_base_path: /var/lib/trochilus/voi/vms
@@ -105,4 +105,4 @@ conf:
 
 ingress:
   enabled: true
-  ingressClassName: nginx
+  ingressClassName: {{ ingress_class_name }}

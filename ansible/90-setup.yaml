@@ -57,6 +57,9 @@
 - name: Apply role mariadb
   gather_facts: true
   hosts: all
+- hosts:
+  - trochilus-api
+  - trochilus-agent
   roles:
     - { role: mariadb,
         tags: mariadb }
