@@ -40,13 +40,6 @@
     - { role: kube-worker,
         tags: kube-worker }
 
-- name: Apply role plugins
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: plugins,
-        tags: plugins }
-
 - name: Apply role ceph-csi
   gather_facts: true
   hosts: all
@@ -57,9 +50,6 @@
 - name: Apply role mariadb
   gather_facts: true
   hosts: all
-- hosts:
-  - trochilus-api
-  - trochilus-agent
   roles:
     - { role: mariadb,
         tags: mariadb }
@@ -84,4 +74,3 @@
   roles:
     - { role: prometheus,
         tags: prometheus }
-

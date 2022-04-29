@@ -7,7 +7,7 @@
   shell: kubeadm config images pull --image-repository={{ kube_image_repository }}
 
 - name: Worker 节点加入集群
-  shell: kubeadm join {{ apiServerEndpoint }}:{{ lb_kube_apiserver_port }} --token {{ kubeadm_token }} --discovery-token-unsafe-skip-ca-verification --node-name {{ inventory_hostname }}
+  shell: kubeadm join {{ apiServerEndpoint }}:{{ kube_apiserver_port }} --token {{ kubeadm_token }} --discovery-token-unsafe-skip-ca-verification --node-name {{ inventory_hostname }}
   when: 
   - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
   - inventory_hostname not in (groups['kube-master'] + groups['new-master'])

@@ -20,7 +20,7 @@ defaults
     maxconn                 {{ 10000 * ansible_processor_vcpus|int }}
 
 listen stats
-    bind 0.0.0.0:{{ lb_haproxy_stats_bind_address }}
+    bind {{ inventory_hostname }}:{{ lb_haproxy_stats_bind_address }}
     mode http
     balance {{ lb_haproxy_balance_alg }}
     stats enable
@@ -31,13 +31,13 @@ listen stats
 
 {% if lb_kube_apiserver_healthcheck_port is defined -%}
 frontend healthz
-    bind 127.0.0.1:{{ lb_kube_apiserver_healthcheck_port }}
+    bind {{ inventory_hostname }}:{{ lb_kube_apiserver_healthcheck_port }}
     mode http
     monitor-uri /healthz
 {% endif %}
 
 frontend kube_api_frontend
-    bind {% if inventory_hostname in groups['load-balancer'] %}0.0.0.0{% else %}127.0.0.1{% endif %}:{{ lb_kube_apiserver_port }}
+    bind {% if inventory_hostname in groups['load-balancer'] %}{{ kube_apiserver_vip }}{% else %}127.0.0.1{% endif %}:{{ kube_apiserver_port }}
     mode tcp
     option tcplog
     default_backend kube_api_backend

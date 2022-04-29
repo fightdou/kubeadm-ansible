@@ -25,7 +25,7 @@ apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
 kubernetesVersion: {{ kubernetes_version }}
 clusterName: kubernetes
-controlPlaneEndpoint: "{{ apiServerEndpoint }}:{{ lb_kube_apiserver_port }}"
+controlPlaneEndpoint: "{{ apiServerEndpoint }}:{{ kube_apiserver_port }}"
 imageRepository: "{{ kube_image_repository }}"
 networking:
   podSubnet: {{ kube_pod_subnet }}

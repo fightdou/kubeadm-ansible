@@ -12,7 +12,7 @@ spec:
   priorityClassName: system-cluster-critical
   containers:
   - name: lb-keepalived
-    image: {{ lb_keepalived_image }}
+    image: {{ kube_image_repository }}/keepalived:{{ kube_image_tag }}
     env:
     - name: KEEPALIVED_VIRTUAL_IPS
       value: {{ kube_apiserver_ip | trim }}

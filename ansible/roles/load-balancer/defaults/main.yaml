@@ -12,10 +12,10 @@ lb_keepalived_unicast_peers: >-
   {%- endfor -%}
 
 kube_apiserver_ip: >-
-  {% if lb_kube_apiserver_ip is not defined %}
+  {% if kube_apiserver_vip is not defined %}
     127.0.0.1
   {% else %}
-    {{ lb_kube_apiserver_ip }}
+    {{ kube_apiserver_vip }}
   {% endif %}
 
 current_host_ip: >-
