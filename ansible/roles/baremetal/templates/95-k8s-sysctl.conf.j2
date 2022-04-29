@@ -10,7 +10,8 @@ net.ipv4.conf.default.rp_filter = 0
 net.ipv4.conf.default.arp_announce = 2
 net.ipv4.conf.lo.arp_announce = 2
 net.ipv4.conf.all.arp_announce = 2
-
+net.ipv4.ip_nonlocal_bind = 1
+net.unix.max_dgram_qlen = 128
 # see details in https://help.aliyun.com/knowledge_detail/41334.html
 net.ipv4.tcp_max_tw_buckets = 5000
 net.ipv4.tcp_syncookies = 1

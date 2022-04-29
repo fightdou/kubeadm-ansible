@@ -23,7 +23,7 @@ spec:
       failureThreshold: 5
       initialDelaySeconds: 10
       httpGet:
-        host: 127.0.0.1
+        host: {{ inventory_hostname }}
         path: /healthz
         port: {{ lb_kube_apiserver_healthcheck_port }}
 {% endif %}

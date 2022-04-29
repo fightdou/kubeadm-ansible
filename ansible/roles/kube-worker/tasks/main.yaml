@@ -4,7 +4,7 @@
   register: kubelet_conf_stat
 
 - name: 拉取 worker 节点需要拉取的镜像列表
-  shell: kubeadm config images pull --image-repository={{ kube_image_repository }}
+  shell: kubeadm config images pull --image-repository={{ kube_image_repository }} --kubernetes-version={{ kubernetes_version }}
 
 - name: Worker 节点加入集群
   shell: kubeadm join {{ apiServerEndpoint }}:{{ kube_apiserver_port }} --token {{ kubeadm_token }} --discovery-token-unsafe-skip-ca-verification --node-name {{ inventory_hostname }}
@@ -12,3 +12,15 @@
   - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
   - inventory_hostname not in (groups['kube-master'] + groups['new-master'])
   - not kubelet_conf_stat.stat.exists
+
+- name: 设置 compute node lables
+  shell: kubectl label node {{ item }} {{ compute_node_role_name }}={{ node_role_value }}
+  with_items: "{{ groups['compute'] }}"
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 设置 storage node lables
+  shell: kubectl label node {{ item }} {{ storage_node_role_name }}={{ node_role_value }}
+  with_items: "{{ groups['storage'] }}"
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"

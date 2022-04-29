@@ -3,42 +3,19 @@
 # 多个bond时，则需配置多个nic记录
 # 没有bond时：nic_info = ["ens3:172.18.29.170:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
 [allnodes]
-172.18.29.170 
-172.18.29.183 
-172.18.29.212
-
-[kube-master]
-172.18.29.170
-172.18.29.183
-172.18.29.212
-
-[kube-worker]
-172.18.29.170
-172.18.29.183
-172.18.29.212
-
-[load-balancer]
-172.18.29.170
-172.18.29.183
-172.18.29.212
+172.18.29.170 hostname=ceph1
+172.18.29.183 hostname=ceph2
+172.18.29.212 hostname=ceph3
+172.18.28.91 hostname=ceph4
 
 [new-master]
 
 [new-worker]
-172.18.28.91
 
 [ceph-mons]
 172.18.29.170
 172.18.29.183
 172.18.29.212
-
-[baremetal:children]
-kube-master
-kube-worker
-load-balancer
-new-master
-new-worker
-
 
 [control]
 172.18.29.170
@@ -49,6 +26,7 @@ new-worker
 172.18.29.170 nic_info="['ens3:172.18.29.170:1011', 'ens4::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens4" vlan_network_nic=""
 172.18.29.183 nic_info="['ens3:172.18.29.183:1011', 'ens10::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens10" vlan_network_nic=""
 172.18.29.212 nic_info="['ens3:172.18.29.212:1011', 'ens9::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens9" vlan_network_nic=""
+172.18.28.91 nic_info="['ens3:172.18.28.91:1011', 'ens10::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens10" vlan_network_nic=""
 
 [storage]
 172.18.29.170
@@ -57,6 +35,22 @@ new-worker
 
 [voi]
 
+[kube-master:children]
+control
+
+[kube-worker:children]
+compute
+
+[load-balancer:children]
+control
+
+[baremetal:children]
+kube-master
+kube-worker
+load-balancer
+new-master
+new-worker
+
 [trochilus-api:children]
 control
 
@@ -64,7 +58,7 @@ control
 compute
 
 [prometheus:children]
-allnodes
+control
 
 [prometheus-node-exporter:children]
 control

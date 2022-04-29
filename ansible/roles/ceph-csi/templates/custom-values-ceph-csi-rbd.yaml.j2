@@ -156,7 +156,7 @@ storageClass:
   annotations: {}
   clusterID: {{ ceph_cluster_id }}
   dataPool: ""
-  pool: {{ rbd_pool_name }}
+  pool: "{{ osd_pools.kubernetes_pools.pool_name }}"
   imageFeatures: "layering"
   tryOtherMounters: false
   mounter: ""
@@ -184,7 +184,7 @@ secret:
   create: true
   name: csi-rbd-secret
   userID: admin
-  userKey: {{ ceph_admin_keyring }}
+  userKey: {{ mons_secret.client_admin.client_admin_secret }}
 
 cephconf: |
   [global]

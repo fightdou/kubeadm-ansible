@@ -9,7 +9,7 @@
 - name: Haproxy | 拉取相关镜像
   shell: "docker pull {{ item }}"
   with_items:
-  - "{{ lb_haproxy_image }}"
+  - "{{ kube_image_repository }}/haproxy:{{ kube_image_tag }}"
   - "{{ pod_infra_container_image }}"
 
 - name: Haproxy | 生成 haproxy static pod 文件
@@ -18,4 +18,3 @@
     dest: /etc/kubernetes/manifests/lb-kube-apiserver.yaml
     owner: root
     mode: 0644
-

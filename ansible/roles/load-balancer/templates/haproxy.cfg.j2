@@ -37,7 +37,7 @@ frontend healthz
 {% endif %}
 
 frontend kube_api_frontend
-    bind {% if inventory_hostname in groups['load-balancer'] %}{{ kube_apiserver_vip }}{% else %}127.0.0.1{% endif %}:{{ kube_apiserver_port }}
+    bind {% if inventory_hostname in groups['load-balancer'] %}0.0.0.0{% else %}127.0.0.1{% endif %}:{{ kube_apiserver_port }}
     mode tcp
     option tcplog
     default_backend kube_api_backend

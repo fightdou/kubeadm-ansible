@@ -1,5 +1,6 @@
 # 节点初始主备状态
 lb_keepalived_state: "{% if inventory_hostname == groups['load-balancer'][0] %}MASTER{% else %}BACKUP{% endif %}"
+lb_keepalived_priority: "{% if inventory_hostname == groups['load-balancer'][0] %}10{% else %}{{ groups['load-balancer'].index(inventory_hostname) + 1 }}{% endif %}"
 # 其他 Keepalived 节点的单点传播 IP
 lb_keepalived_unicast_peers: >-
   {%- for host in groups['load-balancer'] -%}

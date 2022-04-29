@@ -5,19 +5,9 @@
     - { role: baremetal,
         tags: baremetal }
 
-
-- name: Apply role prepare
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: prepare/base,
-        tags: base }
-    - { role: prepare/container,
-        tags: container}
-
 - name: Apply role load-balancer
   gather_facts: true
-  hosts: all
+  hosts: control
   roles:
     - { role: load-balancer,
         tags: load-balancer }
@@ -39,6 +29,13 @@
   roles:
     - { role: kube-worker,
         tags: kube-worker }
+
+- name: Apply role ingress
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: ingress,
+        tags: ingress }
 
 - name: Apply role ceph-csi
   gather_facts: true
@@ -70,7 +67,7 @@
 
 - name: Apply role prometheus
   gather_facts: true
-  hosts: all
+  hosts: prometheus
   roles:
     - { role: prometheus,
         tags: prometheus }

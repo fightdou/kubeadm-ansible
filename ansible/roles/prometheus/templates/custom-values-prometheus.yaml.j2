@@ -29,7 +29,7 @@ prometheusServerIP:
 alert_rule_dir: "{{ prometheus_alert_rule_dir }}"
 serviceAccountName: prometheus
 pushgateway_cleaner_job:
-  cron: "*/1 * * * *"
+  cron: "*/10 * * * *"
   history:
     success: 3
     failed: 1

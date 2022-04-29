@@ -67,10 +67,7 @@ lb_keepalived_password: "d0cker"
 # 区分多个 instance 的 VRRP 组播，同网段不能重复，取值在0-255之间
 lb_keepalived_router_id: 222
 # 负载均衡器健康检查端口
-lb_kube_apiserver_healthcheck_port: 61313
-# 默认所有节点权重 120
-lb_keepalived_priority: "120"
-
+lb_kube_apiserver_healthcheck_port: 8089
 
 ##############
 # Etcd options
@@ -91,17 +88,13 @@ etcd_backup_dir: "/var/lib/etcd/backup"
 install_ceph_rbd_csi: true
 create_rbd_storage_class: true
 rbd_storage_class_name: general
-rbd_pool_name: "kubernetes"
 rbd_service_port: 9081
 rbd_check_port: 9082
 install_ceph_cephfs_csi: true
 create_cephfs_storage_class: true
-cephfs_pool_name: "cephfs_data"
 cephfs_check_port: 9083
 cephfs_service_port: 9084
 cephfs_storage_class_name: cephfs-general
-rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
-rbd_ceph_user: client.admin
 
 #################
 # Ingress Options
@@ -113,8 +106,7 @@ ingress_controller_class: "k8s.io/ingress-nginx"
 # Libvirt Options
 #################
 ceph_rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
-ceph_rbd_ceph_user: client.admin
-ceph_admin_keyring: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
+ceph_rbd_admin_user: client.admin
 
 ###################
 # Trochilus Options
