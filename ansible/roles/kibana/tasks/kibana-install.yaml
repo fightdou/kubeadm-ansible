@@ -1,0 +1,30 @@
+- name: 创建 kibana values 目录
+  file:
+    name: /etc/kubernetes/plugins/kibana
+    state: directory
+
+- name: 复制 kibana charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "kibana"
+
+- name: 生成 kibana values.yml
+  template:
+    src: custom-values-kibana.yaml.j2
+    dest: /etc/kubernetes/plugins/kibana/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install kibana helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: kibana
+    chart_ref: "{{ helm_charts_dir }}/kibana"
+    values_files:
+      - /etc/kubernetes/plugins/kibana/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 180s
+    release_namespace: "{{ helm_install_namespace }}"
