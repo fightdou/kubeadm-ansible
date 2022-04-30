@@ -15,11 +15,11 @@ replica:
   pushgateway: 2
 
 nodeSelector:
-  control_role: enabled
+  {{ control_node_role_name }}: {{ node_role_value }}
 
 affinity:
-  key: control_role
-  value: enabled
+  key: {{ control_node_role_name }}
+  value: {{ node_role_value }}
 
 prometheusServerIP:
   {% for host in groups['prometheus'] -%}

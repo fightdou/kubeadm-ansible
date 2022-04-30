@@ -114,7 +114,8 @@ nodeAffinityPreset:
   key: ""
   values: []
 affinity: {}
-nodeSelector: {}
+nodeSelector:
+  {{ control_node_role_name }}: {{ node_role_value }}
 tolerations: []
 extraVolumes: []
 extraVolumeMounts: []
