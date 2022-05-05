@@ -11,7 +11,7 @@ route:
 receivers:
   - name: "web.hook"
     webhook_configs:
-    - url: "http://{{ lb_kube_apiserver_ip }}:{{ java_webhook_port }}/api/v1/alarm/log/webhook"
+    - url: "http://{{ kube_apiserver_vip }}:{{ java_webhook_port }}/api/v1/alarm/log/webhook"
 inhibit_rules:
 - source_match:
     severity: "critical"

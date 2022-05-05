@@ -12,7 +12,8 @@ spec:
   priorityClassName: system-cluster-critical
   containers:
   - name: lb-keepalived
-    image: {{ lb_keepalived_image }}
+    image: {{ kube_image_repository }}/keepalived:{{ kube_image_tag }}
+    imagePullPolicy: IfNotPresent
     env:
     - name: KEEPALIVED_VIRTUAL_IPS
       value: {{ kube_apiserver_ip | trim }}
@@ -36,7 +37,7 @@ spec:
       failureThreshold: 5
       initialDelaySeconds: 10
       httpGet:
-        host: 127.0.0.1
+        host: {{ inventory_hostname }}
         path: /healthz
         port: {{ lb_kube_apiserver_healthcheck_port }}
 {% endif %}

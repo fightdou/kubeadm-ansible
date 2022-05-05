@@ -75,10 +75,10 @@ conf:
     enabled_image_store: rbd
     rbd_store_config_file: /etc/ceph/ceph.conf
     rbd_store_user: admin
-    rbd_store_pool: images
+    rbd_store_pool: {{ osd_pools.images_pools.pool_name }}
   rbd1:
     rbd_ceph_conf: /etc/ceph/ceph.conf
-    rbd_pool: volumes
+    rbd_pool: {{ osd_pools.volume_pools.pool_name }}
     rbd_user: admin
     rbd_keyring_conf: /etc/ceph/ceph.client.admin.keyring
     rados_connect_timeout: -1
@@ -86,7 +86,7 @@ conf:
   vm_settings:
     virt_type: {{ trochilus_libvirt_driver }}
     default_root_disk_backend: rbd1
-    rbd_secret_uuid: {{ ceph.rbd_secret_uuid }}
+    rbd_secret_uuid: {{ ceph_rbd_secret_uuid }}
   voi_settings:
     voi_image_base_path: /var/lib/trochilus/voi/images
     voi_vm_base_path: /var/lib/trochilus/voi/vms
@@ -105,4 +105,4 @@ conf:
 
 ingress:
   enabled: true
-  ingressClassName: nginx
+  ingressClassName: {{ ingress_class_name }}

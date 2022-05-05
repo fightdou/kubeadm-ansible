@@ -9,8 +9,8 @@ qemu_max_files: 32768
 qemu_max_processes: 131072
 secret:
   rbd_secret_uuid: "{{ ceph_rbd_secret_uuid }}"
-  secret_user: "{{ ceph_rbd_ceph_user }}"
-  ceph_admin_keyring: "{{ ceph_admin_keyring }}"
+  secret_user: "{{ ceph_rbd_admin_user }}"
+  ceph_admin_keyring: "{{ mons_secret.client_admin.client_admin_secret }}"
 serviceAccountName: libvirt
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}

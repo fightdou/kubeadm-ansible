@@ -14,7 +14,8 @@ spec:
   priorityClassName: system-cluster-critical
   containers:
   - name: lb-nginx
-    image: {{ lb_haproxy_image }}
+    image: {{ kube_image_repository }}/haproxy:{{ kube_image_tag }}
+    imagePullPolicy: IfNotPresent
 {% if lb_kube_apiserver_healthcheck_port is defined %}
     livenessProbe:
       periodSeconds: 3
@@ -22,7 +23,7 @@ spec:
       failureThreshold: 5
       initialDelaySeconds: 10
       httpGet:
-        host: 127.0.0.1
+        host: {{ inventory_hostname }}
         path: /healthz
         port: {{ lb_kube_apiserver_healthcheck_port }}
 {% endif %}

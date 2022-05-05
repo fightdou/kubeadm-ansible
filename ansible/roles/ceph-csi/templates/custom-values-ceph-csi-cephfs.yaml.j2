@@ -11,7 +11,7 @@ serviceAccounts:
     name: cephfs-csi-provisioner
 
 csiConfig:
-  - clusterID: "{{ ceph_cluster_id }}"
+  - clusterID: "{{ fsid }}"
     monitors: 
     {% for host in groups['ceph-mons'] -%}
     - "{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}"
@@ -26,11 +26,11 @@ nodeplugin:
 
   httpMetrics:
     enabled: true
-    containerPort: 8081
+    containerPort: {{ cephfs_check_port }}
 
     service:
       enabled: true
-      servicePort: 8080
+      servicePort: {{ cephfs_service_port }}
       type: ClusterIP
       annotations: {}
       clusterIP: ""
@@ -76,11 +76,11 @@ provisioner:
 
   httpMetrics:
     enabled: true
-    containerPort: 8081
+    containerPort: {{ cephfs_check_port }}
 
     service:
       enabled: true
-      servicePort: 8080
+      servicePort: {{ cephfs_service_port }}
       type: ClusterIP
       annotations: {}
       clusterIP: ""
@@ -141,9 +141,9 @@ storageClass:
   create: "{{ create_cephfs_storage_class }}"
   name: "{{ cephfs_storage_class_name }}"
   annotations: {}
-  clusterID: {{ ceph_cluster_id }}
+  clusterID: {{ fsid }}
   fsName: {{ ceph_fs_name }}
-  pool: "{{ cephfs_pool_name }}"
+  pool: "{{ cephfs_pools.cephfs_data_pools.pool_name }}"
   fuseMountOptions: ""
   kernelMountOptions: ""
   mounter: ""
@@ -162,7 +162,7 @@ secret:
   create: true
   name: csi-cephfs-secret
   adminID: admin
-  adminKey: {{ ceph_admin_keyring }}
+  adminKey: {{ mons_secret.client_admin.client_admin_secret }}
 
 cephconf: |
   [global]
