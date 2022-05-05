@@ -42,22 +42,6 @@
     policy: allow
   ignore_errors: yes
 
-- name: Clear all iptables rule
-  command: iptables -F -t {{ item }}
-  with_list:
-    - filter
-    - nat
-    - mangle
-    - raw
-
-- name: Clear all iptables custom chains
-  command: iptables -X -t {{ item }}
-  with_list:
-    - filter
-    - nat
-    - mangle
-    - raw
-
 - name: Disable system swap partition table
   shell: "swapoff -a && sysctl -w vm.swappiness=0"
   ignore_errors: true

@@ -17,31 +17,31 @@
 #       - sg3-utils-udev
 #       - ntp
 
-- name: remove apparmor
-  apt:
-    state: absent
-    name: "{{ packages }}"
-  vars:
-    packages:
-      - apparmor
+# - name: remove apparmor
+#   apt:
+#     state: absent
+#     name: "{{ packages }}"
+#   vars:
+#     packages:
+#       - apparmor
 
-- name: Install kube ansible package
-  pip:
-    name: "{{ package }}"
-  vars:
-    package:
-      - kubernetes
-      - openshift
+# - name: Install kube ansible package
+#   pip:
+#     name: "{{ package }}"
+#   vars:
+#     package:
+#       - kubernetes
+#       - openshift
 
-- name: Install ansible galaxy
-  shell: ansible-galaxy collection install cloud.common
-  run_once: True
-  delegate_to: "localhost"
+# - name: Install ansible galaxy cloud.common
+#   shell: ansible-galaxy collection install cloud.common
+#   run_once: True
+#   delegate_to: "localhost"
 
-- name: Install ansible galaxy
-  shell: ansible-galaxy collection install kubernetes.core
-  run_once: True
-  delegate_to: "localhost"
+# - name: Install ansible galaxy kubernetes.core
+#   shell: ansible-galaxy collection install kubernetes.core
+#   run_once: True
+#   delegate_to: "localhost"
 
 # - name: 查看 docker-archive-keyring.gpg 是否存在
 #   shell: ls /usr/share/keyrings/docker-archive-keyring.gpg
@@ -54,6 +54,14 @@
 
 # - name: 添加 Docker apt 仓库
 #   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# - name: 添加 apt key gpg
+#   shell: curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
+
+# - name: 添加 Kubernetes apt 仓库
+#   apt_repository:
+#     repo: "deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main"
+#     state: present
 
 # - name: 更新 apt 仓库
 #   apt:
@@ -68,44 +76,31 @@
 #     - containerd.io
 #     state: present
 
-- name: 确认 Docker 配置是否有修改
-  template:
-    src: docker-daemon.json.j2
-    dest: /etc/docker/daemon.json
-    owner: root
-    mode: 0644
-  register: configuration_result
+# - name: 确认 Docker 配置是否有修改
+#   template:
+#     src: docker-daemon.json.j2
+#     dest: /etc/docker/daemon.json
+#     owner: root
+#     mode: 0644
+#   register: configuration_result
 
-- name: 重新加载 daemon
-  systemd:
-    daemon_reload: yes
+# - name: 重新加载 daemon
+#   systemd:
+#     daemon_reload: yes
 
-- name: 启动/重启 Docker
-  service:
-    name: docker
-    state: restarted
-    enabled: yes
-  when: 
-  - configuration_result.changed
+# - name: 启动/重启 Docker
+#   service:
+#     name: docker
+#     state: restarted
+#     enabled: yes
+#   when: 
+#   - configuration_result.changed
   
-- name: 设置 Docker 开机自启
-  service:
-    name: docker
-    state: started
-    enabled: yes
-
-# - name: 添加 apt key gpg
-#   shell: curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
-
-# - name: 添加 Kubernetes apt 仓库
-#   apt_repository:
-#     repo: "deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main"
-#     state: present
-
-# - name: 更新 apt 仓库
-#   apt:
-#     upgrade: yes
-#     update_cache: yes
+# - name: 设置 Docker 开机自启
+#   service:
+#     name: docker
+#     state: started
+#     enabled: yes
 
 # - name: 安装 kubeadm kubelet kubectl
 #   apt: 
@@ -121,5 +116,5 @@
 #     - etcd-client
 #     state: present
 
-- name: 配置 kubectl 命令行自动补全
-  shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+# - name: 配置 kubectl 命令行自动补全
+#   shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl

@@ -149,3 +149,4 @@
    - { role: kibana,
        tags: kibana,
        when: enable_kibana| bool }
+
