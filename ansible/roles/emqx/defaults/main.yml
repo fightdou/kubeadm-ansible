@@ -1,0 +1,15 @@
+---
+# defaults file for emqx
+k8s_virt_ip: "{{ lb_kube_apiserver_ip }}"
+k8s_virt_port: "{{ lb_kube_apiserver_port }}"
+emqx_image_tag: "{{ kube_image_tag }}"
+emqx_image_repository: "{{ kube_image_repository }}/emqx"
+emqx_pod_replicaCount: 3
+emqx_pod_pullPolicy: "{{ emqx_pod_pullPolicy }}"
+emqx_svc_type: "{{ emqx_svc_type }}"
+emqx_persistence: "{{ emqx_persistence | bool }}"
+emqx_persistence_accessMode: "{{ emqx_persistence_accessMode }}"
+emqx_persistence_size: "{{ emqx_persistence_size }}"
+emqx_persistence_storageClass: "{{ emqx_persistence_storageClass }}"
+emqx_hostnetwork: "{{ emqx_hostnetwork | bool }}"
+

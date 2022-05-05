@@ -175,3 +175,36 @@ redis_master_password: 123456
 redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
+
+################
+# emqx Options
+################
+emqx_pod_pullPolicy: IfNotPresent
+emqx_svc_type: ClusterIP
+emqx_persistence: true
+emqx_persistence_accessMode: ReadWriteOnce
+emqx_persistence_size: 20Mi
+emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
+emqx_hostnetwork: true
+
+
+#################
+# role开关
+#################
+enable_baremetal: True
+enable_load-balancer: True
+enable_kube-master: True
+enable_kube-worker: True
+enable_ingress: True
+enable_ceph-csi: True
+enable_mariadb: false
+enable_redis: false
+enable_emqx: True
+enable_libvirt: false
+enable_trochilus: false
+enable_prometheus: false
+enable_java: false
+enable_voi: false
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
