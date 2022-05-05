@@ -168,15 +168,6 @@ es_date_del_time: "0 1 * * *"
 kibana_node_port: 32000
 
 ################
-# Redis Options
-################
-redis_storage_size: 10Gi
-redis_master_password: 123456
-redis_master_group_name: mycluster
-redis_server_port: 6379
-redis_sentinel_port: 26379
-
-################
 # emqx Options
 ################
 emqx_pod_pullPolicy: IfNotPresent
@@ -208,3 +199,12 @@ enable_voi: false
 enable_elasticsearch: false
 enable_fluentd: false
 enable_kibana: false
+
+################
+# Redis Options
+################
+redis_storage_size: 10Gi
+redis_master_password: 123456
+redis_master_group_name: mycluster
+redis_server_port: 6379
+redis_sentinel_port: 26379

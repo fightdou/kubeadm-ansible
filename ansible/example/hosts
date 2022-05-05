@@ -8,10 +8,6 @@
 172.18.29.212 hostname=ceph3
 172.18.28.91 hostname=ceph4
 
-[new-master]
-
-[new-worker]
-
 [ceph-mons]
 172.18.29.170
 172.18.29.183
@@ -33,13 +29,19 @@
 172.18.29.183
 172.18.29.212
 
-[voi]
+[voi:children]
+control
 
 [kube-master:children]
 control
 
 [kube-worker:children]
 compute
+storage
+
+[new-master]
+
+[new-worker]
 
 [load-balancer:children]
 control
@@ -54,19 +56,14 @@ new-worker
 [ingress:children]
 control
 
-#####
 [ceph-csi:children]
 control
 
 [ceph-csi-cephfs:children]
 control
-compute
-storage
 
 [ceph-csi-rbd:children]
 control
-
-#####
 
 [mariadb: children]
 control
@@ -80,21 +77,12 @@ control
 [libvirt: children]
 compute
 
-####
-[trochilus:children]
-control
-compute
-
-########
 [trochilus-api:children]
 control
 
 [trochilus-agent:children]
 compute
-##########
 
-
-#####
 [prometheus:children]
 control
 
@@ -112,12 +100,8 @@ storage
 control
 compute
 storage
-#####
 
 [java:children]
-control
-
-[voi:children]
 control
 
 [elasticsearch:children]

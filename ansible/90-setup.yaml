@@ -80,13 +80,6 @@
         tags: emqx,
         when: enable_emqx| bool }
 
-- name: Apply role redis
-  gather_facts: true
-  hosts: all
-  roles:
-   - { role: redis,
-       tags: redis }
-
 - name: Apply role libvirt
   gather_facts: false
   hosts: libvirt
@@ -105,6 +98,14 @@
         tags: trochilus,
         when: enable_trochilus| bool }
 
+- name: Apply role java
+  gather_facts: false
+  hosts: java
+  roles:
+    - { role: java,
+        tags: java,
+        when: enable_java| bool }
+
 - name: Apply role prometheus
   gather_facts: false
   hosts: 
@@ -116,14 +117,6 @@
     - { role: prometheus,
         tags: prometheus,
         when: enable_prometheus| bool }
-
-- name: Apply role java
-  gather_facts: false
-  hosts: java
-  roles:
-    - { role: java,
-        tags: java,
-        when: enable_java| bool }
 
 - name: Apply role voi
   gather_facts: false
@@ -156,4 +149,3 @@
    - { role: kibana,
        tags: kibana,
        when: enable_kibana| bool }
-
