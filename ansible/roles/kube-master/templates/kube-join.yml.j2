@@ -28,3 +28,26 @@ controlPlaneEndpoint: "{{ apiServerEndpoint }}:{{ kube_apiserver_port }}"
 imageRepository: "{{ kube_image_repository }}"
 networking:
   podSubnet: {{ kube_pod_subnet }}
+{% if kube_proxy_mode == "ipvs" %}
+---
+apiVersion: kubeproxy.config.k8s.io/v1alpha1
+kind: KubeProxyConfiguration
+bindAddress: 0.0.0.0
+clientConnection:
+  acceptContentTypes: ""
+  burst: 10
+  contentType: application/vnd.kubernetes.protobuf
+  kubeconfig: /var/lib/kube-proxy/kubeconfig.conf
+  qps: 5
+clusterCIDR: {{ kube_pod_subnet }}
+configSyncPeriod: 15m0s
+conntrack:
+  maxPerCore: 32768
+  min: 131072
+  tcpCloseWaitTimeout: 1h0m0s
+  tcpEstablishedTimeout: 24h0m0s
+healthzBindAddress: 0.0.0.0:10256
+hostnameOverride: "{{ inventory_hostname }}"
+metricsBindAddress: 0.0.0.0:10249
+mode: "{{ kube_proxy_mode }}"
+{% endif %}

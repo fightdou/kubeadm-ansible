@@ -59,7 +59,31 @@
     state: absent
     marker: "# Ansible inventory hosts {mark}"
 
+- name: reset | check kube-ipvs0 network device
+  stat:
+    path: /sys/class/net/kube-ipvs0
+    get_attributes: no
+    get_checksum: no
+    get_mime: no
+  register: kube_ipvs0
+
+- name: reset | Remove kube-ipvs0
+  command: "ip link del kube-ipvs0"
+  when:
+    - kube_proxy_mode == 'ipvs'
+    - kube_ipvs0.stat.exists
+
+- name: 清除虚拟网卡
+  shell: "{{ item }} || true"
+  with_items:
+  - ip link del cni0
+
 - name: 重启网络
   systemd:
     name: NetworkManager
+    state: restarted
+
+- name: 重启docker
+  systemd:
+    name: docker
     state: restarted

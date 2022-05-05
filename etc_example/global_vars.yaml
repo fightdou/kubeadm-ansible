@@ -17,6 +17,7 @@ kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
 kubelet_cgroup_driver: systemd
+kube_proxy_mode: ipvs
 kubelet_root_dir: "/var/lib/kubelet"
 wait_plugins_ready: false
 docker_storage_dir: "/var/lib/docker"
@@ -165,3 +166,12 @@ es_date_del_time: "0 1 * * *"
 # kibana Options
 #################
 kibana_node_port: 32000
+
+################
+# Redis Options
+################
+redis_storage_size: 10Gi
+redis_master_password: 123456
+redis_master_group_name: mycluster
+redis_server_port: 6379
+redis_sentinel_port: 26379

@@ -7,7 +7,7 @@ image:
   host_exporter: {{ kube_image_repository }}/host-exporter:{{ kube_image_tag }}
   pushgateway_cleaner: {{ kube_image_repository }}/prometheus-pushgateway-cleaner:{{ kube_image_tag }}
 
-storageclass: general
+storageclass: {{ cephfs_storage_class_name }}
 size: 10
 
 replica:

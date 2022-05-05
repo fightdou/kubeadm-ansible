@@ -1,94 +1,101 @@
-- name: Apply role baremetal
-  gather_facts: true
-  hosts: baremetal
-  roles:
-    - { role: baremetal,
-        tags: baremetal }
+# - name: Apply role baremetal
+#   gather_facts: true
+#   hosts: baremetal
+#   roles:
+#     - { role: baremetal,
+#         tags: baremetal }
 
-- name: Apply role load-balancer
-  gather_facts: true
-  hosts: control
-  roles:
-    - { role: load-balancer,
-        tags: load-balancer }
+# - name: Apply role load-balancer
+#   gather_facts: true
+#   hosts: control
+#   roles:
+#     - { role: load-balancer,
+#         tags: load-balancer }
 
-- name: Apply role kube-master
-  gather_facts: true
-  hosts: 
-    - kube-master
-    - new-master
-  roles:
-    - { role: kube-master,
-        tags: kube-master }
+# - name: Apply role kube-master
+#   gather_facts: true
+#   hosts: 
+#     - kube-master
+#     - new-master
+#   roles:
+#     - { role: kube-master,
+#         tags: kube-master }
 
-- name: Apply role kube-worker
-  gather_facts: true
-  hosts: 
-    - kube-worker
-    - new-worker
-  roles:
-    - { role: kube-worker,
-        tags: kube-worker }
+# - name: Apply role kube-worker
+#   gather_facts: true
+#   hosts: 
+#     - kube-worker
+#     - new-worker
+#   roles:
+#     - { role: kube-worker,
+#         tags: kube-worker }
 
-- name: Apply role ingress
+# - name: Apply role ingress
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#     - { role: ingress,
+#         tags: ingress }
+
+# - name: Apply role ceph-csi
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#     - { role: ceph-csi,
+#         tags: ceph-csi }
+
+# - name: Apply role mariadb
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#     - { role: mariadb,
+#         tags: mariadb }
+
+# - name: Apply role libvirt
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#     - { role: libvirt,
+#         tags: libvirt }
+
+# - name: Apply role trochilus
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#     - { role: trochilus,
+#         tags: trochilus }
+
+# - name: Apply role prometheus
+#   gather_facts: true
+#   hosts: prometheus
+#   roles:
+#     - { role: prometheus,
+#         tags: prometheus }
+
+# - name: Apply role elasticsearch
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#    - { role: elasticsearch,
+#        tags: elasticsearch }
+
+# - name: Apply role fluentd
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#    - { role: fluentd,
+#        tags: fluentd }
+
+# - name: Apply role kibana
+#   gather_facts: true
+#   hosts: all
+#   roles:
+#    - { role: kibana,
+#        tags: kibana }
+
+- name: Apply role redis
   gather_facts: true
   hosts: all
   roles:
-    - { role: ingress,
-        tags: ingress }
-
-- name: Apply role ceph-csi
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: ceph-csi,
-        tags: ceph-csi }
-
-- name: Apply role mariadb
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: mariadb,
-        tags: mariadb }
-
-- name: Apply role libvirt
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: libvirt,
-        tags: libvirt }
-
-- name: Apply role trochilus
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: trochilus,
-        tags: trochilus }
-
-- name: Apply role prometheus
-  gather_facts: true
-  hosts: prometheus
-  roles:
-    - { role: prometheus,
-        tags: prometheus }
-
-- name: Apply role elasticsearch
-  gather_facts: true
-  hosts: all
-  roles:
-   - { role: elasticsearch,
-       tags: elasticsearch }
-
-- name: Apply role fluentd
-  gather_facts: true
-  hosts: all
-  roles:
-   - { role: fluentd,
-       tags: fluentd }
-
-- name: Apply role kibana
-  gather_facts: true
-  hosts: all
-  roles:
-   - { role: kibana,
-       tags: kibana }
+   - { role: redis,
+       tags: redis }
