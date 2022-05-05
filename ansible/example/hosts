@@ -51,12 +51,50 @@ load-balancer
 new-master
 new-worker
 
+[ingress:children]
+control
+
+#####
+[ceph-csi:children]
+control
+
+[ceph-csi-cephfs:children]
+control
+compute
+storage
+
+[ceph-csi-rbd:children]
+control
+
+#####
+
+[mariadb: children]
+control
+
+[redis: children]
+control
+
+[emqx: children]
+control
+
+[libvirt: children]
+compute
+
+####
+[trochilus:children]
+control
+compute
+
+########
 [trochilus-api:children]
 control
 
 [trochilus-agent:children]
 compute
+##########
 
+
+#####
 [prometheus:children]
 control
 
@@ -74,3 +112,21 @@ storage
 control
 compute
 storage
+#####
+
+[java:children]
+control
+
+[voi:children]
+control
+
+[elasticsearch:children]
+control
+
+[fluentd:children]
+control
+compute
+storage
+
+[kibana:children]
+control
