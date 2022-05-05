@@ -13,14 +13,22 @@
   - inventory_hostname not in (groups['kube-master'] + groups['new-master'])
   - not kubelet_conf_stat.stat.exists
 
+- name: 查看 k8s 节点 标签
+  shell: kubectl get nodes --show-labels | grep {{ compute_node_role_name }} | wc -l
+  register: node_role
+
 - name: 设置 compute node lables
   shell: kubectl label node {{ item }} {{ compute_node_role_name }}={{ node_role_value }}
   with_items: "{{ groups['compute'] }}"
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - node_role.stdout == "0"
 
 - name: 设置 storage node lables
   shell: kubectl label node {{ item }} {{ storage_node_role_name }}={{ node_role_value }}
   with_items: "{{ groups['storage'] }}"
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - node_role.stdout == "0"

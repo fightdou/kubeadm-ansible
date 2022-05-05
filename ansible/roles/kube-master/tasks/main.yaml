@@ -68,11 +68,17 @@
   when:
     - helm_version is not success
 
+- name: 查看 k8s 节点 标签
+  shell: kubectl get nodes --show-labels | grep {{ control_node_role_name }} | wc -l
+  register: node_role
+
 - name: 设置 control node lables
   shell: kubectl label node {{ item }} {{ control_node_role_name }}={{ node_role_value }}
   with_items: "{{ groups['control'] }}"
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - node_role.stdout == "0"
 
 # 备份etcd
 - block:
