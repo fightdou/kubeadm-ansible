@@ -11,7 +11,7 @@ serviceAccounts:
     name: rbd-csi-provisioner
 
 csiConfig:
-  - clusterID: "{{ ceph_cluster_id }}"
+  - clusterID: "{{ fsid }}"
     monitors: 
     {% for host in groups['ceph-mons'] -%}
     - "{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}"
@@ -154,7 +154,7 @@ storageClass:
   create: {{ create_rbd_storage_class }}
   name: {{ rbd_storage_class_name }}
   annotations: {}
-  clusterID: {{ ceph_cluster_id }}
+  clusterID: {{ fsid }}
   dataPool: ""
   pool: "{{ osd_pools.kubernetes_pools.pool_name }}"
   imageFeatures: "layering"

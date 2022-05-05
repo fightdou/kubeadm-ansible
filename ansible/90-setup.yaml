@@ -80,6 +80,13 @@
         tags: emqx,
         when: enable_emqx| bool }
 
+- name: Apply role redis
+  gather_facts: true
+  hosts: all
+  roles:
+   - { role: redis,
+       tags: redis }
+
 - name: Apply role libvirt
   gather_facts: false
   hosts: libvirt
