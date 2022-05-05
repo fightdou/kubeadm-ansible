@@ -1,91 +1,151 @@
+---
+- import_playbook: gather-facts.yml
+
 - name: Apply role baremetal
-  gather_facts: true
+  gather_facts: false
   hosts: baremetal
   roles:
     - { role: baremetal,
-        tags: baremetal }
-
-
-- name: Apply role prepare
-  gather_facts: true
-  hosts: all
-  roles:
-    - { role: prepare/base,
-        tags: base }
-    - { role: prepare/container,
-        tags: container}
+        tags: baremetal,
+        when: enable_baremetal| bool }
 
 - name: Apply role load-balancer
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: load-balancer
   roles:
     - { role: load-balancer,
-        tags: load-balancer }
+        tags: load-balancer,
+        when: enable_load-balancer| bool }
 
 - name: Apply role kube-master
-  gather_facts: true
+  gather_facts: false
   hosts: 
     - kube-master
     - new-master
   roles:
     - { role: kube-master,
-        tags: kube-master }
+        tags: kube-master,
+        when: enable_kube-master| bool }
 
 - name: Apply role kube-worker
-  gather_facts: true
+  gather_facts: false
   hosts: 
     - kube-worker
     - new-worker
   roles:
     - { role: kube-worker,
-        tags: kube-worker }
+        tags: kube-worker,
+        when: enable_kube-worker| bool }
 
-- name: Apply role plugins
-  gather_facts: true
-  hosts: all
+- name: Apply role ingress
+  gather_facts: false
+  hosts: ingress
   roles:
-    - { role: plugins,
-        tags: plugins }
+    - { role: ingress,
+        tags: ingress,
+        when: enable_ingress| bool }
 
 - name: Apply role ceph-csi
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: 
+    - ceph-csi
+    - ceph-csi-cephfs
+    - ceph-csi-rbd
   roles:
     - { role: ceph-csi,
-        tags: ceph-csi }
+        tags: ceph-csi,
+        when: enable_ceph-csi| bool }
 
 - name: Apply role mariadb
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: mariadb
   roles:
     - { role: mariadb,
-        tags: mariadb }
+        tags: mariadb,
+        when: enable_mariadb| bool }
+
+- name: Apply role redis
+  gather_facts: false
+  hosts: redis
+  roles:
+    - { role: redis,
+        tags: redis,
+        when: enable_redis| bool }
 
 - name: Apply role emqx
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: emqx
   roles:
     - { role: emqx,
-        tags: emqx }
+        tags: emqx,
+        when: enable_emqx| bool }
 
 - name: Apply role libvirt
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: libvirt
   roles:
     - { role: libvirt,
-        tags: libvirt }
+        tags: libvirt,
+        when: enable_libvirt| bool }
 
 - name: Apply role trochilus
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: 
+    - trochilus-api
+    - trochilus-agent
   roles:
     - { role: trochilus,
-        tags: trochilus }
+        tags: trochilus,
+        when: enable_trochilus| bool }
 
 - name: Apply role prometheus
-  gather_facts: true
-  hosts: all
+  gather_facts: false
+  hosts: 
+    - prometheus
+    - prometheus-node-exporter
+    - prometheus-collectd-exporter
+    - prometheus-host-exporter
   roles:
     - { role: prometheus,
-        tags: prometheus }
+        tags: prometheus,
+        when: enable_prometheus| bool }
 
+- name: Apply role java
+  gather_facts: false
+  hosts: java
+  roles:
+    - { role: java,
+        tags: java,
+        when: enable_java| bool }
+
+- name: Apply role voi
+  gather_facts: false
+  hosts: voi
+  roles:
+    - { role: voi,
+        tags: voi,
+        when: enable_voi| bool }
+
+- name: Apply role elasticsearch
+  gather_facts: false
+  hosts: elasticsearch
+  roles:
+   - { role: elasticsearch,
+       tags: elasticsearch,
+       when: enable_elasticsearch| bool }
+
+- name: Apply role fluentd
+  gather_facts: false
+  hosts: fluentd
+  roles:
+   - { role: fluentd,
+       tags: fluentd,
+       when: enable_fluentd| bool }
+
+- name: Apply role kibana
+  gather_facts: false
+  hosts: kibana
+  roles:
+   - { role: kibana,
+       tags: kibana,
+       when: enable_kibana| bool }

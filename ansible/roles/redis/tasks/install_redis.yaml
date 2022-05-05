@@ -1,0 +1,30 @@
+- name: 创建 redis values 目录
+  file:
+    name: /etc/kubernetes/plugins/redis
+    state: directory
+
+- name: 复制 redis charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "redis"
+
+- name: 生成 redis values.yml
+  template:
+    src: custom-values-redis.yaml.j2
+    dest: /etc/kubernetes/plugins/redis/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install redis helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: redis
+    chart_ref: "{{ helm_charts_dir }}/redis"
+    values_files:
+      - /etc/kubernetes/plugins/redis/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 120s
+    release_namespace: "{{ helm_install_namespace }}"

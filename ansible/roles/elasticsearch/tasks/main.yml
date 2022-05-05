@@ -1,0 +1,3 @@
+- import_tasks: elasticsearch-install.yaml
+  run_once: True
+  delegate_to: "localhost"

@@ -35,11 +35,6 @@
         {% endfor %}
   become: True
 
-- name: Update apt cache
-  apt:
-    update_cache: yes
-  become: True
-
 - name: Set firewall default policy
   become: True
   ufw:
@@ -63,30 +58,51 @@
     - mangle
     - raw
 
-- name: remove apparmor
-  apt:
+- name: Disable system swap partition table
+  shell: "swapoff -a && sysctl -w vm.swappiness=0"
+  ignore_errors: true
+
+- name: Delete fstab swap config
+  lineinfile:
+    path: /etc/fstab
+    regexp: 'swap'
     state: absent
-    name: "{{ packages }}"
-  vars:
-    packages:
-      - apparmor
+    backup: yes
 
+- name: 设置系统参数
+  template: 
+    src: 95-k8s-sysctl.conf.j2 
+    dest: /etc/sysctl.d/95-k8s-sysctl.conf
 
+- name: 生效系统参数
+  shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"
+  ignore_errors: true
 
-- name: Install kube ansible package
-  pip:
-    name: "{{ package }}"
-  vars:
-    package:
-      - kubernetes
-      - openshift
+- name: 添加集群节点 hostname 信息到 hosts 文件中
+  blockinfile:
+    path: /etc/hosts
+    block: |-
+      {% for item in (groups['all']|unique) -%}
+      {% if hostvars[item]['ansible_host'] is defined -%}
+      {{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }} {{ hostvars[item]['inventory_hostname'] }}.{{ kube_dns_domain }}
+      {% endif %}
+      {% endfor %}
+      {% for custom_hosts_ip, custom_hosts_addr in custom_hosts.items() %}
+      {{ custom_hosts_ip }} {{ ([ custom_hosts_addr ] | flatten ) | join(' ') }}
+      {% endfor %}
+    state: present
+    create: yes
+    backup: yes
+    marker: "# Ansible inventory hosts {mark}"
 
-- name: Install ansible galaxy
-  shell: ansible-galaxy collection install cloud.common
-  run_once: True
-  delegate_to: "localhost"
+- name: 创建 systemd 配置目录
+  file: 
+    name: /etc/systemd/system.conf.d 
+    state: directory 
 
-- name: Install ansible galaxy
-  shell: ansible-galaxy collection install kubernetes.core
-  run_once: True
-  delegate_to: "localhost"
+- name: 设置系统 ulimits
+  template: 
+    src: 30-k8s-ulimits.conf.j2
+    dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
+
+- import_tasks: install_package.yaml

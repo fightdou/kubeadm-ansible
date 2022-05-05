@@ -1,0 +1,30 @@
+- name: 创建 ingress values 目录
+  file:
+    name: /etc/kubernetes/plugins/ingress
+    state: directory
+
+- name: 复制 ingress charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "ingress"
+
+- name: 生成 ingress values.yml
+  template:
+    src: custom-values-ingress.yaml.j2
+    dest: /etc/kubernetes/plugins/ingress/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install ingress helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: ingress
+    chart_ref: "{{ helm_charts_dir }}/ingress"
+    values_files:
+      - /etc/kubernetes/plugins/ingress/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 120s
+    release_namespace: "{{ helm_install_namespace }}"

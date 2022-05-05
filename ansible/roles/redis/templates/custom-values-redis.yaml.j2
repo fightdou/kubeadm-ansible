@@ -1,0 +1,131 @@
+image:
+  repository: redis
+  tag: 5.0.5-alpine
+  pullPolicy: IfNotPresent
+replicas: 3
+
+labels: {}
+
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
+sysctlImage:
+  enabled: false
+  command: []
+  registry: docker.io
+  repository: bitnami/minideb
+  tag: latest
+  pullPolicy: Always
+  mountHostSys: false
+# schedulerName:
+redis:
+  port: 6379
+  masterGroupName: mymaster
+  config:
+    min-slaves-to-write: 1
+    min-slaves-max-lag: 5   # Value in seconds
+    maxmemory: "0"
+    maxmemory-policy: "volatile-lru"
+    save: "900 1"
+    repl-diskless-sync: "yes"
+    rdbcompression: "yes"
+    rdbchecksum: "yes"
+  # customConfig: |-
+
+  resources: {}
+  #  requests:
+  #    memory: 200Mi
+  #    cpu: 100m
+  #  limits:
+  #    memory: 700Mi
+
+## Sentinel specific configuration options
+sentinel:
+  port: 26379
+  quorum: 2
+  config:
+    down-after-milliseconds: 10000
+    ## Failover timeout value in milliseconds
+    failover-timeout: 180000
+    parallel-syncs: 5
+  # customConfig: |-
+      # Define configuration here
+
+  resources: {}
+  #  requests:
+  #    memory: 200Mi
+  #    cpu: 100m
+  #  limits:
+  #    memory: 200Mi
+
+securityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+  runAsNonRoot: true
+hardAntiAffinity: true
+
+## Additional affinities to add to the Redis server pods.
+##
+## Example:
+##   nodeAffinity:
+##     preferredDuringSchedulingIgnoredDuringExecution:
+##       - weight: 50
+##         preference:
+##           matchExpressions:
+##             - key: spot
+##               operator: NotIn
+##               values:
+##                 - "true"
+
+additionalAffinities: {}
+## Example:
+## affinity: |
+##   podAntiAffinity:
+##     requiredDuringSchedulingIgnoredDuringExecution:
+##       - labelSelector:
+##           matchLabels:
+##             app: {{ template "redis-ha.name" . }}
+##             release: {{ .Release.Name }}
+##         topologyKey: kubernetes.io/hostname
+##     preferredDuringSchedulingIgnoredDuringExecution:
+##       - weight: 100
+##         podAffinityTerm:
+##           labelSelector:
+##             matchLabels:
+##               app:  {{ template "redis-ha.name" . }}
+##               release: {{ .Release.Name }}
+##           topologyKey: failure-domain.beta.kubernetes.io/zone
+
+affinity: |
+
+exporter:
+  enabled: false
+  image: oliver006/redis_exporter
+  tag: v0.31.0
+  pullPolicy: IfNotPresent
+  port: 9121
+  scrapePath: /metrics
+  resources: {}
+  extraArgs: {}
+
+podDisruptionBudget: {}
+  # maxUnavailable: 1
+  # minAvailable: 1
+# redisPassword:
+# existingSecret:
+authKey: auth
+
+persistentVolume:
+  enabled: true
+  # storageClass: "-"
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+  annotations: {}
+init:
+  resources: {}
+hostPath:
+  # path: "/data/{{ .Release.Name }}"
+  chown: true

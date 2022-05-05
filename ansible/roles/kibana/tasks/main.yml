@@ -1,0 +1,4 @@
+---
+- import_tasks: kibana-install.yaml
+  run_once: True
+  delegate_to: "localhost"

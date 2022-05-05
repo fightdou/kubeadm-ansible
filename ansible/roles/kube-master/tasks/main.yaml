@@ -4,7 +4,7 @@
   register: kubelet_conf_stat
 
 - name: 拉取 master 节点需要拉取的镜像列表
-  shell: kubeadm config images pull --image-repository={{ kube_image_repository }}
+  shell: kubeadm config images pull --image-repository={{ kube_image_repository }} --kubernetes-version={{ kubernetes_version }}
 
 # 初始化第一个 master 节点
 - include_tasks: master-init.yml
@@ -24,7 +24,7 @@
     name: /etc/kubernetes/plugins/network-plugin
     state: directory
   run_once: True
-  delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 # 配置网络CNI插件
 - name: 渲染 flannel 配置文件
@@ -32,12 +32,7 @@
     src: kube-flannel.yaml.j2
     dest: /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
   run_once: True
-  delegate_to: "localhost"
-
-# - name: 部署 flannel
-#   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/kube-flannel.yaml
-#   run_once: True
-#   delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: Deploy flannel in yaml file
   kubernetes.core.k8s:
@@ -50,17 +45,11 @@
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-
-# - name: 轮询等待 flannel 运行
-#   shell: kubectl get pod --all-namespaces -o wide | grep 'flannel' | awk '{print $4}'
-#   register: pod_status
-#   until: "'Running' in pod_status.stdout"
-#   retries: 12
-#   delay: 5
-#   ignore_errors: true
-#   when: wait_plugins_ready|bool
-#   run_once: True
-#   delegate_to: "localhost"
+- name: 校验 helm 命令是否存在
+  shell: helm version
+  register: helm_version
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - block:
   - name: 安装 helm
@@ -74,27 +63,16 @@
       src: /opt/linux-amd64/helm
       dest: /usr/local/bin
       mode: "0755"
-
   run_once: True
-  delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - helm_version is not success
 
 - name: 设置 control node lables
   shell: kubectl label node {{ item }} {{ control_node_role_name }}={{ node_role_value }}
-  with_items: groups['control']
+  with_items: "{{ groups['control'] }}"
   run_once: True
-  delegate_to: "localhost"
-
-- name: 设置 compute node lables
-  shell: kubectl label node {{ item }} {{ compute_node_role_name }}={{ node_role_value }}
-  with_items: groups['compute']
-  run_once: True
-  delegate_to: "localhost"
-
-- name: 设置 storage node lables
-  shell: kubectl label node {{ item }} {{ storage_node_role_name }}={{ node_role_value }}
-  with_items: groups['storage']
-  run_once: True
-  delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 # 备份etcd
 - block:
@@ -123,4 +101,5 @@
       name: Clean etcd databases backup file
       job: >
         /usr/local/bin/etcdtools cleanup
-  when: inventory_hostname == groups['kube-master'][0]
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
