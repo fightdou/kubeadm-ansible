@@ -1,0 +1,281 @@
+clusterName: "elasticsearch"
+nodeGroup: "master"
+masterService: ""
+
+roles:
+  master: "true"
+  ingest: "true"
+  data: "true"
+  remote_cluster_client: "true"
+  ml: "true"
+
+replicas: 1
+minimumMasterNodes: 1
+esMajorVersion: ""
+clusterDeprecationIndexing: "false"
+
+esConfig: {}
+esJvmOptions: {}
+extraEnvs: []
+envFrom: []
+secretMounts: []
+hostAliases: []
+
+image: {{ kube_image_repository }}/elasticsearch
+imageTag: {{ kube_image_tag }}
+imagePullPolicy: "IfNotPresent"
+
+podAnnotations:
+  {}
+
+labels: {}
+
+esJavaOpts: "" 
+resources:
+  requests:
+    cpu: "1000m"
+    memory: "2Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+initResources:
+  {}
+
+networkHost: "0.0.0.0"
+
+volumeClaimTemplate:
+  storageClassName: {{ rbd_storage_class_name }}
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: {{ es_storage_size }}
+
+rbac:
+  create: false
+  serviceAccountAnnotations: {}
+  serviceAccountName: ""
+  automountToken: true
+
+podSecurityPolicy:
+  create: false
+  name: ""
+  spec:
+    privileged: true
+    fsGroup:
+      rule: RunAsAny
+    runAsUser:
+      rule: RunAsAny
+    seLinux:
+      rule: RunAsAny
+    supplementalGroups:
+      rule: RunAsAny
+    volumes:
+      - secret
+      - configMap
+      - persistentVolumeClaim
+      - emptyDir
+
+persistence:
+  enabled: true
+  labels:
+    enabled: false
+  annotations: {}
+
+extraVolumes:
+  []
+
+extraVolumeMounts:
+  []
+
+extraContainers:
+  []
+
+extraInitContainers:
+  []
+
+priorityClassName: ""
+antiAffinityTopologyKey: "kubernetes.io/hostname"
+antiAffinity: "hard"
+nodeAffinity: {}
+podManagementPolicy: "Parallel"
+enableServiceLinks: true
+protocol: http
+httpPort: {{ es_http_port }}
+transportPort: 9300
+
+service:
+  enabled: true
+  labels: {}
+  labelsHeadless: {}
+  type: ClusterIP
+  publishNotReadyAddresses: false
+  nodePort: ""
+  annotations: {}
+  httpPortName: http
+  transportPortName: transport
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: ""
+
+updateStrategy: RollingUpdate
+maxUnavailable: 1
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+
+terminationGracePeriod: 120
+sysctlVmMaxMapCount: 262144
+
+readinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 3
+  timeoutSeconds: 5
+
+clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
+schedulerName: ""
+imagePullSecrets: []
+nodeSelector: {}
+tolerations: []
+
+ingress:
+  enabled: false
+  annotations: {}
+  className: "nginx"
+  pathtype: ImplementationSpecific
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+  tls: []
+
+nameOverride: ""
+fullnameOverride: ""
+healthNameOverride: ""
+
+lifecycle: {}
+
+sysctlInitContainer:
+  enabled: true
+
+keystore: []
+
+networkPolicy:
+  http:
+    enabled: false 
+  transport:
+    enabled: false
+
+tests:
+  enabled: true
+
+fsGroup: ""
+
+diagnosticMode:
+  enabled: false
+  command:
+    - sleep
+  args:
+    - infinity
+
+curator:
+  name: curator
+  image:
+    image_name: {{ kube_image_repository }}/elasticsearch-curator:{{ kube_image_tag }}
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  cronjob:
+    schedule: {{ es_date_del_time }}
+    annotations: {}
+    concurrencyPolicy: ""
+    failedJobsHistoryLimit: ""
+    successfulJobsHistoryLimit: ""
+    jobRestartPolicy: Never
+
+  schedulerName: ""
+ 
+  podAnnotations: {}
+  podLabels: {}
+  podAffinityPreset: ""
+  podAntiAffinityPreset: ""
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  initContainers: []
+ 
+  sidecars: []
+  affinity: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  topologySpreadConstraints: []
+
+  rbac:
+    enabled: false
+  serviceAccount:
+    create: true
+    name: ""
+
+  psp:
+    create: false
+
+  hooks:
+    install: false
+    upgrade: false
+ 
+  dryrun: false
+ 
+  command: ["curator"]
+
+  env: {}
+  configMaps:
+    action_file_yml: |-
+      ---
+      actions:
+        1:
+          action: delete_indices
+          description: "Clean up ES by deleting old indices"
+          options:
+            timeout_override:
+            continue_if_exception: False
+            disable_action: False
+            ignore_empty_list: True
+          filters:
+          - filtertype: age
+            source: name
+            direction: older
+            timestring: '%Y.%m.%d'
+            unit: days
+            unit_count: {{ es_data_save_days }}
+            field:
+            stats_result:
+            epoch:
+            exclude: False
+
+    config_yml: |-
+      ---
+      client:
+        hosts:
+          - elasticsearch-master.{{ helm_install_namespace }}.svc.cluster.local
+        port: {{ es_http_port }}
+  resources:
+ 
+    limits: {}
+    requests: {}
+  priorityClassName: ""
+  extraVolumes: []
+  extraVolumeMounts: []
+  extraInitContainers: []

@@ -71,3 +71,25 @@
   roles:
     - { role: prometheus,
         tags: prometheus }
+
+- name: Apply role elasticsearch
+  gather_facts: true
+  hosts: all
+  roles:
+   - { role: elasticsearch,
+       tags: elasticsearch }
+
+- name: Apply role fluentd
+  gather_facts: true
+  hosts: all
+  roles:
+   - { role: fluentd,
+       tags: fluentd }
+
+- name: Apply role kibana
+  gather_facts: true
+  hosts: all
+  roles:
+   - { role: kibana,
+       tags: kibana }
+
