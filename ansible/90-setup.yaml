@@ -51,6 +51,13 @@
     - { role: mariadb,
         tags: mariadb }
 
+- name: Apply role redis
+  gather_facts: true
+  hosts: all
+  roles:
+   - { role: redis,
+       tags: redis }
+
 - name: Apply role libvirt
   gather_facts: true
   hosts: all

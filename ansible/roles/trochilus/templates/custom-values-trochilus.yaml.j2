@@ -9,9 +9,9 @@ image:
 serviceAccountName: trochilus
 nodeSelector:
   trochilus_agent:
-    compute_role: enabled
+    {{ compute_node_role_name }}: {{ node_role_value }}
   trochilus_api:
-    control_role: enabled
+    {{ control_node_role_name }}: {{ node_role_value }}
 clusterDomainSuffix: cluster.local
 replica: 2
 
