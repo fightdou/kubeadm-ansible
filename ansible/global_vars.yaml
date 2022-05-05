@@ -167,6 +167,18 @@ es_date_del_time: "0 1 * * *"
 kibana_node_port: 32000
 
 
+################
+# emqx Options
+################
+emqx_pod_pullPolicy: IfNotPresent
+emqx_svc_type: ClusterIP
+emqx_persistence: true
+emqx_persistence_accessMode: ReadWriteOnce
+emqx_persistence_size: 20Mi
+emqx_persistence_storageClass: general
+emqx_hostnetwork: true
+
+
 #################
 # role开关
 #################

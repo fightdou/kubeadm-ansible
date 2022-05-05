@@ -53,12 +53,13 @@ ingress:
     path: /mqtt
     tls: []
 initContainers: {}
-nodeSelector: {}
+nodeSelector:
+  "{{ control_node_role_name }}": "{{ node_role_value }}"
 persistence:
-  accessMode: ReadWriteOnce
-  enabled: true
-  size: 20Mi
-  storageClass: general
+  accessMode: "{{ emqx_persistence_accessMode }}"
+  enabled: "{{ emqx_persistence | bool }}"
+  size: "{{ emqx_persistence_size }}"
+  storageClass: "{{ emqx_persistence_storageClass }}"
 podManagementPolicy: Parallel
 podSecurityContext:
   enabled: true
@@ -90,5 +91,5 @@ service:
   type: "{{ emqx_svc_type }}"
   ws: 8083
   wss: 8084
-hostnetwork: "{{ hostnetwork | bool }}"
+hostnetwork: "{{ emqx_hostnetwork | bool }}"
 tolerations: []
