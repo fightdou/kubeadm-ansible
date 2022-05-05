@@ -92,4 +92,3 @@
   roles:
    - { role: kibana,
        tags: kibana }
-
