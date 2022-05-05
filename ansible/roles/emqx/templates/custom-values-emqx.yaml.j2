@@ -1,4 +1,15 @@
-affinity: {}
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - "emqx"
+          topologyKey: "kubernetes.io/hostname"
 containerSecurityContext:
   enabled: true
   runAsNonRoot: true
