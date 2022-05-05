@@ -13,14 +13,3 @@ api_interface:
 #     nic_info: {{ nic_info }}
 #   {% endfor %}
 
-
-
-
-
-###### emqx_config #####
-emqx_image_tag: 4.4.3
-emqx_image_repository: emqx/emqx
-emqx_pod_replicaCount: 3
-emqx_pod_pullPolicy: IfNotPresent
-emqx_svc_type: NodePort
-

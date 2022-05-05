@@ -61,6 +61,13 @@
     - { role: mariadb,
         tags: mariadb }
 
+- name: Apply role emqx
+  gather_facts: true
+  hosts: all
+  roles:
+    - { role: emqx,
+        tags: emqx }
+
 - name: Apply role libvirt
   gather_facts: true
   hosts: all
