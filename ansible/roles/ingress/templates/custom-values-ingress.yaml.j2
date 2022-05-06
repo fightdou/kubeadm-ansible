@@ -1,6 +1,7 @@
 global:
   imageRegistry: ""
-  imagePullSecrets: []
+  imagePullSecrets:
+    - "{{ docker_register_secrets_name }}"
 nameOverride: ""
 fullnameOverride: ""
 commonLabels: {}
@@ -11,7 +12,6 @@ image:
   repository: nginx-ingress-controller
   tag: {{ kube_image_tag }}
   pullPolicy: IfNotPresent
-  pullSecrets: "{{ docker_register_secrets_name }}"
 containerPorts:
   http: 80
   https: 443

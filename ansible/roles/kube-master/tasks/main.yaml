@@ -99,8 +99,18 @@
   when:
     - node_role.stdout == "0"
 
+- name: 查看 docker register 是否创建
+  shell: kubectl get secrets -n {{ helm_install_namespace }} | grep {{ docker_register_secrets_name }} | wc -l
+  register: docker_result
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
 - name: 创建 harbor register secrets
-  shell: kubectl create secret docker-registry {{ docker_register_secrets }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+  shell: kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }} -n {{ helm_install_namespace }}
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - docker_result.stdout == "0"
 
 # 备份etcd
 - block:

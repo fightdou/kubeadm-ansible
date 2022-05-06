@@ -214,6 +214,10 @@ spec:
           hostPath:
             path: {{ .Values.kubeletDir }}/plugins/{{ .Values.driverName }}/mountinfo
             type: DirectoryOrCreate
+{{- if .Values.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecrets }}
+{{- end }}
 {{- if .Values.nodeplugin.affinity }}
       affinity:
 {{ toYaml .Values.nodeplugin.affinity | indent 8 -}}
@@ -226,7 +230,3 @@ spec:
       tolerations:
 {{ toYaml .Values.nodeplugin.tolerations | indent 8 -}}
 {{- end -}}
-      {{- if .Values.image.pullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecrets }}
-      {{- end }}

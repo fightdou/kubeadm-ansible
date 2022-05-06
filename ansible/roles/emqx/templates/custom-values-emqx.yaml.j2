@@ -35,7 +35,8 @@ image:
   pullPolicy: "{{ emqx_pod_pullPolicy }}"
   repository: "{{ emqx_image_repository }}"
   tag: "{{ emqx_image_tag }}"
-  pullSecrets: "{{ docker_register_secrets_name }}
+  pullSecrets: 
+    - "{{ docker_register_secrets_name }}"
 ingress:
   annotations: {}
   dashboard:
@@ -61,7 +62,7 @@ ingress:
     tls: []
 initContainers: {}
 nodeSelector:
-  "{{ control_node_role_name }}": "{{ node_role_value }}"
+  {{ control_node_role_name }}: "{{ node_role_value }}"
 persistence:
   accessMode: "{{ emqx_persistence_accessMode }}"
   enabled: "{{ emqx_persistence | bool }}"

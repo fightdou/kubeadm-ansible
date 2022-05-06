@@ -13,8 +13,6 @@ image:
   tag: {{ kube_image_tag }}
   pullSecrets: "{{ docker_register_secrets_name }}"
 
-imagePullSecrets: []
-
 serviceAccount:
   create: true
   annotations: {}
