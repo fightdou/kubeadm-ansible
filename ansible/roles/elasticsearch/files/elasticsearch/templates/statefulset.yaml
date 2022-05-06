@@ -374,6 +374,10 @@ spec:
 {{ toYaml .Values.extraVolumeMounts | indent 10 }}
         {{- end }}
         {{- end }}
+{{- if .Values.pullSecrets }}
+        imagePullSecrets:
+          - name: {{ .Values.pullSecrets }}
+{{- end }}
 {{- if .Values.lifecycle }}
         lifecycle:
 {{ toYaml .Values.lifecycle | indent 10 }}

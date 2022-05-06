@@ -6,6 +6,9 @@ custom_hosts:
   - kunlun.cluster.local
 api_interface: ens3
 harbor_address: 172.18.31.155
+harbor_username: admin
+harbor_password: Harbor12345
+docker_register_secrets_name: docker-register-secrets
 
 ####################
 # Kubernetes options

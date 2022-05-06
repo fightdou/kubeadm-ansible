@@ -57,6 +57,10 @@ spec:
                 - {{ .Values.affinity.value }}
             weight: 100
       restartPolicy: Always
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       {{- if .Values.nodeSelector }}

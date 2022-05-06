@@ -57,6 +57,10 @@ spec:
             name: trochilus-bin
             subPath: kolla-toolbox-sudoer
       restartPolicy: OnFailure
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName }}
       serviceAccountName: {{ .Values.serviceAccountName }}
       volumes:

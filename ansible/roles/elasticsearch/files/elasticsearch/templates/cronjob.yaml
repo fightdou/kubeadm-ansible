@@ -124,4 +124,8 @@ spec:
             {{- if .Values.curator.sidecars }}
             {{- include "common.tplvalues.render" ( dict "value" .Values.curator.sidecars "context" $) | nindent 12 }}
             {{- end }}
+          {{- if .Values.pullSecrets }}
+          imagePullSecrets:
+            - name: {{ .Values.pullSecrets }}
+          {{- end }}
   {{- end }}

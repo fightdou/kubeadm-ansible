@@ -31,6 +31,7 @@ hostAliases: []
 image: "{{ kube_image_repository }}/kibana"
 imageTag: {{ kube_image_tag }}
 imagePullPolicy: "IfNotPresent"
+pullSecrets: "{{ docker_register_secrets_name }}"
 
 # additionals labels
 labels: {}

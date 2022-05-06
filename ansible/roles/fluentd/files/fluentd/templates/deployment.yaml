@@ -38,4 +38,8 @@ spec:
         {{- end }}
     spec:
       {{- include "fluentd.pod" . | nindent 6 }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
 {{- end }}
