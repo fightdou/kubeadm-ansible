@@ -1,0 +1,30 @@
+- name: 创建 guest-server values 目录
+  file:
+    name: /etc/kubernetes/plugins/guest-server
+    state: directory
+
+- name: 复制 guest-server charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "guest-server"
+
+- name: 生成 guest-server values.yml
+  template:
+    src: custom-values-guest-server.yaml.j2
+    dest: /etc/kubernetes/plugins/guest-server/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install guest-server helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: guest-server
+    chart_ref: "{{ helm_charts_dir }}/guest-server"
+    values_files:
+      - /etc/kubernetes/plugins/guest-server/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 120s
+    release_namespace: "{{ helm_install_namespace }}"

@@ -1,0 +1,17 @@
+---
+image: "guest-server:v3.0"
+pullPolicy: "IfNotPresent"
+
+# Allows you to add any config files in /opt/microservice/kly/bin/config
+# such as kls.yml
+klyConfig:
+    mqtt_svc_addr: tcp://emqx:1883
+    prometheus_svc_addr: http://prometheus/metrics/job/pushgateway/instance/
+
+service:
+  type: NodePort
+  nodePort: 33000
+
+serviceAccountName: guest-server
+nodeSelector:
+  compute_role: enabled

@@ -1,0 +1,3 @@
+- import_tasks: guest-server-install.yaml
+  run_once: True
+  delegate_to: "localhost"

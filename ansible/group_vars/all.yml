@@ -20,3 +20,4 @@ enable_voi: false
 enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
+enable_guest_server: true

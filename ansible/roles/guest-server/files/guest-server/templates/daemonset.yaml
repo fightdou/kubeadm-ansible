@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app.kubernetes.io/name: guest-server
+    app.kubernetes.io/component: guest-server
+    app.kubernetes.io/release_group: guest-server
+  name: guest-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: guest-server
+      app.kubernetes.io/component: guest-server
+      app.kubernetes.io/release_group: guest-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: guest-server
+        app.kubernetes.io/component: guest-server
+        app.kubernetes.io/release_group: guest-server
+    spec:
+      containers:
+        - name: guest-server
+          image: {{ .Values.image }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          securityContext:
+            privileged: true
+            readOnlyRootFilesystem: false
+          volumeMounts:
+            - name: guest-server-config
+              mountPath: /opt/microservice/kly/bin/config/
+            - name: var-lib-libvirt
+              mountPath: /var/lib/libvirt
+              mountPropagation: Bidirectional
+            - name: var-lib-guest-server
+              mountPath: /var/lib/guest-server
+              mountPropagation: Bidirectional  
+            - name: var-run-libvirt
+              mountPath: /var/run/libvirt
+              mountPropagation: Bidirectional   
+            - name: var-log-klylog 
+              mountPath: /var/log/klylog/
+              mountPropagation: Bidirectional    
+      volumes:
+        - name: guest-server-config
+          configMap:
+            name: guest-server-config
+        - name: var-lib-libvirt
+          hostPath:
+            path: /var/lib/libvirt
+            type: ""
+        - name: var-lib-guest-server
+          hostPath:
+             path: /var/lib/guest-server
+             type: ""   
+        - name: var-run-libvirt
+          hostPath:
+             path: /var/run/libvirt
+             type: ""
+        - name: var-log-klylog
+          hostPath:
+             path: /var/log/klylog/
+             type: ""
+            
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
