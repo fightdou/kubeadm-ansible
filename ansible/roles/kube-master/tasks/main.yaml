@@ -45,6 +45,25 @@
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
+# 配置 metrics-server
+- name: 渲染 metrics-server 配置文件
+  template:
+    src: metrics-server.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/metrics-server.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy metrics server in yaml file
+  kubernetes.core.k8s:
+    src: /etc/kubernetes/plugins/network-plugin/metrics-server.yaml
+    namespace: default
+    state: present
+    wait: yes
+    wait_sleep: 5
+    wait_timeout: 60
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
 - name: 校验 helm 命令是否存在
   shell: helm version
   register: helm_version
