@@ -182,23 +182,23 @@ emqx_hostnetwork: true
 #################
 # role开关
 #################
-enable_baremetal: True
-enable_load-balancer: True
-enable_kube-master: True
-enable_kube-worker: True
-enable_ingress: True
-enable_ceph-csi: True
-enable_mariadb: false
-enable_redis: false
-enable_emqx: True
-enable_libvirt: false
-enable_trochilus: false
-enable_prometheus: false
+enable_baremetal: true
+enable_load_balancer: true
+enable_kube_master: true
+enable_kube_worker: true
+enable_ingress: true
+enable_ceph_csi: true
+enable_mariadb: true
+enable_redis: true
+enable_emqx: true
+enable_libvirt: true
+enable_trochilus: true
+enable_prometheus: true
 enable_java: false
 enable_voi: false
-enable_elasticsearch: false
-enable_fluentd: false
-enable_kibana: false
+enable_elasticsearch: true
+enable_fluentd: true
+enable_kibana: true
 
 ################
 # Redis Options

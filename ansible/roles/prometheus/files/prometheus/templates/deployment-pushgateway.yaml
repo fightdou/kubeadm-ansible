@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: pushgateway
-  replicas: 1
+  replicas: {{ .Values.replica.pushgateway }}
   template:
     metadata:
       labels:

@@ -1,4 +1,4 @@
 
 - import_tasks: libvirt-install.yaml
   run_once: True
-  delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"

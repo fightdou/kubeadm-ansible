@@ -106,7 +106,13 @@ spec:
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15
-          resources: {}
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "1024Mi"
+              cpu: "2000m"
           securityContext:
             privileged: true
             readOnlyRootFilesystem: false

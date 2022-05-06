@@ -8,9 +8,6 @@ image:
   pushgateway_cleaner: jorinvo/prometheus-pushgateway-cleaner:latest
   thanos: thanosio/thanos:v0.25.2
 
-storageclass: general
-size: 10
-
 nodeSelector:
   control_role: enabled
 

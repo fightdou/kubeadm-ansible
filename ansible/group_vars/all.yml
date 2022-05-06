@@ -3,20 +3,20 @@
 #################
 # role开关
 #################
-enable_baremetal: True
-enable_load-balancer: True
-enable_kube-master: True
-enable_kube-worker: True
-enable_ingress: True
-enable_ceph-csi: True
-enable_mariadb: True
-enable_redis: True
-enable_emqx: True
-enable_libvirt: True
-enable_trochilus: True
-enable_prometheus: True
-enable_java: True
-enable_voi: True
-enable_elasticsearch: True
-enable_fluentd: True
-enable_kibana: True
+enable_baremetal: true
+enable_load_balancer: true
+enable_kube_master: true
+enable_kube_worker: true
+enable_ingress: true
+enable_ceph_csi: true
+enable_mariadb: true
+enable_redis: true
+enable_emqx: true
+enable_libvirt: true
+enable_trochilus: true
+enable_prometheus: true
+enable_java: false
+enable_voi: false
+enable_elasticsearch: true
+enable_fluentd: true
+enable_kibana: true

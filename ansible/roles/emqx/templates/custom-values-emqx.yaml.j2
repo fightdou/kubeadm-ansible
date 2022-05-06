@@ -20,11 +20,6 @@ emqxConfig:
   EMQX_CLUSTER__DISCOVERY: k8s
   EMQX_CLUSTER__K8S__ADDRESS_TYPE: ip
   EMQX_CLUSTER__K8S__APISERVER: https://{{ k8s_virt_ip }}:{{ k8s_virt_port }}
-  EMQX_CLUSTER__K8S__APP_NAME: '{{ .Release.Name }}'
-  EMQX_CLUSTER__K8S__NAMESPACE: '{{ .Release.Namespace }}'
-  EMQX_CLUSTER__K8S__SERVICE_NAME: '{{ .Release.Name }}-headless'
-  # EMQX_CLUSTER__K8S__SUFFIX: svc.cluster.local
-  EMQX_NAME: '{{ .Release.Name }}'
   EMQX_MANAGEMENT__LISTENER__HTTP: '8082'
 emqxLicenseSecretName: null
 emqxLoadedModules: |

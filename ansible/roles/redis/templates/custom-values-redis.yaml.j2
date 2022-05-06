@@ -39,6 +39,7 @@ redis:
       cpu: 100m
     limits:
       memory: 700Mi
+      cpu: 500m
 
 sentinel:
   port: "{{ redis_sentinel_port }}"
