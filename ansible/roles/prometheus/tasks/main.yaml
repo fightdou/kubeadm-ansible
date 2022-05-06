@@ -8,6 +8,6 @@
 
 - import_tasks: install_prometheus_charts.yaml
   run_once: True
-  delegate_to: "localhost"
+  delegate_to: "{{ groups['kube-master'][0] }}"
   when:
   - inventory_hostname in groups['prometheus']

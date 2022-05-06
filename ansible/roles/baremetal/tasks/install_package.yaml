@@ -1,120 +1,128 @@
-# - name: Update apt cache
-#   apt:
-#     update_cache: yes
-#   become: True
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: True
 
-# - name: Install pip3 package
-#   apt:
-#     state: present
-#     name: "{{ packages }}"
-#   vars:
-#     packages:
-#       - python3-pip
-#       - git
-#       - rsync
-#       - python3-virtualenv
-#       - iptables
-#       - sg3-utils-udev
-#       - ntp
+- name: Install pip3 package
+  apt:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python3-pip
+      - git
+      - rsync
+      - python3-virtualenv
+      - iptables
+      - sg3-utils-udev
+      - ntp
+      - jq
+      - ipvsadm
 
-# - name: remove apparmor
-#   apt:
-#     state: absent
-#     name: "{{ packages }}"
-#   vars:
-#     packages:
-#       - apparmor
+- name: remove apparmor
+  apt:
+    state: absent
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - apparmor
 
-# - name: Install kube ansible package
-#   pip:
-#     name: "{{ package }}"
-#   vars:
-#     package:
-#       - kubernetes
-#       - openshift
+- name: Install kube ansible package
+  pip:
+    name: "{{ package }}"
+  vars:
+    package:
+      - kubernetes
+      - openshift
 
-# - name: Install ansible galaxy cloud.common
-#   shell: ansible-galaxy collection install cloud.common
-#   run_once: True
-#   delegate_to: "localhost"
+- name: Install ansible galaxy cloud.common
+  shell: ansible-galaxy collection install cloud.common
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
-# - name: Install ansible galaxy kubernetes.core
-#   shell: ansible-galaxy collection install kubernetes.core
-#   run_once: True
-#   delegate_to: "localhost"
+- name: Install ansible galaxy kubernetes.core
+  shell: ansible-galaxy collection install kubernetes.core
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
-# - name: 查看 docker-archive-keyring.gpg 是否存在
-#   shell: ls /usr/share/keyrings/docker-archive-keyring.gpg
-#   ignore_errors: True
-#   register: result
+- name: 查看 docker-archive-keyring.gpg 是否存在
+  shell: ls /usr/share/keyrings/docker-archive-keyring.gpg
+  ignore_errors: True
+  register: result
 
-# - name: 添加 Docker GPG 公钥
-#   shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-#   when: result is not success
+- name: 添加 Docker GPG 公钥
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  when: result is not success
 
-# - name: 添加 Docker apt 仓库
-#   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+- name: 查看 docker 源是否存在
+  shell: ls /etc/apt/sources.list.d/docker.list
+  ignore_errors: True
+  register: docker_apt_source
 
-# - name: 添加 apt key gpg
-#   shell: curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
+- name: 添加 Docker apt 仓库
+  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  when: docker_apt_source is not success
 
-# - name: 添加 Kubernetes apt 仓库
-#   apt_repository:
-#     repo: "deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main"
-#     state: present
+- name: 添加 apt key gpg
+  shell: curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
 
-# - name: 更新 apt 仓库
-#   apt:
-#     upgrade: yes
-#     update_cache: yes
+- name: 添加 Kubernetes apt 仓库
+  apt_repository:
+    repo: "deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main"
+    state: present
 
-# - name: 安装docker
-#   apt:
-#     name: 
-#     - docker-ce
-#     - docker-ce-cli
-#     - containerd.io
-#     state: present
+- name: 更新 apt 仓库
+  apt:
+    upgrade: yes
+    update_cache: yes
 
-# - name: 确认 Docker 配置是否有修改
-#   template:
-#     src: docker-daemon.json.j2
-#     dest: /etc/docker/daemon.json
-#     owner: root
-#     mode: 0644
-#   register: configuration_result
+- name: 安装docker
+  apt:
+    name: 
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    state: present
 
-# - name: 重新加载 daemon
-#   systemd:
-#     daemon_reload: yes
+- name: 确认 Docker 配置是否有修改
+  template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    mode: 0644
+  register: configuration_result
 
-# - name: 启动/重启 Docker
-#   service:
-#     name: docker
-#     state: restarted
-#     enabled: yes
-#   when: 
-#   - configuration_result.changed
+- name: 重新加载 daemon
+  systemd:
+    daemon_reload: yes
+
+- name: 启动/重启 Docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
+  when: 
+  - configuration_result.changed
   
-# - name: 设置 Docker 开机自启
-#   service:
-#     name: docker
-#     state: started
-#     enabled: yes
+- name: 设置 Docker 开机自启
+  service:
+    name: docker
+    state: started
+    enabled: yes
 
-# - name: 安装 kubeadm kubelet kubectl
-#   apt: 
-#     name:
-#     - "kubectl=1.23.5-00"
-#     - "kubelet=1.23.5-00"
-#     - "kubeadm=1.23.5-00"
-#     state: present
+- name: 安装 kubeadm kubelet kubectl
+  apt: 
+    name:
+    - "kubectl=1.23.5-00"
+    - "kubelet=1.23.5-00"
+    - "kubeadm=1.23.5-00"
+    state: present
 
-# - name: 安装 etcdctl 工具
-#   apt:
-#     name:
-#     - etcd-client
-#     state: present
+- name: 安装 etcdctl 工具
+  apt:
+    name:
+    - etcd-client
+    state: present
 
-# - name: 配置 kubectl 命令行自动补全
-#   shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+- name: 配置 kubectl 命令行自动补全
+  shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
