@@ -10,4 +10,4 @@ klyConfig:
 
 serviceAccountName: guest-server
 nodeSelector:
-  compute_role: enabled
+  {{ compute_node_role_name }}: {{ node_role_value }}
