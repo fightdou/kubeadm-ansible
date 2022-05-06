@@ -36,6 +36,10 @@ spec:
                 cpu: 102m
                 memory: 180Mi
           restartPolicy: OnFailure
+          {{- if .Values.image.pullSecrets }}
+          imagePullSecrets:
+            - name: {{ .Values.image.pullSecrets }}
+          {{- end }}
           serviceAccount: {{ .Values.serviceAccountName}}
           serviceAccountName: {{ .Values.serviceAccountName}}
           {{- if .Values.nodeSelector }}

@@ -78,6 +78,10 @@ spec:
           - name: prometheus-etc
             mountPath: /etc/prometheus
       restartPolicy: Always
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       {{- if .Values.nodeSelector }}

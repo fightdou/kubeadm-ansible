@@ -2,6 +2,8 @@
 rbac:
   create: true
 
+pullSecrets: {{ docker_register_secrets_name }}
+
 serviceAccounts:
   nodeplugin:
     create: true

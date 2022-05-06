@@ -1,6 +1,6 @@
 image:
   mariadb: {{ kube_image_repository }}/mariadb:{{ kube_image_tag }}
-
+  pullSecrets: {{ docker_register_secrets_name }}
 mariadb_password: {{ mariadb_root_password }}
 storageclass: {{ cephfs_storage_class_name }}
 pvc:

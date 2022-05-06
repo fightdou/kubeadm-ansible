@@ -42,6 +42,10 @@ spec:
             name: prometheus-etc
             subPath: host-exporter.yml
       restartPolicy: Always
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       hostNetwork: true
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}

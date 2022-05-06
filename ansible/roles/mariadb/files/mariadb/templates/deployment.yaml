@@ -85,6 +85,10 @@ spec:
           name: data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       serviceAccount: mariadb
       serviceAccountName: mariadb
       volumes:

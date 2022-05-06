@@ -8,7 +8,7 @@ data:
     #!/bin/bash
     echo "
     [DEFAULT]
-    debug = True
+    debug = false
     [agent_rest_client]
     [agent_settings]
     bind_host = ${NODE_ID}

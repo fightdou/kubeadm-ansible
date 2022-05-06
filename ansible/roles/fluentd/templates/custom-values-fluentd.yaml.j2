@@ -11,6 +11,7 @@ image:
   repository: {{ kube_image_repository }}/fluentd
   pullPolicy: "IfNotPresent"
   tag: {{ kube_image_tag }}
+  pullSecrets: "{{ docker_register_secrets_name }}"
 
 imagePullSecrets: []
 
