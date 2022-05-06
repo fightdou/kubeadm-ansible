@@ -80,6 +80,9 @@
   when:
     - node_role.stdout == "0"
 
+- name: 创建 harbor register secrets
+  shell: kubectl create secret docker-registry {{ docker_register_secrets }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+
 # 备份etcd
 - block:
   - name: 第一个 etcd 节点创建 etcd 备份目录

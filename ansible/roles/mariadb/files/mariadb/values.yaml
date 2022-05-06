@@ -1,5 +1,6 @@
 image:
   mariadb: bitnami/mariadb:10.5.15-debian-10-r52
+  pullSecrets: ""
 mariadb_password: 123456
 storageclass: cephfs-general
 pvc:

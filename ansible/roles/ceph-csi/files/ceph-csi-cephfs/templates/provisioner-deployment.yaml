@@ -229,6 +229,10 @@ spec:
           emptyDir: {
             medium: "Memory"
           }
+{{- if .Values.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecrets }}
+{{- end }}
 {{- if .Values.provisioner.affinity }}
       affinity:
 {{ toYaml .Values.provisioner.affinity | indent 8 -}}

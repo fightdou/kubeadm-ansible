@@ -60,6 +60,10 @@ spec:
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       hostNetwork: {{ .Values.hostNetwork }}
       {{- if .Values.topologySpreadConstraints }}
       topologySpreadConstraints: {{- toYaml .Values.topologySpreadConstraints | nindent 8 }}

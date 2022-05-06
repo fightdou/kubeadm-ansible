@@ -231,6 +231,10 @@ spec:
                   path: oidc-token
                   expirationSeconds: 3600
                   audience: ceph-csi-kms
+{{- if .Values.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecrets }}
+{{- end }}
 {{- if .Values.nodeplugin.affinity }}
       affinity:
 {{ toYaml .Values.nodeplugin.affinity | indent 8 -}}

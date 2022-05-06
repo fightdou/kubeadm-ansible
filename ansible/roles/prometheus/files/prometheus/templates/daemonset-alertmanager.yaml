@@ -79,6 +79,10 @@ spec:
         - mountPath: /etc/alertmanager/alertmanager.yaml
           name: alertmanager-etc
       hostNetwork: true
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       restartPolicy: Always
       {{- if .Values.nodeSelector }}

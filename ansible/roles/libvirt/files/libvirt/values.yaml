@@ -1,6 +1,6 @@
 image:
   libvirt: kolla/ubuntu-source-nova-libvirt:yoga
-
+  pullSecrets: ""
 libvirt_tls: false
 nova_libvirt_port: 16509
 # The number of max files qemu can open

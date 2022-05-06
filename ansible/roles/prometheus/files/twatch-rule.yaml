@@ -3,10 +3,10 @@ groups:
     rules:
     # host
     - record: TWatch:Host::CPUAllUsedUtilization
-      expr: (sum(100 - collectd_cpu_percent{cpu="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100
+      expr: (sum(100 - collectd_cpu_percent{type="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100
 
     - record: TWatch:Host::CPUAllIdleUtilization
-      expr: (sum(collectd_cpu_percent{host!="",cpu="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100
+      expr: (sum(collectd_cpu_percent{host!="",type="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100
 
     - record: TWatch:Host::MemoryUsedInPercent
       expr: (sum(collectd_memory{memory="used", host!=""}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100
@@ -15,10 +15,10 @@ groups:
       expr: (sum(collectd_memory{host!="",memory!="used"}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100
 
     - record: TWatch:Host::CPUAllUsedUtilizationAVG
-      expr: avg((sum(100 - collectd_cpu_percent{cpu="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100)
+      expr: avg((sum(100 - collectd_cpu_percent{type="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100)
 
     - record: TWatch:Host::CPUAllIdleUtilizationAVG
-      expr: avg((sum(collectd_cpu_percent{host!="",cpu="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100)
+      expr: avg((sum(collectd_cpu_percent{host!="",type="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100)
 
     - record: TWatch:Host::MemoryUsedInPercentAVG
       expr: avg((sum(collectd_memory{memory="used", host!=""}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100)
@@ -48,22 +48,22 @@ groups:
       expr: avg ((node_filesystem_size_bytes{device=~"/.*"} - node_filesystem_avail_bytes{device=~"/.*"}) / node_filesystem_size_bytes{device=~"/.*"} * 100) by (host, host_ip)
 
     - record: TWatch:Host::CPUAverageUsedUtilization
-      expr: avg((sum(100 - collectd_cpu_percent{cpu="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100) by (host,host_ip)
+      expr: avg((sum(100 - collectd_cpu_percent{type="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100) by (host,host_ip)
 
     - record: TWatch:Host::CPUUsedUtilization
-      expr: abs(100 - collectd_cpu_percent{cpu="idle", host!=""})
+      expr: abs(100 - collectd_cpu_percent{type="idle", host!=""})
 
     - record: TWatch:Host::CPUUserUtilization
-      expr: collectd_cpu_percent{cpu="user", host!=""}
+      expr: collectd_cpu_percent{type="user", host!=""}
 
     - record: TWatch:Host::CPUWaitUtilization
-      expr: collectd_cpu_percent{cpu="wait", host!=""}
+      expr: collectd_cpu_percent{type="wait", host!=""}
 
     - record: TWatch:Host::CPUSystemUtilization
-      expr: collectd_cpu_percent{cpu="system", host!=""}
+      expr: collectd_cpu_percent{type="system", host!=""}
 
     - record: TWatch:Host::CPUIdleUtilization
-      expr: collectd_cpu_percent{cpu="idle", host!=""}
+      expr: collectd_cpu_percent{type="idle", host!=""}
 
     - record: TWatch:Host::MemoryUsedBytes
       expr: collectd_memory{memory="used", host!=""}

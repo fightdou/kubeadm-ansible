@@ -4,6 +4,7 @@ image:
   entrypoint: quay.io/airshipit/kubernetes-entrypoint:v1.0.0
   db_init: kolla/centos-source-kolla-toolbox:yoga
   db_sync: 172.18.31.155/kubernetes/trochilus-agent:latest
+  pullSecrets: ""
 
 serviceAccountName: trochilus
 nodeSelector:

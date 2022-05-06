@@ -1,6 +1,6 @@
 image:
   libvirt: {{ kube_image_repository }}/ubuntu-source-nova-libvirt:{{ kube_image_tag }}
-
+  pullSecrets: {{ docker_register_secrets_name }}
 libvirt_tls: false
 nova_libvirt_port: 16509
 # The number of max files qemu can open

@@ -46,6 +46,10 @@ spec:
       {{- if .Values.hostAliases }}
       hostAliases: {{ toYaml .Values.hostAliases | nindent 6 }}
       {{- end }}
+      {{- if .Values.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecrets }}
+      {{- end }}
       volumes:
         {{- range .Values.secretMounts }}
         - name: {{ .name }}

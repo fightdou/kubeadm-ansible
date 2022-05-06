@@ -5,6 +5,7 @@ image:
   entrypoint: {{ kube_image_repository }}/kubernetes-entrypoint:{{ kube_image_tag }}
   db_init: {{ kube_image_repository }}/centos-source-kolla-toolbox:{{ kube_image_tag }}
   db_sync: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
+  pullSecrets: {{ docker_register_secrets_name }}
 
 serviceAccountName: trochilus
 nodeSelector:
