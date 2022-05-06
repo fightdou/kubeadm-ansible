@@ -149,3 +149,11 @@
    - { role: kibana,
        tags: kibana,
        when: enable_kibana| bool }
+
+- name: Apply role guest-server
+  gather_facts: false
+  hosts: libvirt
+  roles:
+   - { role: guest-server,
+       tags: guest-server,
+       when: enable_guest_server| bool }

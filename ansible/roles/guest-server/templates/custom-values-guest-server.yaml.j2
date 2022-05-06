@@ -1,0 +1,14 @@
+---
+image: {{ kube_image_repository }}/guest-server:{{ kube_image_tag }}
+pullPolicy: "IfNotPresent"
+pullSecrets: {{ docker_register_secrets_name }}
+
+# Allows you to add any config files in /opt/microservice/kly/bin/config
+# such as kls.yml
+klyConfig:
+    mqtt_svc_addr: tcp://emqx.{{ helm_install_namespace }}.svc.cluster.local:1883
+    prometheus_svc_addr: http://pushgateway.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
+
+serviceAccountName: guest-server
+nodeSelector:
+  {{ compute_node_role_name }}: {{ node_role_value }}

@@ -1,0 +1,14 @@
+---
+image: "guest-server:latest"
+pullPolicy: "IfNotPresent"
+pullSecrets: "docker_register_secrets_name"
+
+# Allows you to add any config files in /opt/microservice/kly/bin/config
+# such as kls.yml
+klyConfig:
+    mqtt_svc_addr: tcp://emqx:1883
+    prometheus_svc_addr: http://prometheus/metrics/job/pushgateway/instance/
+
+serviceAccountName: guest-server
+nodeSelector:
+  compute_role: enabled

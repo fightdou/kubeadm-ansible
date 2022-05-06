@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guest-server-config
+  namespace: default
+
+data:
+  kly.yaml: |
+    mqtt:
+      url: '{{ .Values.klyConfig.mqtt_svc_addr }}'
+
+    udp:
+      fwd:
+        start: 60000
+        size: 5000
+
+    prometheus:
+      url: '{{ .Values.klyConfig.prometheus_svc_addr }}'
