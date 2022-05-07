@@ -24,7 +24,6 @@ hostAliases: []
 image: {{ kube_image_repository }}/elasticsearch
 imageTag: {{ kube_image_tag }}
 imagePullPolicy: "IfNotPresent"
-pullSecrets: {{ docker_register_secrets_name }}
 
 podAnnotations:
   {}
@@ -145,7 +144,8 @@ readinessProbe:
 
 clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 schedulerName: ""
-imagePullSecrets: []
+imagePullSecrets:
+  - name: "{{ docker_register_secrets_name }}"
 nodeSelector: {}
 tolerations: []
 
