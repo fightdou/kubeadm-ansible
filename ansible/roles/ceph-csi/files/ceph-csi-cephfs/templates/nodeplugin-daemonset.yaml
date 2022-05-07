@@ -226,7 +226,7 @@ spec:
       tolerations:
 {{ toYaml .Values.nodeplugin.tolerations | indent 8 -}}
 {{- end -}}
-      {{- if .Values.image.pullSecrets }}
+{{- if .Values.pullSecrets }}
       imagePullSecrets:
-        - name: {{ .Values.image.pullSecrets }}
-      {{- end }}
+        - name: {{ .Values.pullSecrets }}
+{{- end }}

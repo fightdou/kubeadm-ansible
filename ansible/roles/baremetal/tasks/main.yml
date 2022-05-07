@@ -53,6 +53,16 @@
     state: absent
     backup: yes
 
+- name: 加载br_netfilter模块
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: 加载ip_conntrack模块
+  modprobe:
+    name: ip_conntrack
+    state: present
+
 - name: 设置系统参数
   template: 
     src: 95-k8s-sysctl.conf.j2 
