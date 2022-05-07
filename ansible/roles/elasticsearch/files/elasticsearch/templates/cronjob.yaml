@@ -44,6 +44,10 @@ spec:
           annotations: {{- toYaml .Values.curator.podAnnotations | nindent 12 }}
           {{- end }}
         spec:
+          {{- if .Values.imagePullSecrets }}
+          imagePullSecrets:
+{{ toYaml .Values.imagePullSecrets | indent 12 }}
+          {{- end }}
           volumes:
             - name: config-volume
               configMap:
@@ -124,8 +128,4 @@ spec:
             {{- if .Values.curator.sidecars }}
             {{- include "common.tplvalues.render" ( dict "value" .Values.curator.sidecars "context" $) | nindent 12 }}
             {{- end }}
-          {{- if .Values.pullSecrets }}
-          imagePullSecrets:
-            - name: {{ .Values.pullSecrets }}
-          {{- end }}
   {{- end }}
