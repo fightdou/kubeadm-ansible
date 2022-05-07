@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsd-web
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      fsd: web
+  replicas: {{ .Values.replica }}
+  template:
+    metadata:
+      labels:
+        fsd: web
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: fsd
+                    operator: In
+                    values:
+                    - web
+              topologyKey: 'kubernetes.io/hostname'
+      containers:
+        - name: fsd-web
+          image: {{ .Values.image.fsd_web }}
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.fsd_web.port }}
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 50
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.fsd_web.port }}
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 50
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "1024Mi"
+              cpu: "2000m"
+          ports:
+            - name: {{ .Values.service.fsd_web.name }}
+              containerPort: {{ .Values.service.fsd_web.port }}
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: fsd-etc
+              subPath: nginx.conf
+            - mountPath: /etc/nginx/conf/fsd.conf
+              name: fsd-etc
+              subPath: fsd.conf
+      securityContext: {}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      nodeSelector: {}
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: fsd-etc
+          name: fsd-etc

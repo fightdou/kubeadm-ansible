@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsd
+spec:
+  replicas: {{ .Values.replica }}
+  selector:
+    matchLabels:
+      type: fsd
+  template:
+    metadata:
+      labels:
+        type: fsd
+    spec:
+      containers:
+        - name: fsd
+          image: {{ .Values.image.fsd }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.service.fsd_webhook.port }}
+              protocol: TCP
+              name: {{ .Values.service.fsd_webhook.name }}
+            - containerPort: {{ .Values.service.fsd.port }}
+              protocol: TCP
+              name: {{ .Values.service.fsd.name }}
+          volumeMounts:
+            - name: fsd-log
+              mountPath: /log
+            - name: fsd-prometheus-rule
+              mountPath: /home/static/prometheus/rules
+            - name: fsd-prometheus-alert
+              mountPath: /home/static/prometheus/alert/alertmanager.yml
+            - name: fsd-voi
+              mountPath: /mnt/voi
+            - name: fsd-upload
+              mountPath: /root/upload
+            - name: fsd-static
+              mountPath: /mnt/fsd/static
+          env:
+            - name: env.fsd.spring.mysql.password
+              value: "{{ .Values.fsd_job_env.mariadb_password }}"
+            - name: env.fsd.spring.redis.master
+              value: "{{ .Values.fsd_env.redis_master_name }}"
+            - name: env.fsd.spring.redis.servers
+              value: "{{ .Values.fsd_env.redis_server_address }}"
+            - name: env.fsd.common.netty.codec.mac
+              value: "{{ .Values.fsd_env.netty_codec_mac }}"
+            - name: env.fsd.biz.deploy.mode
+              value: "{{ .Values.fsd_env.deploy_mode }}"
+            - name: env.fsd.biz.deploy.vip
+              value: "{{ .Values.fsd_env.deploy_vip }}"
+            - name: env.fsd.biz.deploy.node.ip
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: env.fsd.biz.deploy.node.username
+              value: "{{ .Values.fsd_env.deploy_node_username }}"
+            - name: env.fsd.biz.deploy.node.password
+              value: "{{ .Values.fsd_env.deploy_node_password }}"
+            - name: env.fsd.biz.desktop.bt.portStart
+              value: "{{ .Values.fsd_env.desktop_bt_port_start }}"
+            - name: env.fsd.biz.desktop.bt.portEnd
+              value: "{{ .Values.fsd_env.desktop_bt_port_end }}"
+            - name: env.fsd.biz.clouddisk.password
+              value: "{{ .Values.fsd_env.cloud_disk_password }}"
+            - name: env.fsd.biz.clouddisk.rootPath
+              value: "{{ .Values.fsd_env.cloud_disk_root_path }}"
+            - name: env.fsd.biz.clouddisk.sharedDiskMapPath
+              value: "{{ .Values.fsd_env.cloud_disk_share_disk_path }}"
+            - name: env.fsd.biz.clouddisk.cloudDiskUsername
+              value: "{{ .Values.fsd_env.cloud_disk_username }}"
+            - name: env.fsd.biz.clouddisk.cloudDiskPassword
+              value: "{{ .Values.fsd_env.cloud_disk_password }}"
+      volumes:
+        - name: fsd-log
+          hostPath:
+            path: "{{ .Values.mount_dir.fsd_log }}"
+            type: DirectoryOrCreate
+        - name: fsd-prometheus-rule
+          hostPath:
+            path: "{{ .Values.mount_dir.prometheus_rule }}"
+            type: DirectoryOrCreate
+        - name: fsd-prometheus-alert
+          hostPath:
+            path: "{{ .Values.mount_dir.alertmanager_conf }}"
+            type: DirectoryOrCreate
+        - name: fsd-voi
+          hostPath:
+            path: "{{ .Values.mount_dir.voi_dir }}"
+            type: DirectoryOrCreate
+        - name: fsd-upload
+          hostPath:
+            path: "{{ .Values.mount_dir.upload_dir }}"
+            type: DirectoryOrCreate
+        - name: fsd-static
+          hostPath:
+            path: "{{ .Values.mount_dir.fsd_static }}"
+            type: DirectoryOrCreate
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      serviceAccount: {{ .Values.serviceAccountName }}

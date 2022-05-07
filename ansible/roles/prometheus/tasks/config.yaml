@@ -5,6 +5,20 @@
     recurse: yes
     mode: 0755
 
+- name: 创建 prometheus alert-rule 共享目录
+  file:
+    name: "{{ prometheus_alert_rule_dir }}"
+    state: directory
+    recurse: yes
+    mode: 0755
+
+- name: 创建 alertmanager 共享目录
+  file:
+    name: "{{ prometheus_alertmanager_dir }}"
+    state: directory
+    recurse: yes
+    mode: 0755
+
 - name: 创建 prometheus 数据存储目录
   file:
     name: /etc/prometheus/data
@@ -25,4 +39,4 @@
 - name: 生成 alertmanager 配置文件
   template:
     src: alertmanager.yaml.j2
-    dest: "{{ prometheus_alert_rule_dir }}/alertmanager.yaml"
+    dest: "{{ prometheus_alertmanager_dir }}/alertmanager.yml"

@@ -8,9 +8,7 @@ image:
   pushgateway_cleaner: {{ kube_image_repository }}/prometheus-pushgateway-cleaner:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
   
-replica:
-  query: 2
-  pushgateway: 2
+replica: "{{ replica_num }}"
 
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
@@ -25,6 +23,7 @@ prometheusServerIP:
   {% endfor %}
 
 alert_rule_dir: "{{ prometheus_alert_rule_dir }}"
+alertmanager_dir: "{{ prometheus_alertmanager_dir }}"
 serviceAccountName: prometheus
 pushgateway_cleaner_job:
   cron: "*/10 * * * *"

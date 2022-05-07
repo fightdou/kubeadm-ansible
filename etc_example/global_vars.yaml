@@ -9,6 +9,8 @@ harbor_address: 172.18.31.155
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
+system_username: root
+system_password: 123456
 
 ####################
 # Kubernetes options
@@ -136,8 +138,6 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # Prometheus Options
 ####################
-# 数据存放目录，需挂载共享存储
-prometheus_alert_rule_dir: /opt/prometheus/rules
 prometheus_query_port: 9003
 prometheus_server_port: 9004
 thanos_sidecar_http_port: 19092
@@ -151,10 +151,20 @@ prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
 
 ##############
-# Java Options
+# Fsd Options
 ##############
-java_webhook_port: 9030
-java_webhook_token: abc123
+fsd_tcp_port: 9012
+fsd_webhook_port: 9010
+fsd_job_port: 9011
+fsd_webhook_token: abc123
+bt_server_port: 9019
+bt_tracker_port: 9020
+bt_download_port_start: 6880
+bt_download_port_end: 6889
+fsd_database_name: klcloud_fsd
+fsd_job_database_name: xxl_job
+fsd_cloud_disk_user_name: troila
+fsd_cloud_disk_password: Troila12
 
 #######################
 # elasticsearch Options
@@ -197,7 +207,7 @@ enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
-enable_java: false
+enable_fsd: true
 enable_voi: false
 enable_elasticsearch: true
 enable_fluentd: true

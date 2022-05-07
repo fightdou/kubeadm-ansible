@@ -98,13 +98,13 @@
         tags: trochilus,
         when: enable_trochilus| bool }
 
-# - name: Apply role java
-#   gather_facts: false
-#   hosts: java
-#   roles:
-#     - { role: java,
-#         tags: java,
-#         when: enable_java| bool }
+- name: Apply role fsd
+  gather_facts: false
+  hosts: fsd
+  roles:
+    - { role: fsd,
+        tags: fsd,
+        when: enable_fsd| bool }
 
 - name: Apply role prometheus
   gather_facts: false

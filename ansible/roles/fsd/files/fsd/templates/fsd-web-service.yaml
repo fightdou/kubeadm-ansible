@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fsd-web
+spec:
+  ports:
+    - port: {{ .Values.service.fsd_web.port }}
+      targetPort: {{ .Values.service.fsd_web.port }}
+      name: {{ .Values.service.fsd_web.name }}
+  selector:
+    fsd: web
+  type: ClusterIP

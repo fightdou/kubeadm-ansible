@@ -1,0 +1,48 @@
+image:
+  fsd: {{ kube_image_repository }}/fsd:{{ kube_image_tag }}
+  fsd_job: {{ kube_image_repository }}/fsd_job:{{ kube_image_tag }}
+  fsd_web: {{ kube_image_repository }}/fsd_web:{{ kube_image_tag }}
+  pullSecrets: {{ docker_register_secrets_name }}
+
+serviceAccountName: fsd
+replica: 1
+service:
+  fsd_tcp:
+    port: {{ fsd_tcp_port }}
+    name: fsd-tcp
+  fsd_webhook:
+    port: {{ fsd_webhook_port }}
+    name: fsd-webhook
+  fsd_job:
+    port: {{ fsd_job_port }}
+    name: fsd-job
+
+mount_dir:
+  fsd_log: "{{ fsd_log }}"
+  prometheus_rule: "{{ prometheus_alert_rule_dir }}"
+  alertmanager_conf: "{{ prometheus_alertmanager_dir }}"
+  voi_dir: "{{ fsd_voi_dir }}"
+  upload_dir: "{{ fsd_voi_upload_dir }}"
+  fsd_static: "{{ fsd_static_dir }}"
+
+fsd_env:
+  redis_master_name: "{{ redis_master_group_name }}"
+  redis_server_address: redis.{{ helm_install_namespace }}.svc.cluster.local
+  netty_codec_mac: "{{ fsd_netty_codec_mac }}"
+  deploy_mode: all
+  deploy_vip: "{{ kube_apiserver_vip }}"
+  deploy_node_username: "{{ system_username }}"
+  deploy_node_password: "{{ system_password }}"
+  desktop_bt_port_start: "{{ bt_download_port_start }}"
+  desktop_bt_port_end: "{{ bt_download_port_end }}"
+  cloud_disk_root_path: "{{ fsd_cloud_disk_root_path }}"
+  cloud_disk_share_disk_path: "{{ fsd_cloud_disk_share_disk_path }}"
+  cloud_disk_username: "{{ fsd_cloud_disk_user_name }}"
+  cloud_disk_password: "{{ fsd_cloud_disk_password }}"
+
+fsd_job_env:
+  fsd_database: "{{ fsd_database_name }}"
+  job_database: "{{ fsd_job_database_name }}"
+  mariadb_host: mariadb.{{ helm_install_namespace }}.svc.cluster.local
+  mariadb_username: root
+  mariadb_password: "{{ mariadb_root_password }}"

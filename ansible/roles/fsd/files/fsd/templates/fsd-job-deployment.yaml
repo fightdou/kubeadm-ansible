@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsd-job
+spec:
+  replicas: {{ .Values.replica }}
+  selector:
+    matchLabels:
+      type: fsd-job
+  template:
+    metadata:
+      labels:
+        type: fsd-job
+    spec:
+      containers:
+        - name: fsd-job
+          image: {{ .Values.image.fsd_job }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.service.fsd_job.port }}
+              protocol: TCP
+              name: {{ .Values.service.fsd_job.name }}
+          env:
+            - name: env.fsd.common.job.mysql.host
+              value: "{{ .Values.fsd_job_env.mariadb_host }}"
+            - name: env.fsd.common.job.mysql.username
+              value: "{{ .Values.fsd_job_env.mariadb_username }}"
+            - name: env.fsd.common.job.mysql.password
+              value: "{{ .Values.fsd_job_env.mariadb_password }}"
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      serviceAccount: {{ .Values.serviceAccountName }}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}

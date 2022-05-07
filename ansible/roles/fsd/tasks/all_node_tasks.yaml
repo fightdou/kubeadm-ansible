@@ -1,0 +1,31 @@
+---
+- name: Install mysql cli tools
+  become: True
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "mariadb-client-core-10.3"
+      - "python3-pymysql"
+      - "samba"
+      - "samba-common"
+
+- name: 创建日志目录
+  file: 
+    name: /var/log/fsd/
+    state: directory
+    recurse: yes
+    mode: 0755
+
+- name: 创建 fsd 共享目录
+  file:
+    name: "{{ fsd_voi_dir }}"
+    state: directory
+    mode: "0777"
+
+- name: 创建 voi upload 目录
+  file:
+    name: "{{ fsd_voi_upload_dir }}"
+    state: directory
+    mode: "0777"

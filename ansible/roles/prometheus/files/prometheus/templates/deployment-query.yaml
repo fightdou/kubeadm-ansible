@@ -4,7 +4,7 @@ metadata:
   name: thanos-query
   namespace: {{ .Release.Namespace }}
 spec:
-  replicas: {{ .Values.replica.query }}
+  replicas: {{ .Values.replica }}
   selector:
     matchLabels:
       app.kubernetes.io/name: thanos-query

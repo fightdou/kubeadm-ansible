@@ -1,0 +1,56 @@
+---
+- name: set cephf_ceph_local_ip
+  set_fact:
+    cephf_ceph_local_ip: "{{ ceph_local_ip }}"
+
+- name: set cephfs_mount ip
+  set_fact:
+    mon_hosts: "{% for host in groups['ceph-mons'] %}{{ hostvars[host]['cephf_ceph_local_ip'] }}:6789{% if not loop.last %},{% endif %}{% endfor %}"
+
+- name: Make cephfs mount dir
+  become: true
+  file:
+    path: "{{ desktop_mount_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Mount cephfs share dir
+  become: true
+  mount:
+    path: "{{ desktop_mount_dir }}"
+    src: "{{ mon_hosts }}:/"
+    state: mounted
+    fstype: ceph
+    opts: name=admin,secret={{ mons_secret.client_admin.client_admin_secret }},_netdev,noatime
+  register: result
+  until: result is success
+  retries: 10
+  delay: 6
+
+- name: Make cephfs shell dir
+  become: true
+  file:
+    path: "{{ desktop_mount_shell_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Copy ceph_mount shell file
+  become: true
+  template:
+    src: "cephmount.sh.j2"
+    dest: "{{ desktop_mount_shell_dir }}/cephmount.sh"
+    mode: "0777"
+
+- name: Copy cephmount to systemctl
+  become: true
+  template:
+    src: "cephmount.service.j2"
+    dest: "{{ cephmount_service_dir }}/cephmount.service"
+    mode: "0655"
+
+- name: Reload systemctl and enable cephmount service
+  become: true
+  systemd:
+    name: cephmount
+    daemon_reload: true
+    enabled: true
