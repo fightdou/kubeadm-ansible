@@ -115,5 +115,8 @@ storage
 [kibana:children]
 control
 
+[guest-server:children]
+compute
+
 [websockify:children]
 control
