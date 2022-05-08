@@ -1,0 +1,4 @@
+---
+- import_tasks: websockify-install.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
