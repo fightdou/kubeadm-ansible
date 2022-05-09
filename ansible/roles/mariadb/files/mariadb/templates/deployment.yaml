@@ -83,7 +83,8 @@ spec:
         volumeMounts:
         - mountPath: /bitnami/mariadb
           name: data
-      dnsPolicy: ClusterFirst
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

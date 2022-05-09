@@ -37,14 +37,14 @@ ingress:
 
 service:
   query:
-    port: 9003
-  prometheus:
     port: 9004
+  prometheus:
+    port: 9005
   sidecar:
     http_port: 10902
     grpc_port: 10901
   alertmanager:
-    port: 9005
+    port: 9006
   alertmanager_cluster:
     port: 9094
   pushgateway:

@@ -10,3 +10,6 @@ tolerationSeconds: 30
 
 nodeSelector:
   control_role: enabled
+ingress:
+  enabled: true
+  ingressClassName: nginx

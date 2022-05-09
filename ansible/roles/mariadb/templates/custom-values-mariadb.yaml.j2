@@ -9,3 +9,6 @@ pvc:
 tolerationSeconds: {{ mariadb_toleration_seconds }}
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
+ingress:
+  enabled: true
+  ingressClassName: {{ ingress_class_name }}
