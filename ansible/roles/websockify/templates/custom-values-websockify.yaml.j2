@@ -39,7 +39,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 59999
+  port: {{ websockify_port }}
 
 ingress:
   enabled: false

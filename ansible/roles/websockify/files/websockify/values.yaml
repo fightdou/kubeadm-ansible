@@ -8,7 +8,7 @@ image:
   repository: 172.18.31.155/kubernetes/websockify
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
+  tag: v3
 
 imagePullSecrets: 
   - name: "docker-register-secrets"
@@ -39,7 +39,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 59999
+  port: 56666
 
 ingress:
   enabled: false
