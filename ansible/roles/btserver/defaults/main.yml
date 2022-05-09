@@ -1,0 +1,16 @@
+---
+k8s_virt_ip: "{{ kube_apiserver_vip }}"
+k8s_virt_port: "{{ kube_apiserver_port }}"
+btserver_image_tag: "{{ kube_image_tag }}"
+btserver_image_repository: "{{ kube_image_repository }}/btserver"
+btserver_image_repository_track: "{{ kube_image_repository }}/btserver_track"
+btserver_pod_replicaCount: 2
+btserver_pod_pullPolicy: "{{ btserver_pod_pullPolicy }}"
+btserver_svc_type: "{{ btserver_svc_type }}"
+#btserver_persistence: "{{ btserver_persistence | bool }}"
+#btserver_persistence_accessMode: "{{ btserver_persistence_accessMode }}"
+#btserver_persistence_size: "{{ btserver_persistence_size }}"
+#btserver_persistence_storageClass: "{{ btserver_persistence_storageClass }}"
+btserver_hostnetwork: "{{ btserver_hostnetwork | bool }}"
+btserver_containers_name_track: btserver-track
+

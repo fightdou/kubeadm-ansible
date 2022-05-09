@@ -198,10 +198,10 @@ enable_libvirt: false
 enable_trochilus: false
 enable_prometheus: false
 enable_java: false
-enable_voi: false
-enable_elasticsearch: true
-enable_fluentd: true
-enable_kibana: true
+enable_btserver: true
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
 
 ################
 # Redis Options
@@ -211,3 +211,22 @@ redis_master_password: 123456
 redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
+
+
+#######################
+# btserver
+#######################
+k8s_virt_ip: "{{ kube_apiserver_vip }}"
+k8s_virt_port: "{{ kube_apiserver_port }}"
+btserver_image_tag: "{{ kube_image_tag }}"
+btserver_image_repository: "{{ kube_image_repository }}/btserver"
+btserver_image_repository_track: "{{ kube_image_repository }}/btserver_track"
+btserver_pod_replicaCount: 2
+btserver_pod_pullPolicy: "IfNotPresent"
+btserver_svc_type: "ClusterIP"
+#btserver_persistence: "{{ btserver_persistence | bool }}"
+#btserver_persistence_accessMode: "{{ btserver_persistence_accessMode }}"
+#btserver_persistence_size: "{{ btserver_persistence_size }}"
+#btserver_persistence_storageClass: "{{ btserver_persistence_storageClass }}"
+btserver_hostnetwork: "yes"
+btserver_containers_name_track: btserver-track
