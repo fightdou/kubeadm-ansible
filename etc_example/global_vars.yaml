@@ -207,7 +207,8 @@ enable_kibana: true
 # Redis Options
 ################
 redis_storage_size: 10Gi
-redis_master_password: 123456
+redis_master_password: zhuolang@Troila@123
 redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
+redis_host_network: true

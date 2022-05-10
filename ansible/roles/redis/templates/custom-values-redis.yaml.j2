@@ -4,7 +4,7 @@ image:
   pullPolicy: IfNotPresent
   pullSecrets: {{ docker_register_secrets_name }}
 
-replicas: 3
+replicas: {{ replicaNum }}
 labels: {}
 serviceAccount:
   create: true
@@ -18,6 +18,8 @@ sysctlImage:
   tag: latest
   pullPolicy: IfNotPresent
   mountHostSys: false
+
+hostNetwork: {{ redis_host_network }}
 
 redis:
   port: "{{ redis_server_port }}"
@@ -41,6 +43,7 @@ redis:
       cpu: 500m
 
 sentinel:
+  enabled: {{ sentinel_mode }}
   port: "{{ redis_sentinel_port }}"
   quorum: 2
   config:
@@ -53,12 +56,9 @@ sentinel:
       memory: 200Mi
       cpu: 100m
     limits:
-      memory: 200Mi
+      memory: 512Mi
 
-securityContext:
-  runAsUser: 1000
-  fsGroup: 1000
-  runAsNonRoot: true
+securityContext: {}
 
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
@@ -78,8 +78,8 @@ exporter:
   extraArgs: {}
 
 podDisruptionBudget: {}
+auth: true
 redisPassword: "{{ redis_master_password }}"
-# existingSecret:
 authKey: auth
 
 persistentVolume:
