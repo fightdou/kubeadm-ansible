@@ -194,7 +194,8 @@ curator:
   image:
     image_name: {{ kube_image_repository }}/elasticsearch-curator:{{ kube_image_tag }}
     pullPolicy: IfNotPresent
-    pullSecrets: []
+    pullSecrets: 
+      - name: "{{ docker_register_secrets_name }}"
   cronjob:
     schedule: {{ es_date_del_time }}
     annotations: {}

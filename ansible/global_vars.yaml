@@ -2,7 +2,7 @@ firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
 custom_hosts:
-  "172.18.28.193":
+  "172.18.31.109":
   - kunlun.cluster.local
 api_interface: ens3
 harbor_address: 172.18.31.155
@@ -15,7 +15,7 @@ docker_register_secrets_name: docker-register-secrets
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.193
+kube_apiserver_vip: 172.18.31.109
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -185,23 +185,24 @@ emqx_hostnetwork: true
 #################
 # role开关
 #################
-enable_baremetal: false
-enable_load_balancer: false
-enable_kube_master: false
-enable_kube_worker: false
-enable_ingress: false
-enable_ceph_csi: false
-enable_mariadb: false
-enable_redis: false
-enable_emqx: false
-enable_libvirt: false
-enable_trochilus: false
-enable_prometheus: false
+enable_baremetal: true
+enable_load_balancer: true
+enable_kube_master: true
+enable_kube_worker: true
+enable_ingress: true
+enable_ceph_csi: true
+enable_mariadb: true
+enable_redis: true
+enable_emqx: true
+enable_libvirt: true
+enable_trochilus: true
+enable_prometheus: true
 enable_java: false
 enable_voi: false
 enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
+enable_websockify: true
 
 ################
 # Redis Options
@@ -211,3 +212,8 @@ redis_master_password: 123456
 redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
+
+####################
+# websockify Options
+####################
+websockify_port: 56666

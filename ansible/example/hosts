@@ -1,31 +1,33 @@
  # 网卡配置，存在bond时，指定bond名称与对应物理网卡信息；不存在bond时，ip地址后跟随角色
-# 格式，存在bond时：nic_info = ["bond1:172.18.31.92:0011:ens4,ens5"] (bond名称:bond的IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0:组成bond的网卡名称); 
+# 格式，存在bond时：nic_info = ["bond1:172.18.29.199:0011:ens4,ens5"] (bond名称:bond的IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0:组成bond的网卡名称); 
 # 多个bond时，则需配置多个nic记录
-# 没有bond时：nic_info = ["ens3:172.18.31.92:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
+# 没有bond时：nic_info = ["ens3:172.18.29.199:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
 [all]
-172.18.31.92 hostname=control1
-172.18.28.5 hostname=control2
-172.18.30.72 hostname=control3
+172.18.29.199 hostname=master01
+172.18.30.154 hostname=master02
+172.18.30.150 hostname=master03
+
 
 [ceph-mons]
-172.18.31.92
-172.18.28.5
-172.18.30.72
+172.18.29.199
+172.18.30.154
+172.18.30.150
 
 [control]
-172.18.31.92
-172.18.28.5
-172.18.30.72
+172.18.29.199
+172.18.30.154
+172.18.30.150
 
 [compute]
-172.18.31.92 nic_info="['ens3:172.18.31.92:1011', 'ens9::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens9" vlan_network_nic=""
-172.18.28.5 nic_info="['ens3:172.18.28.5:1011', 'ens10::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens10" vlan_network_nic=""
-172.18.30.72 nic_info="['ens3:172.18.30.72:1011', 'ens9::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens9" vlan_network_nic=""
+172.18.29.199 nic_info="['ens3:172.18.29.199:1100', 'ens9::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens9" vlan_network_nic=""
+172.18.30.154 nic_info="['ens3:172.18.30.154:1100', 'ens9::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens9" vlan_network_nic=""
+172.18.30.150 nic_info="['ens3:172.18.30.150:1100', 'ens4::0100']" node_role="['control', 'compute', 'storage']" flat_network_nic="ens4" vlan_network_nic=""
+
 
 [storage]
-172.18.31.92
-172.18.28.5
-172.18.30.72
+172.18.29.199
+172.18.30.154
+172.18.30.150
 
 [voi:children]
 control
@@ -111,4 +113,10 @@ compute
 storage
 
 [kibana:children]
+control
+
+[guest-server:children]
+compute
+
+[websockify:children]
 control
