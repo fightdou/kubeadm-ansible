@@ -139,11 +139,11 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # 数据存放目录，需挂载共享存储
 prometheus_alert_rule_dir: /opt/prometheus/rules
-prometheus_query_port: 9003
-prometheus_server_port: 9004
+prometheus_query_port: 9004
+prometheus_server_port: 9005
 thanos_sidecar_http_port: 19092
 thanos_sidecar_grpc_port: 19091
-prometheus_alertmanager_port: 9005
+prometheus_alertmanager_port: 9006
 prometheus_alertmanager_cluster_port: 9094
 prometheus_pushgateway_port: 9091
 prometheus_node_exporter_port: 9100
