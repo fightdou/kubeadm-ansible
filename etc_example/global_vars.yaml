@@ -2,7 +2,7 @@ firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
 custom_hosts:
-  "172.18.28.222":
+  "172.18.28.193":
   - kunlun.cluster.local
 api_interface: ens3
 harbor_address: 172.18.31.155
@@ -15,7 +15,7 @@ docker_register_secrets_name: docker-register-secrets
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.222
+kube_apiserver_vip: 172.18.28.193
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -202,6 +202,7 @@ enable_voi: false
 enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
+enable_websockify: true
 
 ################
 # Redis Options
@@ -212,3 +213,8 @@ redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
+
+####################
+# websockify Options
+####################
+websockify_port: 56666

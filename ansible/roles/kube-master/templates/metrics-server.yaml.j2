@@ -170,6 +170,8 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: tmp-dir
+      imagePullSecrets:
+          - name: {{ docker_register_secrets_name }}
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical

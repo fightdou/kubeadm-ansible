@@ -78,6 +78,13 @@
   with_items:
   - ip link del cni0
 
+- name: 清除残留的 router 信息
+  vars:
+    pod_subnet_ip_prefix: "{{ kube_pod_subnet.split('.')[0:2] | join('.') }}"
+  shell: "{{ item }} || true"
+  with_items:
+  - "ip route | awk '{print $1}' | awk -F: '/^{{ pod_subnet_ip_prefix }}/' | while read line; do ip route del $line; done"
+
 - name: 重启网络
   systemd:
     name: NetworkManager
