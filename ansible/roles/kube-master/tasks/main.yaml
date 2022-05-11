@@ -30,6 +30,8 @@
   shell: |
     kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
     kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
   ignore_errors: yes
 
 
@@ -76,6 +78,7 @@
   register: helm_version
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+  ignore_errors: yes
 
 - block:
   - name: 安装 helm

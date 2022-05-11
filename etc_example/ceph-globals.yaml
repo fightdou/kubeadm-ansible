@@ -88,12 +88,6 @@ osd_pools:
     pgp_num: "{{ osd_pool_pgp_num }}"
     pool_app: "{{ unify_osd_pool_app }}"
     pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
-  troila_pools:
-    pool_name: troila
-    pg_num: "16"
-    pgp_num: "16"
-    pool_app: "{{ unify_osd_pool_app }}"
-    pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
   kubernetes_pools:
     pool_name: kubernetes
     pg_num: "16"

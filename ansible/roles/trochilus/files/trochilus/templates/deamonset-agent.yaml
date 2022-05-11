@@ -65,11 +65,11 @@ spec:
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
-            {{- if eq $conf "vlan_network_nic" }}
+            {{- if eq $conf "vlan_network_interface" }}
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
-            {{- if eq $conf "flat_network_nic" }}
+            {{- if eq $conf "flat_network_interface" }}
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
