@@ -1,23 +1,29 @@
 image:
   fsd: 172.18.31.155/kubernetes/fsd:latest
   fsd_job: 172.18.31.155/kubernetes/fsd_job:latest
-  fsd_web: nginx:1.15.9
+  fsd_nginx: nginx:1.15.9
   pullSecrets: ""
 
 serviceAccountName: fsd
 replica: 1
+nodeSelector:
+  control_role: enabled
+priorityClassName: ""
 
 service:
-  fsd:
-    port: 6666
-    name: fsd
   fsd_webhook:
-    port: 9030
+    port: 9010
     name: fsd-webhook
   fsd_job:
-    port: 7777
+    port: 9011
     name: fsd-job
-  fsd_web:
+  fsd_tcp:
+    port: 9012
+    name: fsd-tcp
+  fsd_tcp_file:
+    port: 9013
+    name: fsd-tcp-file
+  fsd_nginx:
     port: 80
     name: fsd-web
 

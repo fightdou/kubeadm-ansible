@@ -12,6 +12,16 @@ spec:
       labels:
         type: fsd-job
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: type
+                    operator: In
+                    values:
+                    - fsd-job
+              topologyKey: 'kubernetes.io/hostname'
       containers:
         - name: fsd-job
           image: {{ .Values.image.fsd_job }}
@@ -27,10 +37,17 @@ spec:
               value: "{{ .Values.fsd_job_env.mariadb_username }}"
             - name: env.fsd.common.job.mysql.password
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
+      {{- if .Values.hostNetwork }}
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName }}
+      priorityClassName: {{ .Values.priorityClassName }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+{{- end }}

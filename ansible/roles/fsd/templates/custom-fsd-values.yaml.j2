@@ -1,21 +1,32 @@
 image:
   fsd: {{ kube_image_repository }}/fsd:{{ kube_image_tag }}
   fsd_job: {{ kube_image_repository }}/fsd_job:{{ kube_image_tag }}
-  fsd_web: {{ kube_image_repository }}/fsd_web:{{ kube_image_tag }}
+  fsd_init: {{ kube_image_repository }}/fsd_init:{{ kube_image_tag }}
+  fsd_nginx: {{ kube_image_repository }}/fsd_nginx:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
 
 serviceAccountName: fsd
-replica: 1
+replica: {{ replicaNum }}
+nodeSelector:
+  {{ control_node_role_name }}: {{ node_role_value }}
+priorityClassName: {{ kube_priority_name }}
+
 service:
-  fsd_tcp:
-    port: {{ fsd_tcp_port }}
-    name: fsd-tcp
   fsd_webhook:
     port: {{ fsd_webhook_port }}
     name: fsd-webhook
   fsd_job:
     port: {{ fsd_job_port }}
     name: fsd-job
+  fsd_tcp:
+    port: {{ fsd_tcp_port }}
+    name: fsd-tcp
+  fsd_tcp_file:
+    port: {{ fsd_tcp_file_port }}
+    name: fsd-tcp-file
+  fsd_nginx:
+    port: {{ fsd_nginx_port }}
+    name: fsd-web
 
 mount_dir:
   fsd_log: "{{ fsd_log }}"
@@ -27,7 +38,7 @@ mount_dir:
 
 fsd_env:
   redis_master_name: "{{ redis_master_group_name }}"
-  redis_server_address: redis.{{ helm_install_namespace }}.svc.cluster.local
+  redis_server_address: "{{ redis_server_address }}"
   netty_codec_mac: "{{ fsd_netty_codec_mac }}"
   deploy_mode: all
   deploy_vip: "{{ kube_apiserver_vip }}"
@@ -41,8 +52,6 @@ fsd_env:
   cloud_disk_password: "{{ fsd_cloud_disk_password }}"
 
 fsd_job_env:
-  fsd_database: "{{ fsd_database_name }}"
-  job_database: "{{ fsd_job_database_name }}"
-  mariadb_host: mariadb.{{ helm_install_namespace }}.svc.cluster.local
+  mariadb_host: "{{ mariadb_host_address }}"
   mariadb_username: root
   mariadb_password: "{{ mariadb_root_password }}"

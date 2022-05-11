@@ -11,6 +11,8 @@ replicas: 3
 ## Custom labels for the redis pod
 labels: {}
 
+hostNetwork: false
+
 ## Pods Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
@@ -60,11 +62,12 @@ redis:
     repl-diskless-sync: "yes"
     rdbcompression: "yes"
     rdbchecksum: "yes"
+    notify-keyspace-events: Ex
 
   ## Custom redis.conf files used to override default settings. If this file is
   ## specified then the redis.config above will be ignored.
   # customConfig: |-
-      # Define configuration here
+  #     notify-keyspace-events Ex
 
   resources: {}
   #  requests:
@@ -75,6 +78,7 @@ redis:
 
 ## Sentinel specific configuration options
 sentinel:
+  enabled: true
   port: 26379
   quorum: 2
   config:
@@ -177,7 +181,7 @@ podDisruptionBudget: {}
 
 ## Configures redis with AUTH (requirepass & masterauth conf params)
 auth: false
-# redisPassword:
+redisPassword: ""
 
 ## Use existing secret containing key `authKey` (ignores redisPassword)
 # existingSecret:
@@ -194,7 +198,7 @@ persistentVolume:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  # storageClass: "-"
+  storageClass: ""
   accessModes:
     - ReadWriteOnce
   size: 10Gi

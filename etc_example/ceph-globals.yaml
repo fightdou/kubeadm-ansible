@@ -16,7 +16,7 @@ ceph_public_network: 172.18.28.0/22
 ceph_cluster_network: 172.18.28.0/22
 
 ## ceph osd 最小副本数 和 最大副本数
-osd_pool_default_size: 3
+osd_pool_default_size: 1
 osd_pool_default_min_size: 1
 
 ## ceph pg、pgp组数量

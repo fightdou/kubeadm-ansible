@@ -6,6 +6,7 @@ image:
   collectd_exporter: {{ kube_image_repository }}/collectd-exporter:{{ kube_image_tag }}
   host_exporter: {{ kube_image_repository }}/host-exporter:{{ kube_image_tag }}
   pushgateway_cleaner: {{ kube_image_repository }}/prometheus-pushgateway-cleaner:{{ kube_image_tag }}
+  thanos: {{ kube_image_repository }}/thanos:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
   
 replica: "{{ replica_num }}"

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fsd
+  name: fsd-tcp
 spec:
   ports:
     - port: {{ .Values.service.fsd_webhook.port }}
@@ -10,6 +10,9 @@ spec:
     - port: {{ .Values.service.fsd_tcp.port }}
       targetPort: {{ .Values.service.fsd_tcp.port }}
       name: {{ .Values.service.fsd_tcp.name }}
+    - port: {{ .Values.service.fsd_tcp_file.port }}
+      targetPort: {{ .Values.service.fsd_tcp_file.port }}
+      name: {{ .Values.service.fsd_tcp_file.name }}
   selector:
     type: fsd
   type: ClusterIP

@@ -26,6 +26,13 @@
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
+- name: 创建 harbor register secrets
+  shell: |
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+  ignore_errors: yes
+
+
 # 配置网络CNI插件
 - name: 渲染 flannel 配置文件
   template:
@@ -41,7 +48,7 @@
     state: present
     wait: yes
     wait_sleep: 5
-    wait_timeout: 60
+    wait_timeout: 180
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
@@ -56,11 +63,24 @@
 - name: Deploy metrics server in yaml file
   kubernetes.core.k8s:
     src: /etc/kubernetes/plugins/network-plugin/metrics-server.yaml
-    namespace: default
+    namespace: kube-system
     state: present
     wait: yes
     wait_sleep: 5
     wait_timeout: 60
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 配置驱逐优先级
+- name: 渲染 priorityClass 配置文件
+  template:
+    src: priority-class.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/priority-class.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy priorityClass in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/priority-class.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
@@ -99,8 +119,6 @@
   when:
     - node_role.stdout == "0"
 
-- name: 创建 harbor register secrets
-  shell: kubectl create secret docker-registry {{ docker_register_secrets }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
 
 # 备份etcd
 - block:

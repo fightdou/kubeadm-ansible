@@ -24,7 +24,6 @@ hostAliases: []
 image: {{ kube_image_repository }}/elasticsearch
 imageTag: {{ kube_image_tag }}
 imagePullPolicy: "IfNotPresent"
-pullSecrets: {{ docker_register_secrets_name }}
 
 podAnnotations:
   {}
@@ -40,8 +39,7 @@ resources:
     cpu: "1000m"
     memory: "2Gi"
 
-initResources:
-  {}
+initResources: {}
 
 networkHost: "0.0.0.0"
 
@@ -145,8 +143,11 @@ readinessProbe:
 
 clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 schedulerName: ""
-imagePullSecrets: []
-nodeSelector: {}
+imagePullSecrets:
+  - name: "{{ docker_register_secrets_name }}"
+nodeSelector:
+  {{ control_node_role_name }}: {{ node_role_value }}
+  
 tolerations: []
 
 ingress:
@@ -194,7 +195,8 @@ curator:
   image:
     image_name: {{ kube_image_repository }}/elasticsearch-curator:{{ kube_image_tag }}
     pullPolicy: IfNotPresent
-    pullSecrets: []
+    pullSecrets: 
+      - name: "{{ docker_register_secrets_name }}"
   cronjob:
     schedule: {{ es_date_del_time }}
     annotations: {}
@@ -217,11 +219,9 @@ curator:
  
   sidecars: []
   affinity: {}
-
-  nodeSelector: {}
-
+  nodeSelector: 
+    {{ control_node_role_name }}: {{ node_role_value }}
   tolerations: []
-
   topologySpreadConstraints: []
 
   rbac:
@@ -272,10 +272,15 @@ curator:
         hosts:
           - elasticsearch-master.{{ helm_install_namespace }}.svc.cluster.local
         port: {{ es_http_port }}
+  
   resources:
- 
-    limits: {}
-    requests: {}
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
   priorityClassName: ""
   extraVolumes: []
   extraVolumeMounts: []

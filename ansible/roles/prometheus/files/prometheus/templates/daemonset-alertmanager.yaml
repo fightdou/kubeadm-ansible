@@ -33,7 +33,7 @@ spec:
         - name: NODE_ID
           valueFrom:
             fieldRef:
-              fieldPath: spec.nodeName
+              fieldPath: status.hostIP
         image: {{ .Values.image.alertmanager }}
         imagePullPolicy: IfNotPresent
         livenessProbe:

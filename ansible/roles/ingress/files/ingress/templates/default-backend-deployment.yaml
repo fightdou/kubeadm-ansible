@@ -43,10 +43,6 @@ spec:
         podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.defaultBackend.podAntiAffinityPreset "component" "default-backend" "context" $) | nindent 10 }}
         nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.defaultBackend.nodeAffinityPreset.type "key" .Values.defaultBackend.nodeAffinityPreset.key "values" .Values.defaultBackend.nodeAffinityPreset.values) | nindent 10 }}
       {{- end }}
-      {{- if .Values.image.pullSecrets }}
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecrets }}
-      {{- end }}
       {{- if .Values.defaultBackend.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" ( dict "value" .Values.defaultBackend.nodeSelector "context" $) | nindent 8 }}
       {{- end }}

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fsd-web
+  name: fsd-nginx
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
@@ -24,13 +24,23 @@ spec:
                     - web
               topologyKey: 'kubernetes.io/hostname'
       containers:
-        - name: fsd-web
-          image: {{ .Values.image.fsd_web }}
+        - name: fsd-nginx
+          image: {{ .Values.image.fsd_nginx }}
           imagePullPolicy: IfNotPresent
+          env:
+            - name: fsd_init_vip
+              value: "{{ .Values.fsd_env.deploy_vip }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              /home/init/init.sh
+              nginx
+              tail -f /dev/null
           livenessProbe:
             httpGet:
               path: /
-              port: {{ .Values.service.fsd_web.port }}
+              port: {{ .Values.service.fsd_nginx.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
@@ -40,43 +50,38 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: {{ .Values.service.fsd_web.port }}
+              port: {{ .Values.service.fsd_nginx.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "1024Mi"
-              cpu: "2000m"
           ports:
-            - name: {{ .Values.service.fsd_web.name }}
-              containerPort: {{ .Values.service.fsd_web.port }}
+            - name: {{ .Values.service.fsd_nginx.name }}
+              containerPort: {{ .Values.service.fsd_nginx.port }}
               protocol: TCP
           volumeMounts:
-            - mountPath: /etc/nginx/nginx.conf
-              name: fsd-etc
-              subPath: nginx.conf
-            - mountPath: /etc/nginx/conf/fsd.conf
-              name: fsd-etc
-              subPath: fsd.conf
+            - name: fsd-static
+              mountPath: /usr/local/dist/static
+      volumes:
+        - name: fsd-static
+          hostPath:
+            path: {{ .Values.mount_dir.fsd_static }}
+            type: DirectoryOrCreate
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
-      dnsPolicy: ClusterFirstWithHostNet
+      {{- if .Values.hostNetwork }}
       hostNetwork: true
-      nodeSelector: {}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
-      volumes:
-        - configMap:
-            defaultMode: 420
-            name: fsd-etc
-          name: fsd-etc
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+{{- end }}

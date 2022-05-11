@@ -1,4 +1,5 @@
 #jinja2: trim_blocks: False
+
 image:
   trochilus_api: {{ kube_image_repository }}/trochilus-api:{{ kube_image_tag }}
   trochilus_agent: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
@@ -21,7 +22,7 @@ nodeInfo:
   - {{ hostvars[host]['ansible_nodename'] }}:
       system: "{{ hostvars[host]['ansible_distribution'] }}"
       version: "{{ hostvars[host]['ansible_distribution_version'] }}"
-      node_role: "{{ hostvars[host]['node_role'] | join(',') }}"
+      node_role: "{{ ['control', 'compute', 'storge'] | listintersection(hostvars[host]['group_names']) | join(',') }}"
       nic_info: "{{ hostvars[host]['nic_info'] | join(',') }}"
       {% if hostvars[host]['vlan_network_nic'] == "" and trochilus_vlan_network_nic != "" -%}
       vlan_network_nic: "{{ trochilus_vlan_network_nic }}"
@@ -97,7 +98,7 @@ conf:
     target_port: {{ fsd_webhook_port }}
     target_path: /api/v1/webhook/
     method: post
-    auth_token: {{ java_webhook_token }}
+    auth_token: {{ fsd_webhook_token }}
     max_retries: 5
     retry_interval: 5
     request_conn_timeout: 10

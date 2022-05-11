@@ -10,5 +10,4 @@ klyConfig:
     prometheus_svc_addr: http://prometheus/metrics/job/pushgateway/instance/
 
 serviceAccountName: guest-server
-nodeSelector:
-  compute_role: enabled
+

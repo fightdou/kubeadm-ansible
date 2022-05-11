@@ -149,6 +149,8 @@ spec:
         tier: node
         app: flannel
     spec:
+      imagePullSecrets:
+        - name: "{{ docker_register_secrets_name }}"
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -167,7 +169,7 @@ spec:
       initContainers:
       - name: install-cni-plugin
        #image: flannelcni/flannel-cni-plugin:v1.0.1 for ppc64le and mips64le (dockerhub limitations may apply)
-        image: {{ kube_image_repository }}/mirrored-flannelcni-flannel-cni-plugin:v1.0.1
+        image: {{ kube_image_repository }}/mirrored-flannelcni-flannel-cni-plugin:{{ kube_image_tag }}
         command:
         - cp
         args:
@@ -179,7 +181,7 @@ spec:
           mountPath: /opt/cni/bin
       - name: install-cni
        #image: flannelcni/flannel:v0.17.0 for ppc64le and mips64le (dockerhub limitations may apply)
-        image: {{ kube_image_repository }}/mirrored-flannelcni-flannel:v0.17.0
+        image: {{ kube_image_repository }}/mirrored-flannelcni-flannel:{{ kube_image_tag }}
         command:
         - cp
         args:
@@ -194,7 +196,7 @@ spec:
       containers:
       - name: kube-flannel
        #image: flannelcni/flannel:v0.17.0 for ppc64le and mips64le (dockerhub limitations may apply)
-        image: rancher/mirrored-flannelcni-flannel:v0.17.0
+        image: {{ kube_image_repository }}/mirrored-flannelcni-flannel:{{ kube_image_tag }}
         command:
         - /opt/bin/flanneld
         args:

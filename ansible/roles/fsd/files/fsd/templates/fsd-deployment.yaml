@@ -12,6 +12,16 @@ spec:
       labels:
         type: fsd
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: type
+                    operator: In
+                    values:
+                    - fsd
+              topologyKey: 'kubernetes.io/hostname'
       containers:
         - name: fsd
           image: {{ .Values.image.fsd }}
@@ -20,9 +30,12 @@ spec:
             - containerPort: {{ .Values.service.fsd_webhook.port }}
               protocol: TCP
               name: {{ .Values.service.fsd_webhook.name }}
-            - containerPort: {{ .Values.service.fsd.port }}
+            - containerPort: {{ .Values.service.fsd_tcp.port }}
               protocol: TCP
-              name: {{ .Values.service.fsd.name }}
+              name: {{ .Values.service.fsd_tcp.name }}
+            - containerPort: {{ .Values.service.fsd_tcp_file.port }}
+              protocol: TCP
+              name: {{ .Values.service.fsd_tcp_file.name }}
           volumeMounts:
             - name: fsd-log
               mountPath: /log
@@ -52,7 +65,7 @@ spec:
             - name: env.fsd.biz.deploy.node.ip
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
+                  fieldPath: status.hostIP
             - name: env.fsd.biz.deploy.node.username
               value: "{{ .Values.fsd_env.deploy_node_username }}"
             - name: env.fsd.biz.deploy.node.password
@@ -100,6 +113,13 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      {{- if .Values.hostNetwork }}
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
       serviceAccount: {{ .Values.serviceAccountName }}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+{{- end }}

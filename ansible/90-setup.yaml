@@ -152,8 +152,16 @@
 
 - name: Apply role guest-server
   gather_facts: false
-  hosts: libvirt
+  hosts: guest-server
   roles:
    - { role: guest-server,
        tags: guest-server,
        when: enable_guest_server| bool }
+
+- name: Apply role websockify 
+  gather_facts: false
+  hosts: websockify
+  roles:
+   - { role: websockify,
+       tags: websockify,
+       when: enable_websockify| bool }
