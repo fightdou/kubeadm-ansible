@@ -26,5 +26,5 @@
       - /etc/kubernetes/plugins/kibana/values.yaml
     state: present 
     wait: yes
-    wait_timeout: 180s
+    wait_timeout: 200s
     release_namespace: "{{ helm_install_namespace }}"

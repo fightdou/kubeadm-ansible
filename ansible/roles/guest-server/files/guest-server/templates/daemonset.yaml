@@ -41,7 +41,9 @@ spec:
               mountPropagation: Bidirectional   
             - name: var-log-klylog 
               mountPath: /var/log/klylog/
-              mountPropagation: Bidirectional    
+              mountPropagation: Bidirectional 
+          resources:
+          {{- toYaml .Values.resources | nindent 12 }}   
       volumes:
         - name: guest-server-config
           configMap:
@@ -62,10 +64,11 @@ spec:
           hostPath:
              path: /var/log/klylog/
              type: ""
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.pullSecrets }}
-      {{- end }}
-      {{- if .Values.nodeSelector }}
-      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
       {{- end }}

@@ -72,8 +72,9 @@ spec:
           {{- if .Values.curator.affinity }}
           affinity: {{ .Values.curator.affinity }}
           {{- end }}
-          {{- if .Values.curator.nodeSelector }}
-          nodeSelector: {{ .Values.curator.nodeSelector }}
+          {{- with .Values.curator.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
           {{- end }}
           {{- if .Values.curator.tolerations }}
           tolerations: {{ .Values.curator.tolerations }}
