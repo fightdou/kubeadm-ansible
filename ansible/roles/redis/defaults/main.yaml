@@ -1,0 +1,2 @@
+replicaNum: "{% if groups['redis'] | length > 2 %}3{% else %}1{% endif %}"
+sentinel_mode: "{% if replicaNum == 3 %}true{% else %}false{% endif %}"

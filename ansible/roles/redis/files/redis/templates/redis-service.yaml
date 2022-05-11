@@ -1,0 +1,13 @@
+{{- if not .Values.sentinel.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "redis-ha.fullname" . }}
+spec:
+  selector:
+    app: redis
+  ports:
+  - name: redis
+    port: {{ .Values.redis.port }}
+  clusterIP: None
+{{- end }}
