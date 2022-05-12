@@ -44,7 +44,12 @@ spec:
           - name: {{ .Values.volumeMounts.name }}
             mountPath: {{ .Values.volumeMounts.path }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
         - name: {{ .Values.containers.name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -60,7 +65,12 @@ spec:
           - name: {{ .Values.volumeMounts.name_track }}
             mountPath: {{ .Values.volumeMounts.path_track }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
       volumes:
       - name: {{ .Values.volumes.name }}
         hostPath:
