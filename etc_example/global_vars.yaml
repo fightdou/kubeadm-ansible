@@ -138,11 +138,11 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # 数据存放目录，需挂载共享存储
 prometheus_alert_rule_dir: /opt/prometheus/rules
-prometheus_query_port: 9004
-prometheus_server_port: 9005
+prometheus_query_port: 9003
+prometheus_server_port: 9004
 thanos_sidecar_http_port: 19092
 thanos_sidecar_grpc_port: 19091
-prometheus_alertmanager_port: 9006
+prometheus_alertmanager_port: 9005
 prometheus_alertmanager_cluster_port: 9094
 prometheus_pushgateway_port: 9091
 prometheus_node_exporter_port: 9100
@@ -185,23 +185,23 @@ emqx_hostnetwork: true
 #################
 # role开关
 #################
-enable_baremetal: true
-enable_load_balancer: true
-enable_kube_master: true
-enable_kube_worker: true
-enable_ingress: true
-enable_ceph_csi: true
-enable_mariadb: true
-enable_redis: true
-enable_emqx: true
-enable_libvirt: true
-enable_trochilus: true
-enable_prometheus: true
+enable_baremetal: false
+enable_load_balancer: false
+enable_kube_master: false
+enable_kube_worker: false
+enable_ingress: false
+enable_ceph_csi: false
+enable_mariadb: false
+enable_redis: false
+enable_emqx: false
+enable_libvirt: false
+enable_trochilus: false
+enable_prometheus: false
 enable_java: false
-enable_voi: false
-enable_elasticsearch: true
-enable_fluentd: true
-enable_kibana: true
+enable_btserver: true
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
 enable_websockify: true
 
 ################
@@ -218,3 +218,22 @@ redis_host_network: true
 # websockify Options
 ####################
 websockify_port: 56666
+
+
+#######################
+# btserver
+#######################
+k8s_virt_ip: "{{ kube_apiserver_vip }}"
+k8s_virt_port: "{{ kube_apiserver_port }}"
+btserver_image_tag: "{{ kube_image_tag }}"
+btserver_image_repository: "{{ kube_image_repository }}/btserver"
+btserver_image_repository_track: "{{ kube_image_repository }}/btserver_track"
+btserver_pod_replicaCount: 2
+btserver_pod_pullPolicy: "IfNotPresent"
+btserver_svc_type: "ClusterIP"
+#btserver_persistence: "{{ btserver_persistence | bool }}"
+#btserver_persistence_accessMode: "{{ btserver_persistence_accessMode }}"
+#btserver_persistence_size: "{{ btserver_persistence_size }}"
+#btserver_persistence_storageClass: "{{ btserver_persistence_storageClass }}"
+btserver_hostnetwork: "yes"
+btserver_containers_name_track: btserver-track
