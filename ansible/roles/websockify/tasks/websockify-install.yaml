@@ -1,0 +1,30 @@
+- name: 创建 websockify values 目录
+  file:
+    name: /etc/kubernetes/plugins/websockify
+    state: directory
+
+- name: 复制 websockify charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "websockify"
+
+- name: 生成 websockify values.yml
+  template:
+    src: custom-values-websockify.yaml.j2
+    dest: /etc/kubernetes/plugins/websockify/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install websockify helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: websockify
+    chart_ref: "{{ helm_charts_dir }}/websockify"
+    values_files:
+      - /etc/kubernetes/plugins/websockify/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 180s
+    release_namespace: "{{ helm_install_namespace }}"

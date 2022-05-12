@@ -213,6 +213,10 @@ redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 
+####################
+# websockify Options
+####################
+websockify_port: 56666
 
 #######################
 # btserver

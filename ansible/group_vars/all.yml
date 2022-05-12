@@ -21,3 +21,4 @@ enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
 enable_guest_server: true
+enable_websockify: true
