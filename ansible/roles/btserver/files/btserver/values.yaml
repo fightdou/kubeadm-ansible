@@ -9,7 +9,7 @@ image:
   repository_track: 172.18.31.155/kubernetes/btserver_track
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1"
+  tag: "latest"
 
 containers:
   name: btserver-track

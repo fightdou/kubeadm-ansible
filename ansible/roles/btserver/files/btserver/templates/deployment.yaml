@@ -36,10 +36,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             tcpSocket:
-              port: 9019
+              port: {{ .Values.containers.port }}
           readinessProbe:
             tcpSocket:
-              port: 9019
+              port: {{ .Values.containers.port }}
           volumeMounts:
           - name: {{ .Values.volumeMounts.name }}
             mountPath: {{ .Values.volumeMounts.path }}
@@ -57,10 +57,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             tcpSocket:
-              port: 9020
+              port: {{ .Values.containers.port_track }}
           readinessProbe:
             tcpSocket:
-              port: 9020
+              port: {{ .Values.containers.port_track }}
           volumeMounts:
           - name: {{ .Values.volumeMounts.name_track }}
             mountPath: {{ .Values.volumeMounts.path_track }}
