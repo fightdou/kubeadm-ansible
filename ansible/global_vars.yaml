@@ -156,20 +156,6 @@ prometheus_host_exporter_port: 9104
 java_webhook_port: 9030
 java_webhook_token: abc123
 
-#######################
-# elasticsearch Options
-#######################
-es_storage_size: 10Gi
-es_http_port: 9200
-es_data_save_days: 3
-## At 01:00 every day
-es_date_del_time: "0 1 * * *"
-
-#################
-# kibana Options
-#################
-kibana_node_port: 32000
-
 ################
 # emqx Options
 ################
@@ -180,7 +166,6 @@ emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
 emqx_hostnetwork: true
-
 
 #################
 # role开关
@@ -197,12 +182,13 @@ enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
+enable_guest_server: false
 enable_java: false
 enable_voi: false
-enable_elasticsearch: true
-enable_fluentd: true
-enable_kibana: true
 enable_websockify: true
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
 
 ################
 # Redis Options
@@ -213,7 +199,21 @@ redis_master_group_name: mycluster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 
+#######################
+# elasticsearch Options
+#######################
+es_storage_size: 10Gi
+es_http_port: 9200
+es_data_save_days: 7
+## At 01:00 every day
+es_date_del_time: "0 1 * * *"
+
+#################
+# kibana Options
+#################
+kibana_node_port: 32000
+
 ####################
 # websockify Options
-####################
-websockify_port: 56666
+####################s
+websockify_port: 9003
