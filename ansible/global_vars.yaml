@@ -86,7 +86,7 @@ etcd_backup_expiry: "7"
 etcd_backup_dir: "/var/lib/etcd/backup"
 
 ##################
-# Ceph csi Options
+#  csi Options
 ##################
 # kubernetes ceph csi
 install_ceph_rbd_csi: true
@@ -99,6 +99,13 @@ create_cephfs_storage_class: true
 cephfs_check_port: 9083
 cephfs_service_port: 9084
 cephfs_storage_class_name: cephfs-general
+install_lvm_csi: false
+lvm_service_port: 9500
+lvm_storage_class_name: general
+lvm_volgroup_name: lvmvg
+create_lvm_storage_class: true
+# /dev/vdb or /dev/vdb1
+lvm_pv_deive: /dev/vdb
 
 #################
 # Ingress Options
@@ -175,14 +182,14 @@ enable_load_balancer: true
 enable_kube_master: true
 enable_kube_worker: true
 enable_ingress: true
-enable_ceph_csi: true
+enable_csi: true
 enable_mariadb: true
 enable_redis: true
 enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
-enable_guest_server: false
+enable_guest_server: true
 enable_java: false
 enable_voi: false
 enable_websockify: true
@@ -217,3 +224,4 @@ kibana_node_port: 32000
 # websockify Options
 ####################s
 websockify_port: 9003
+websockify_replicaCount: "{% if groups['websockify'] | length > 2 %}2{% else %}1{% endif %}"

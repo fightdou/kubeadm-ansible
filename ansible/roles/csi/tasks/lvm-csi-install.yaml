@@ -1,0 +1,40 @@
+- name: 创建 pv
+  shell: "{{ item }} || true"
+  with_items:
+  - "sudo pvcreate {{lvm_pv_deive}}"
+
+- name: 创建 vg
+  shell: "{{ item }} || true"
+  with_items:
+  - "sudo vgcreate {{lvm_volgroup_name}} {{lvm_pv_deive}}"
+
+- name: 创建 lvm-csi values 目录
+  file:
+    name: /etc/kubernetes/plugins/lvm-csi
+    state: directory
+
+- name: 复制 lvm-csi charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "lvm-csi"
+
+- name: 生成 lvm-csi values.yml
+  template:
+    src: custom-values-lvm-csi.yaml.j2
+    dest: /etc/kubernetes/plugins/lvm-csi/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install lvm-csi helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: lvm-csi
+    chart_ref: "{{ helm_charts_dir }}/lvm-csi"
+    values_files:
+      - /etc/kubernetes/plugins/lvm-csi/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 180s
+    release_namespace: "{{ helm_install_namespace }}"
