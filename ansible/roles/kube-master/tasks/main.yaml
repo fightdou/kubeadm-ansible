@@ -76,6 +76,7 @@
   register: helm_version
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+  ignore_errors: yes
 
 - block:
   - name: 安装 helm

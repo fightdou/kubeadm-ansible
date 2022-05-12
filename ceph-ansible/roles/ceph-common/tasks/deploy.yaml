@@ -18,6 +18,7 @@
   apt:
     state: present
     name: "{{ packages }}"
+    update_cache: True
   vars:
     packages:
       - "{% if ansible_python.version.major == 3 %}python3-netaddr{% else %}python-netaddr{% endif %}"

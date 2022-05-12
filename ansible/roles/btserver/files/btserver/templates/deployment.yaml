@@ -20,9 +20,9 @@ spec:
       labels:
         {{- include "btserver.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        - name: {{ .Values.image.pullSecrets }}
       {{- end }}
       serviceAccountName: {{ include "btserver.serviceAccountName" . }}
       securityContext:
@@ -40,6 +40,9 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 9019
+          volumeMounts:
+          - name: {{ .Values.volumeMounts.name }}
+            mountPath: {{ .Values.volumeMounts.path }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: {{ .Values.containers.name }}
@@ -53,8 +56,16 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 9020
+          volumeMounts:
+          - name: {{ .Values.volumeMounts.name_track }}
+            mountPath: {{ .Values.volumeMounts.path_track }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: {{ .Values.volumes.name }}
+        hostPath:
+          path: {{ .Values.volumes.path }}
+          type: {{ .Values.volumes.type }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

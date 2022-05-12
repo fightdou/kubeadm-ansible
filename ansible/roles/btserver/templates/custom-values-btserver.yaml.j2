@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: "{{ btserver_pod_replicaCount }}"
+replicaCount: "{{ replica_num }}"
 
 image:
   repository: "{{ btserver_image_repository }}"
@@ -10,10 +10,20 @@ image:
   pullPolicy: "{{ btserver_pod_pullPolicy }}"
   # Overrides the image tag whose default is the chart appVersion.
   tag: "{{ btserver_image_tag }}"
+  pullSecrets: "{{ docker_register_secrets_name }}"  
 
 containers:
   name: "{{ btserver_containers_name_track }}"
   network: "{{ btserver_hostnetwork }}"
+volumeMounts:
+  name: "{{ volume_mount_name }}"
+  path: "{{ volume_mount_path }}"
+  name_track: "{{ volume_mount_name }}"
+  path_track: "{{ volume_mount_path }}"
+volumes:
+  name: "{{ volumes_name }}"
+  path: "{{ volumes_path }}"
+  type: "{{ volumes_type }}"
 
 imagePullSecrets: []
 nameOverride: ""
