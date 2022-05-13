@@ -1,23 +1,25 @@
 firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
-custom_hosts:
-  "172.18.28.193":
-  - kunlun.cluster.local
 api_interface: ens3
-harbor_address: 172.18.31.155
+enable_docker_auth: true
+enable_domain_deploy: true
+docker_register_address: 172.18.31.155
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
 system_username: root
 system_password: 123456
+ipmi_vendor: HUAWEI
+ipmi_username: root
+ipmi_password: Huawei12#$
 
 ####################
 # Kubernetes options
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.29.183
+kube_apiserver_vip: 172.18.28.222
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -32,7 +34,7 @@ flannel_backend: "host-gw"
 kube_priority_name: high-priority-nonpreempting
 kube_priority_value: 1000000
 # Pod根容器
-pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
+pod_infra_container_image: "{{ kube_image_repository }}/pause:{{ kube_image_tag }}"
 kubeadm_token: ceky52.rec2keii98oke7sl
 # 节点的角色名称，默认values为enabled
 control_node_role_name: control_role
@@ -109,6 +111,9 @@ cephfs_storage_class_name: cephfs-general
 #################
 ingress_class_name: nginx
 ingress_controller_class: "k8s.io/ingress-nginx"
+ingress_http_port: 81
+ingress_https_port: 443
+ingress_metric_port: 10254
 
 #################
 # Libvirt Options
@@ -127,12 +132,15 @@ trochilus_vlan_network_interface: ""
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
+trochilus_api_ingress: true
+trochilus_voi_path: "{{ fsd_voi_dir }}"
 
 #################
 # Mariadb Options
 #################
 mariadb_root_password: 123456
 mariadb_trochilus_password: 123456
+mariadb_port: 3306
 mariadb_storage_size: 10Gi
 mariadb_toleration_seconds: 10
 mariadb_pvc_name: mariadb-pvc
@@ -151,6 +159,7 @@ prometheus_node_exporter_port: 9100
 prometheus_collectd_exporter_port: 9103
 prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
+pushgateway_clean_time: ""
 
 ##############
 # Fsd Options
@@ -167,6 +176,8 @@ bt_download_port_start: 6880
 bt_download_port_end: 6889
 fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
+fsd_host_network: true
+fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
 vdi_cpu_num: 50
 vdi_memory_num: 16
 vdi_storage_num: 1000
@@ -218,6 +229,7 @@ enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
 enable_websockify: true
+enable_ceph: true
 
 ################
 # Redis Options
@@ -233,3 +245,8 @@ redis_host_network: true
 # websockify Options
 ####################
 websockify_port: 56666
+
+##############
+# VOI Options
+##############
+only_deploy_voi: false

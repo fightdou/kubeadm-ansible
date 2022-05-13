@@ -121,7 +121,7 @@ control
 compute
 storage
 
-[java:children]
+[fsd:children]
 control
 
 [elasticsearch:children]
