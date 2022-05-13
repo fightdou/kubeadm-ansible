@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - args:
-        - --config.file=/etc/alertmanager/alertmanager.yaml
+        - --config.file=/etc/alertmanager/alertmanager.yml
         - --storage.path=/alertmanager
         - --data.retention=120h
         - --cluster.listen-address=[$(POD_IP)]:9094
@@ -33,7 +33,7 @@ spec:
         - name: NODE_ID
           valueFrom:
             fieldRef:
-              fieldPath: spec.nodeName
+              fieldPath: status.hostIP
         image: {{ .Values.image.alertmanager }}
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -94,6 +94,6 @@ spec:
       - emptyDir: {}
         name: alertmanager-main-db
       - hostPath:
-          path: {{ .Values.alert_rule_dir }}/alertmanager.yaml
+          path: {{ .Values.alertmanager_dir }}/alertmanager.yaml
           type: ""
         name: alertmanager-etc

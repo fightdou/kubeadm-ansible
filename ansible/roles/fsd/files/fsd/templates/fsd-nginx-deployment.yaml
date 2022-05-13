@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsd-nginx
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      fsd: web
+  replicas: {{ .Values.replica }}
+  template:
+    metadata:
+      labels:
+        fsd: web
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: fsd
+                    operator: In
+                    values:
+                    - web
+              topologyKey: 'kubernetes.io/hostname'
+      containers:
+        - name: fsd-nginx
+          image: {{ .Values.image.fsd_nginx }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: fsd_init_vip
+              value: "{{ .Values.fsd_env.deploy_vip }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              /home/init/init.sh
+              nginx
+              tail -f /dev/null
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.fsd_nginx.port }}
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 50
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.fsd_nginx.port }}
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 50
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
+          ports:
+            - name: {{ .Values.service.fsd_nginx.name }}
+              containerPort: {{ .Values.service.fsd_nginx.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: fsd-static
+              mountPath: /usr/local/dist/static
+      volumes:
+        - name: fsd-static
+          hostPath:
+            path: {{ .Values.mount_dir.fsd_static }}
+            type: DirectoryOrCreate
+      securityContext: {}
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
+      {{- if .Values.hostNetwork }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+{{- toYaml . | nindent 8 }}
+{{- end }}

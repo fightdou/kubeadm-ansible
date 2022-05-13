@@ -1,3 +1,4 @@
+{{- if .Values.sentinel.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -118,13 +119,25 @@ spec:
       - name: config-init
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+            privileged: true
         resources:
 {{ toYaml .Values.init.resources | indent 10 }}
         command:
-        - sh
+        - bash
         args:
         - /readonly-config/init.sh
         env:
+        {{- if .Values.hostNetwork }}
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        {{- end }}
 {{- $replicas := int .Values.replicas -}}
 {{- range $i := until $replicas }}
         - name: SENTINEL_ID_{{ $i }}
@@ -171,6 +184,14 @@ spec:
           tcpSocket:
             port: {{ .Values.redis.port }}
           initialDelaySeconds: 15
+        startupProbe:
+          failureThreshold: 22
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: {{ .Values.redis.port }}
+          timeoutSeconds: 5
         resources:
 {{ toYaml .Values.redis.resources | indent 10 }}
         ports:
@@ -202,6 +223,14 @@ spec:
           tcpSocket:
             port: {{ .Values.sentinel.port }}
           initialDelaySeconds: 15
+        startupProbe:
+          failureThreshold: 22
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: {{ .Values.sentinel.port }}
+          timeoutSeconds: 5
         resources:
 {{ toYaml .Values.sentinel.resources | indent 10 }}
         ports:
@@ -245,6 +274,8 @@ spec:
           - name: exporter-port
             containerPort: {{ .Values.exporter.port }}
 {{- end }}
+      hostNetwork: {{ .Values.hostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
       volumes:
       - name: config
         configMap:
@@ -288,4 +319,5 @@ spec:
 {{- else }}
       - name: data
         emptyDir: {}
+{{- end }}
 {{- end }}

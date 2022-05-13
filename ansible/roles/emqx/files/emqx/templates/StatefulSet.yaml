@@ -156,6 +156,12 @@ spec:
 {{ toYaml .Values.extraEnvFrom | indent 10 }}
           {{- end }}
           env:
+          - name: EMQX_MQTT_PORT
+            value: "{{ .Values.service.mqtt | default 1883 }}"
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
           {{- if .Values.extraEnv }}
 {{ toYaml .Values.extraEnv | indent 10 }}
           {{- end }}

@@ -161,7 +161,7 @@ spec:
             - name: NODE_ID
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
+                  fieldPath: status.hostIP
             - name: CSI_ENDPOINT
               value: "unix:///csi/{{ .Values.provisionerSocketFile }}"
             - name: CSI_ADDONS_ENDPOINT
