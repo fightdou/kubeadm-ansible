@@ -40,7 +40,7 @@ data:
     volume_driver = {{ .Values.conf.rbd1.volume_driver }}
     [network_settings]
     support_flat_physicals = {{ .Values.networkConfig.flat_network_type }}
-    physical_vlan_ranges = {{ .Values.networkConfig.vlan_network_type }}:{{ .Values.networkConfig.network_vlan_range }}
+    physical_vlan_ranges = {{ .Values.networkConfig.vlan_network_type }}
     physical_interface_mappings =
     [vm_settings]
     virt_type = {{ .Values.conf.vm_settings.virt_type }}
@@ -87,9 +87,9 @@ data:
     sed -i "s/version =/version = $version/g" /etc/trochilus/trochilus.conf
 
     {{- if and .Values.networkConfig.support_vlan_network .Values.networkConfig.support_flat_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.networkConfig.support_vlan_physicals }}:$vlan_nic, {{ .Values.networkConfig.support_flat_physicals }}:$flat_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = $vlan_nic,$flat_nic/g" /etc/trochilus/trochilus.conf
     {{- else if .Values.networkConfig.support_vlan_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.networkConfig.vlan_network_type }}:$vlan_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = $vlan_nic/g" /etc/trochilus/trochilus.conf
     {{- else if .Values.networkConfig.support_flat_network }}
-    sed -i "s/physical_interface_mappings =/physical_interface_mappings = {{ .Values.networkConfig.flat_network_type }}:$flat_nic/g" /etc/trochilus/trochilus.conf
+    sed -i "s/physical_interface_mappings =/physical_interface_mappings = $flat_nic/g" /etc/trochilus/trochilus.conf
     {{- end }}

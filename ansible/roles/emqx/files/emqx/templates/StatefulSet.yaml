@@ -155,8 +155,8 @@ spec:
           {{- if .Values.extraEnvFrom }}
 {{ toYaml .Values.extraEnvFrom | indent 10 }}
           {{- end }}
-          {{- if .Values.extraEnv }}
           env:
+          {{- if .Values.extraEnv }}
 {{ toYaml .Values.extraEnv | indent 10 }}
           {{- end }}
           resources:

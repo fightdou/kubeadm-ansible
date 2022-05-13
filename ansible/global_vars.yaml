@@ -2,7 +2,7 @@ firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
 custom_hosts:
-  "172.18.31.109":
+  "172.18.28.193":
   - kunlun.cluster.local
 api_interface: ens3
 harbor_address: 172.18.31.155
@@ -15,7 +15,7 @@ docker_register_secrets_name: docker-register-secrets
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.31.109
+kube_apiserver_vip: 172.18.28.193
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -116,10 +116,8 @@ ceph_rbd_admin_user: client.admin
 # Trochilus Options
 ###################
 trochilus_support_flat_network: true
-trochilus_flat_network_nic: ""
-trochilus_support_vlan_network: false
+trochilus_support_vlan_network: true
 trochilus_network_vlan_range: 100:1000
-trochilus_vlan_network_nic: ""
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002

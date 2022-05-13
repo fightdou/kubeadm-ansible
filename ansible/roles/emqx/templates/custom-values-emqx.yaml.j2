@@ -77,7 +77,13 @@ podSecurityContext:
   - 1000
 recreatePods: false
 replicaCount: "{{ emqx_pod_replicaCount }}"
-resources: {}
+resources:
+    requests:
+      memory: 700Mi
+      cpu: 500m
+    limits:
+      memory: 700Mi
+      cpu: 500m
 service:
   annotations: {}
   dashboard: 18083
