@@ -72,8 +72,8 @@ data:
       role=`eval echo '$'${HOSTNAME}"_node_role"`
       system=`eval echo '$'${HOSTNAME}"_system"`
       version=`eval echo '$'${HOSTNAME}"_version"`
-      flat_nic=`eval echo '$'${HOSTNAME}"_flat_network_nic"`
-      vlan_nic=`eval echo '$'${HOSTNAME}"_vlan_network_nic"`
+      flat_nic=`eval echo '$'${HOSTNAME}"_flat_network_interface"`
+      vlan_nic=`eval echo '$'${HOSTNAME}"_vlan_network_interface"`
     fi
 
     nics_info=`(echo $nic | sed "s/,/\ /g")`

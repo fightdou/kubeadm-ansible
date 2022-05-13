@@ -1,0 +1,9 @@
+- name: Restart samba service
+  service:
+    name: "{{ item }}"
+    state: "restarted"
+    enabled: yes
+  become: True
+  with_items:
+    - "nmbd"
+    - "smbd"

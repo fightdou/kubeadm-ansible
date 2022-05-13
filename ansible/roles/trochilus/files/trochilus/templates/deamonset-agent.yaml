@@ -65,11 +65,11 @@ spec:
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
-            {{- if eq $conf "vlan_network_nic" }}
+            {{- if eq $conf "vlan_network_interface" }}
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
-            {{- if eq $conf "flat_network_nic" }}
+            {{- if eq $conf "flat_network_interface" }}
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
@@ -79,7 +79,7 @@ spec:
             - name: NODE_ID
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
+                  fieldPath: status.hostIP
           command:
             - /bin/sh
             - -c
@@ -106,13 +106,6 @@ spec:
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "1024Mi"
-              cpu: "2000m"
           securityContext:
             privileged: true
             readOnlyRootFilesystem: false
@@ -164,6 +157,7 @@ spec:
       {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
+      priorityClassName: {{ .Values.priorityClassName }}
       volumes:
         - configMap:
             defaultMode: 420
