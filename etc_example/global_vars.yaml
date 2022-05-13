@@ -120,10 +120,10 @@ ceph_rbd_admin_user: client.admin
 # Trochilus Options
 ###################
 trochilus_support_flat_network: true
-trochilus_flat_network_nic: ""
+trochilus_flat_network_interface: ""
 trochilus_support_vlan_network: false
 trochilus_network_vlan_range: 100:1000
-trochilus_vlan_network_nic: ""
+trochilus_vlan_network_interface: ""
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002

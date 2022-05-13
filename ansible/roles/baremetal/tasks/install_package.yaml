@@ -36,15 +36,15 @@
       - openshift
       - docker
 
-- name: Install ansible galaxy cloud.common
-  shell: ansible-galaxy collection install cloud.common
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+# - name: Install ansible galaxy cloud.common
+#   shell: ansible-galaxy collection install cloud.common
+#   run_once: True
+#   delegate_to: "{{ groups['kube-master'][0] }}"
 
-- name: Install ansible galaxy kubernetes.core
-  shell: ansible-galaxy collection install kubernetes.core
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+# - name: Install ansible galaxy kubernetes.core
+#   shell: ansible-galaxy collection install kubernetes.core
+#   run_once: True
+#   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 查看 docker-archive-keyring.gpg 是否存在
   shell: ls /usr/share/keyrings/docker-archive-keyring.gpg

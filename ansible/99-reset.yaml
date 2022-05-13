@@ -1,6 +1,6 @@
 - name: Apply role Reset Kubernetes cluster
   gather_facts: false
-  hosts: all
+  hosts: allnodes
   roles:
     - { role: reset,
         tags: reset }

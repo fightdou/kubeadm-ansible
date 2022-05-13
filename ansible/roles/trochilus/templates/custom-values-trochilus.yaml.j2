@@ -24,26 +24,26 @@ nodeInfo:
       version: "{{ hostvars[host]['ansible_distribution_version'] }}"
       node_role: "{{ ['control', 'compute', 'storge'] | listintersection(hostvars[host]['group_names']) | join(',') }}"
       nic_info: "{{ hostvars[host]['nic_info'] | join(',') }}"
-      {% if hostvars[host]['vlan_network_nic'] == "" and trochilus_vlan_network_nic != "" -%}
-      vlan_network_nic: "{{ trochilus_vlan_network_nic }}"
+      {% if hostvars[host]['vlan_network_interface'] == "" and trochilus_vlan_network_interface != "" -%}
+      vlan_network_interface: "{{ trochilus_vlan_network_interface }}"
       {%- else -%}
-      vlan_network_nic: "{{ hostvars[host]['vlan_network_nic'] }}"
+      vlan_network_interface: "{{ hostvars[host]['vlan_network_interface'] }}"
       {% endif -%}
-      {% if hostvars[host]['flat_network_nic'] == "" and trochilus_flat_network_nic != "" -%}
-      flat_network_nic: "{{ trochilus_flat_network_nic }}"
+      {% if hostvars[host]['flat_network_interface'] == "" and trochilus_flat_network_interface != "" -%}
+      flat_network_interface: "{{ trochilus_flat_network_interface }}"
       {%- else -%}
-      flat_network_nic: "{{ hostvars[host]['flat_network_nic'] }}"
+      flat_network_interface: "{{ hostvars[host]['flat_network_interface'] }}"
       {% endif %}
   {% endfor %}
 
 networkConfig:
   support_vlan_network: {{ trochilus_support_vlan_network }}
   vlan_network_type: vlan1
-  vlan_network_nic: {{ trochilus_vlan_network_nic }}
+  vlan_network_interface: {{ trochilus_vlan_network_interface }}
   network_vlan_range: {{ trochilus_network_vlan_range }}
   support_flat_network: {{ trochilus_support_flat_network }}
   flat_network_type: flat1
-  flat_network_nic: {{ trochilus_flat_network_nic }}
+  flat_network_interface: {{ trochilus_flat_network_interface }}
 
 dependencies:
   db_sync:
