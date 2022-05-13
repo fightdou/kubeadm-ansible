@@ -1,0 +1,27 @@
+#!/bin/bash
+a=1
+mount_state="mountpoint -q /mnt"
+if $mount_state;then
+    echo "/mnt已挂载"
+    exit 1
+fi
+while true
+do
+    ceph_active=`ceph fs status | grep active | wc -l`
+    if [ "$ceph_active" -ne 0 ]
+    then
+        mount -t ceph {{ mon_hosts }}:/ {{ desktop_mount_dir }} -o name=admin,secret={{ mons_secret.client_admin.client_admin_secret }},_netdev,noatime
+        if [ $? == "0" ]
+        then
+            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功"
+            exit 0
+        else
+            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:失败"
+            exit 1
+        fi
+    else
+        echo "$(date +"%Y-%m-%d %T")==>第$a次ceph fs 检测未active"
+        let a=a+1
+        sleep 10
+    fi
+done

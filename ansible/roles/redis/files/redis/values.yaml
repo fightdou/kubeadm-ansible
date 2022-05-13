@@ -62,11 +62,12 @@ redis:
     repl-diskless-sync: "yes"
     rdbcompression: "yes"
     rdbchecksum: "yes"
+    notify-keyspace-events: Ex
 
   ## Custom redis.conf files used to override default settings. If this file is
   ## specified then the redis.config above will be ignored.
   # customConfig: |-
-      # Define configuration here
+  #     notify-keyspace-events Ex
 
   resources: {}
   #  requests:
