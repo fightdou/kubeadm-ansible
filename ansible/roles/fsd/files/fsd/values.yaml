@@ -1,0 +1,58 @@
+image:
+  fsd: 172.18.31.155/kubernetes/fsd:latest
+  fsd_job: 172.18.31.155/kubernetes/fsd_job:latest
+  fsd_nginx: nginx:1.15.9
+  pullSecrets: ""
+
+serviceAccountName: fsd
+replica: 1
+nodeSelector:
+  control_role: enabled
+priorityClassName: ""
+
+service:
+  fsd_webhook:
+    port: 9010
+    name: fsd-webhook
+  fsd_job:
+    port: 9011
+    name: fsd-job
+  fsd_tcp:
+    port: 9012
+    name: fsd-tcp
+  fsd_tcp_file:
+    port: 9013
+    name: fsd-tcp-file
+  fsd_nginx:
+    port: 80
+    name: fsd-web
+
+mount_dir:
+  fsd_log: /var/log/fsd
+  prometheus_rule: /mnt/prometheus/rules
+  alertmanager_conf: /mnt/prometheus/alertmanager
+  voi_dir: /mnt/voi
+  upload_dir: /mnt/upload
+  fsd_static: /var/nginx/nginx_page/static
+
+fsd_env:
+  redis_master_name: mycluster
+  redis_server_address: redis.default.svc.cluster.local
+  netty_codec_mac: 60f81dad19ae
+  deploy_mode: all
+  deploy_vip: 172.18.29.222
+  deploy_node_username: root
+  deploy_node_password: 123456
+  desktop_bt_port_start: "6880"
+  desktop_bt_port_end: "6889"
+  cloud_disk_root_path: "/mnt/111"
+  cloud_disk_share_disk_path: "ShareA"
+  cloud_disk_username: "troila"
+  cloud_disk_password: "Troila12"
+
+fsd_job_env:
+  fsd_database: klcloud_fsd
+  job_database: xxl_job
+  mariadb_host: mariadb.default.svc.cluster.local
+  mariadb_username: root
+  mariadb_password: 123456

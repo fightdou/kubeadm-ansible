@@ -1,0 +1,46 @@
+- name: 创建 fsd values 目录
+  file:
+    name: /etc/kubernetes/plugins/fsd
+    state: directory
+
+- name: 复制 fsd charts 目录
+  copy:
+    src: "{{ item }}"
+    dest: "{{ helm_charts_dir }}/"
+  loop:
+    - "fsd"
+
+- name: 获取 mariadb host 地址
+  shell: kubectl get pod -A -o wide | grep mariadb | awk -F' ' '{print $8}'
+  register: mariadb_host
+
+- name: 记录 mariadb IP地址
+  set_fact:
+    mariadb_host_address: "{{ mariadb_host.stdout }}"
+
+- name: 获取 redis host 地址
+  shell: kubectl get pod -A -o wide | grep redis | awk -F' ' '{print $8}'
+  register: redis_host
+
+- name: 查看 redis host 地址
+  set_fact:
+    redis_server_address: "{{ redis_host.stdout.split('\n') | join(':26379,') }}:26379"
+
+- name: 生成 fsd values.yml
+  template:
+    src: custom-fsd-values.yaml.j2
+    dest: /etc/kubernetes/plugins/fsd/values.yaml
+    owner: root
+    mode: 0644
+
+- name: Install fsd helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: fsd
+    chart_ref: "{{ helm_charts_dir }}/fsd"
+    values_files:
+      - /etc/kubernetes/plugins/fsd/values.yaml
+    state: present 
+    wait: yes
+    wait_timeout: 200s
+    release_namespace: "{{ helm_install_namespace }}"

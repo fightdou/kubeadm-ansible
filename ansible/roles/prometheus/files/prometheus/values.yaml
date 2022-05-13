@@ -18,6 +18,7 @@ replica:
 
 prometheusServerIP: []
 alert_rule_dir: ""
+alertmanager_dir: ""
 
 serviceAccountName: prometheus
 

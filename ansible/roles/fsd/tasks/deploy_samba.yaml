@@ -1,0 +1,36 @@
+---
+- name: Create samba user
+  user:
+    name: "{{ fsd_cloud_disk_user_name }}"
+    state: "present"
+
+- name: 创建 samba cloud disk 目录
+  file:
+    path: "{{ fsd_cloud_disk_root_path }}/samba"
+    state: "directory"
+    mode: "0777"
+    recurse: yes
+
+- name: Create disksize file
+  file:
+    path: "{{ fsd_cloud_disk_root_path }}/samba/disksize"
+    mode: "0777"
+    state: touch
+
+- name: Copy samba shell scribe
+  template:
+    src: "diskSize.sh.j2"
+    dest: "{{ fsd_cloud_disk_root_path }}/samba/diskSize.sh"
+    mode: "0777"
+  become: true
+  notify:
+    - Restart samba service
+
+- name: Cope samba config file
+  template:
+    src: "smb.conf.j2"
+    dest: "/etc/samba/smb.conf"
+    mode: "0755"
+  become: true
+  notify:
+    - Restart samba service
