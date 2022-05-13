@@ -1,0 +1,33 @@
+[global]
+        workgroup = MYGROUP
+        netbios name = MYSERVER
+        server string = Samba Server Version %v
+        log file = /var/log/samba/log.%m
+        max log size = 50
+        security = user
+        passdb backend = tdbsam
+        load printers = yes
+        cups options = raw
+        dfree command = {{ fsd_cloud_disk_root_path }}/samba/diskSize.sh
+
+[{{ fsd_cloud_disk_share_disk_path }}]
+        path = {{ fsd_cloud_disk_root_path }}
+        browsable = yes
+        read only = no
+        inherit permissions = yes
+        valid users = {{ fsd_cloud_disk_user_name }}
+        writable = yes
+        available = yes
+        create mask = 0777
+        directory mask = 0777
+
+[{{ fsd_cloud_disk_share_disk_path }}-read]
+        path = {{ fsd_cloud_disk_root_path }}
+        browsable = yes
+        read only = yes
+        inherit permissions = yes
+        valid users = {{ fsd_cloud_disk_user_name }}
+        writable = no
+        available = yes
+        create mask = 0777
+        directory mask = 0777

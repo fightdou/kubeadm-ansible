@@ -15,7 +15,7 @@ enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
-enable_java: false
+enable_fsd: true
 enable_voi: false
 enable_elasticsearch: true
 enable_fluentd: true

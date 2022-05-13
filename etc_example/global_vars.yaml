@@ -9,13 +9,15 @@ harbor_address: 172.18.31.155
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
+system_username: root
+system_password: 123456
 
 ####################
 # Kubernetes options
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.193
+kube_apiserver_vip: 172.18.29.183
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -27,6 +29,8 @@ docker_storage_dir: "/var/lib/docker"
 kube_pod_subnet: 10.244.0.0/16
 kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
+kube_priority_name: high-priority-nonpreempting
+kube_priority_value: 1000000
 # Pod根容器
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
@@ -136,8 +140,6 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # Prometheus Options
 ####################
-# 数据存放目录，需挂载共享存储
-prometheus_alert_rule_dir: /opt/prometheus/rules
 prometheus_query_port: 9004
 prometheus_server_port: 9005
 thanos_sidecar_http_port: 19092
@@ -151,10 +153,24 @@ prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
 
 ##############
-# Java Options
+# Fsd Options
 ##############
-java_webhook_port: 9030
-java_webhook_token: abc123
+fsd_webhook_port: 9030
+fsd_job_port: 6666
+fsd_tcp_port: 6667
+fsd_tcp_file_port: 9013
+fsd_webhook_token: abc123
+fsd_nginx_port: 80
+bt_server_port: 9019
+bt_tracker_port: 9020
+bt_download_port_start: 6880
+bt_download_port_end: 6889
+fsd_cloud_disk_user_name: troila
+fsd_cloud_disk_password: Troila12
+vdi_cpu_num: 50
+vdi_memory_num: 16
+vdi_storage_num: 1000
+cloud_disk_num: 1000
 
 #######################
 # elasticsearch Options
@@ -181,7 +197,6 @@ emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
 emqx_hostnetwork: true
 
-
 #################
 # role开关
 #################
@@ -197,7 +212,7 @@ enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
-enable_java: false
+enable_fsd: true
 enable_voi: false
 enable_elasticsearch: true
 enable_fluentd: true
