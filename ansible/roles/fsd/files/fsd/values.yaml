@@ -3,6 +3,7 @@ image:
   fsd_job: 172.18.31.155/kubernetes/fsd_job:latest
   fsd_nginx: nginx:1.15.9
   pullSecrets: ""
+  pullPolicy: "IfNotPresent"
 
 serviceAccountName: fsd
 replica: 1
@@ -37,13 +38,14 @@ mount_dir:
   fsd_static: /var/nginx/nginx_page/static
 
 fsd_env:
+  redis_password: zhuolang@Troila@123
   redis_master_name: mycluster
   redis_server_address: redis.default.svc.cluster.local
   netty_codec_mac: 60f81dad19ae
   deploy_mode: all
-  deploy_vip: 172.18.29.222
-  deploy_node_username: root
-  deploy_node_password: 123456
+  proxy_ip: 172.18.28.222
+  deploy_vip: 172.18.28.222
+  vnc_port: 9003
   desktop_bt_port_start: "6880"
   desktop_bt_port_end: "6889"
   cloud_disk_root_path: "/mnt/111"
@@ -52,8 +54,6 @@ fsd_env:
   cloud_disk_password: "Troila12"
 
 fsd_job_env:
-  fsd_database: klcloud_fsd
-  job_database: xxl_job
-  mariadb_host: mariadb.default.svc.cluster.local
+  mariadb_host: 172.18.29.183:3306
   mariadb_username: root
   mariadb_password: 123456

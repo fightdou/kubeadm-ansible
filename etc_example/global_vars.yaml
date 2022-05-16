@@ -19,7 +19,7 @@ ipmi_password: Huawei12#$
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.222
+kube_apiserver_vip: 172.18.28.193
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -148,28 +148,30 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # Prometheus Options
 ####################
-prometheus_query_port: 9004
-prometheus_server_port: 9005
+prometheus_query_port: 19191
+prometheus_server_port: 9090
 thanos_sidecar_http_port: 19092
 thanos_sidecar_grpc_port: 19091
-prometheus_alertmanager_port: 9006
+prometheus_alertmanager_port: 9093
 prometheus_alertmanager_cluster_port: 9094
 prometheus_pushgateway_port: 9091
 prometheus_node_exporter_port: 9100
 prometheus_collectd_exporter_port: 9103
 prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
-pushgateway_clean_time: ""
+pushgateway_clean_time: "*/1 * * * *"
 
 ##############
 # Fsd Options
 ##############
-fsd_webhook_port: 9030
-fsd_job_port: 6666
-fsd_tcp_port: 6667
+# 如果需要外网映射，需配置外网映射的IP地址，没有的话则配置VIP
+fsd_proxy_ip: ""
+fsd_webhook_port: 9010
+fsd_job_port: 9011
+fsd_tcp_port: 9012
 fsd_tcp_file_port: 9013
 fsd_webhook_token: abc123
-fsd_nginx_port: 80
+fsd_nginx_port: 9000
 bt_server_port: 9019
 bt_tracker_port: 9020
 bt_download_port_start: 6880
@@ -236,7 +238,7 @@ enable_ceph: true
 ################
 redis_storage_size: 10Gi
 redis_master_password: zhuolang@Troila@123
-redis_master_group_name: mycluster
+redis_master_group_name: kolla
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
@@ -244,7 +246,7 @@ redis_host_network: true
 ####################
 # websockify Options
 ####################
-websockify_port: 56666
+websockify_port: 9003
 
 ##############
 # VOI Options

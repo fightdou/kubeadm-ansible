@@ -25,17 +25,17 @@ spec:
       containers:
         - name: fsd-job
           image: {{ .Values.image.fsd_job }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.fsd_job.port }}
               protocol: TCP
               name: {{ .Values.service.fsd_job.name }}
           env:
-            - name: env.fsd.common.job.mysql.host
+            - name: ENV_FSD_COMMON_JOB_MYSQL_HOST
               value: "{{ .Values.fsd_job_env.mariadb_host }}"
-            - name: env.fsd.common.job.mysql.username
+            - name: ENV_FSD_COMMON_JOB_MYSQL_USERNAME
               value: "{{ .Values.fsd_job_env.mariadb_username }}"
-            - name: env.fsd.common.job.mysql.password
+            - name: ENV_FSD_COMMON_JOB_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
       {{- if .Values.hostNetwork }}
       hostNetwork: true

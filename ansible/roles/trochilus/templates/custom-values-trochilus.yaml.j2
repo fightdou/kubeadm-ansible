@@ -7,6 +7,7 @@ image:
   db_init: {{ kube_image_repository }}/centos-source-kolla-toolbox:{{ kube_image_tag }}
   db_sync: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
+  pullPolicy: "Always"
 
 serviceAccountName: trochilus
 nodeSelector:
@@ -15,7 +16,7 @@ nodeSelector:
   trochilus_api:
     {{ control_node_role_name }}: {{ node_role_value }}
 clusterDomainSuffix: cluster.local
-replica: 2
+replica: "{% if groups['trochilus-api'] | length > 2 %}2{% else %}1{% endif %}"
 
 nodeInfo:
   {% for host in groups['trochilus-agent'] -%}

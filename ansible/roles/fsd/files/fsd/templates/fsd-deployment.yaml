@@ -25,7 +25,7 @@ spec:
       containers:
         - name: fsd
           image: {{ .Values.image.fsd }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.fsd_webhook.port }}
               protocol: TCP
@@ -50,39 +50,39 @@ spec:
             - name: fsd-static
               mountPath: /mnt/fsd/static
           env:
-            - name: env.fsd.spring.mysql.password
+            - name: ENV_FSD_SPRING_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
-            - name: env.fsd.spring.redis.master
+            - name: ENV_FSD_SPRING_REDIS_PASSWORD
+              value: "{{ .Values.fsd_env.redis_password }}"
+            - name: ENV_FSD_SPRING_REDIS_MASTER
               value: "{{ .Values.fsd_env.redis_master_name }}"
-            - name: env.fsd.spring.redis.servers
+            - name: ENV_FSD_SPRING_REDIS_SERVERS
               value: "{{ .Values.fsd_env.redis_server_address }}"
-            - name: env.fsd.common.netty.codec.mac
+            - name: ENV_FSD_COMMON_NETTY_CODEC_MAC
               value: "{{ .Values.fsd_env.netty_codec_mac }}"
-            - name: env.fsd.biz.deploy.mode
+            - name: ENV_FSD_BIZ_DEPLOY_MODE
               value: "{{ .Values.fsd_env.deploy_mode }}"
-            - name: env.fsd.biz.deploy.vip
+            - name: ENV_FSD_BIZ_DEPLOY_PROXYIP
+              value: "{{ .Values.fsd_env.proxy_ip }}"
+            - name: ENV_FSD_BIZ_DEPLOY_VIP
               value: "{{ .Values.fsd_env.deploy_vip }}"
-            - name: env.fsd.biz.deploy.node.ip
+            - name: ENV_FSD_BIZ_VIRTUAL_VNCPORT
+              value: "{{ .Values.fsd_env.vnc_port }}"
+            - name: ENV_FSD_BIZ_DEPLOY_NODEIP
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-            - name: env.fsd.biz.deploy.node.username
-              value: "{{ .Values.fsd_env.deploy_node_username }}"
-            - name: env.fsd.biz.deploy.node.password
-              value: "{{ .Values.fsd_env.deploy_node_password }}"
-            - name: env.fsd.biz.desktop.bt.portStart
+            - name: ENV_FSD_BIZ_DESKTOP_BT_PORTSTART
               value: "{{ .Values.fsd_env.desktop_bt_port_start }}"
-            - name: env.fsd.biz.desktop.bt.portEnd
+            - name: ENV_FSD_BIZ_DESKTOP_BT_PORTEND
               value: "{{ .Values.fsd_env.desktop_bt_port_end }}"
-            - name: env.fsd.biz.clouddisk.password
-              value: "{{ .Values.fsd_env.cloud_disk_password }}"
-            - name: env.fsd.biz.clouddisk.rootPath
+            - name: ENV_FSD_BIZ_CLOUDDISK_ROOTPATH
               value: "{{ .Values.fsd_env.cloud_disk_root_path }}"
-            - name: env.fsd.biz.clouddisk.sharedDiskMapPath
+            - name: ENV_FSD_BIZ_CLOUDDISK_SHAREDDISKMAPPATH
               value: "{{ .Values.fsd_env.cloud_disk_share_disk_path }}"
-            - name: env.fsd.biz.clouddisk.cloudDiskUsername
+            - name: ENV_FSD_BIZ_CLOUDDISK_CLOUDDISKUSERNAME
               value: "{{ .Values.fsd_env.cloud_disk_username }}"
-            - name: env.fsd.biz.clouddisk.cloudDiskPassword
+            - name: ENV_FSD_BIZ_CLOUDDISK_CLOUDDISKPASSWORD
               value: "{{ .Values.fsd_env.cloud_disk_password }}"
       volumes:
         - name: fsd-log
