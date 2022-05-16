@@ -27,7 +27,7 @@ alert_rule_dir: "{{ prometheus_alert_rule_dir }}"
 alertmanager_dir: "{{ prometheus_alertmanager_dir }}"
 serviceAccountName: prometheus
 pushgateway_cleaner_job:
-  cron: "*/10 * * * *"
+  cron: "{{ pushgateway_clean_time }}"
   history:
     success: 3
     failed: 1

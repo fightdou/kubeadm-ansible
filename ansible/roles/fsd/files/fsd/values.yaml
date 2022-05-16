@@ -9,6 +9,7 @@ replica: 1
 nodeSelector:
   control_role: enabled
 priorityClassName: ""
+hostNetwork: ""
 
 service:
   fsd_webhook:

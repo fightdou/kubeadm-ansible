@@ -14,3 +14,4 @@ secret:
 serviceAccountName: libvirt
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
+priorityClassName: {{ kube_priority_name }}

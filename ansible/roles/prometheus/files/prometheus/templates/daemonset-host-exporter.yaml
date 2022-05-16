@@ -29,10 +29,10 @@ spec:
         resources:
           limits:
             cpu: 250m
-            memory: 180Mi
+            memory: 512Mi
           requests:
-            cpu: 102m
-            memory: 180Mi
+            cpu: 250m
+            memory: 512Mi
         volumeMounts:
           - mountPath: /dev
             name: dev

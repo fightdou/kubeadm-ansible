@@ -14,3 +14,4 @@ secret:
 serviceAccountName: libvirt
 nodeSelector:
   compute_role: enabled
+priorityClassName: ""

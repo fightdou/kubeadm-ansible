@@ -74,13 +74,6 @@ spec:
           periodSeconds: 60
           successThreshold: 1
           timeoutSeconds: 5
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "1024Mi"
-            cpu: "2000m"
         securityContext:
           privileged: true
           readOnlyRootFilesystem: false
@@ -138,6 +131,7 @@ spec:
       {{- end }}
       serviceAccount: libvirt
       serviceAccountName: libvirt
+      priorityClassName: {{ .Values.priorityClassName }}
       volumes:
         - emptyDir: {}
           name: kolla-config

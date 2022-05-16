@@ -13,6 +13,11 @@ data:
     [agent_settings]
     bind_host = ${NODE_ID}
     bind_port = {{ .Values.service.trochilus_agent.port }}
+    ipmi_username = {{ .Values.conf.agent_settings.ipmi_username }}
+    ipmi_password = {{ .Values.conf.agent_settings.ipmi_password }}
+    ipmi_vendor = {{ .Values.conf.agent_settings.ipmi_vendor }}
+    host_username = {{ .Values.conf.agent_settings.host_username }}
+    host_password = {{ .Values.conf.agent_settings.host_password }}
     system =
     version =
     role =
@@ -52,7 +57,7 @@ data:
     spice_server_listen = ${NODE_ID}
     [voi_settings]
     voi_image_base_path = /var/lib/trochilus/voi/images
-    voi_vm_base_path = /var/lib/trochilus/voi/vms
+    voi_vm_base_path = {{ .Values.conf.voi_settings.voi_vm_base_path }}
     vm_name_template = voi-%s
     [webhook_settings]
     target_host = ${NODE_ID}

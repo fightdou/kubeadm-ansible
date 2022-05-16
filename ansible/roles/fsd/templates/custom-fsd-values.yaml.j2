@@ -10,6 +10,7 @@ replica: {{ replicaNum }}
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
 priorityClassName: {{ kube_priority_name }}
+hostNetwork: {{ fsd_host_network }}
 
 service:
   fsd_webhook:
