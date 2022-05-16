@@ -14,7 +14,7 @@ spec:
           service:
             name: mariadb
             port:
-              name: mysql
+              name: {{ .Values.service.mariadb.name }}
         path: /
         pathType: ImplementationSpecific
   - host: mariadb.{{ .Release.Namespace }}
@@ -24,7 +24,7 @@ spec:
           service:
             name: mariadb
             port:
-              name: mysql
+              name: {{ .Values.service.mariadb.name }}
         path: /
         pathType: ImplementationSpecific
   - host: mariadb.{{ .Release.Namespace }}.svc.cluster.local
@@ -34,7 +34,7 @@ spec:
           service:
             name: mariadb
             port:
-              name: mysql
+              name: {{ .Values.service.mariadb.name }}
         path: /
         pathType: ImplementationSpecific
 {{- end }}

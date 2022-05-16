@@ -53,6 +53,12 @@ mariadb:
   database: trochilus
 
 conf:
+  agent_settings:
+    ipmi_username: root
+    ipmi_password: Troila12#$
+    ipmi_vendor: HUAWEI
+    host_username: root
+    host_password: 123456
   api_settings:
     enabled_volume_backends: rbd1
   image_settings:
