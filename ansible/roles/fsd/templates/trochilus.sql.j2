@@ -1,3 +1,2 @@
 USE klcloud_fsd;
-INSERT INTO `klcloud_fsd`.`des_server`(`uuid`, `name`, `ip`, `login_name`, `password`, `manage_ip`, `manage_login_name`, `manage_password`, `brand`, `status`, `description`, `createtime`, `createpin`, `updatetime`, `updatepin`, `yn`) VALUES ('f87dabd8-fe65-4c27-949d-cc7605f6cae4', 'ceph1', '172.18.29.170', 'root', '123456', '172.18.22.170', 'root', 'Huawei12#$', 'HUAWEI', 'up', '', NULL, '', NULL, '', 1);
 UPDATE `des_resource_pool` SET `vdi_cpu_num` = {{ vdi_cpu_num }}, `vdi_memory_num` = {{ vdi_memory_num }}, `vdi_storage_num` = {{ vdi_storage_num }}, `cloud_disk_num` = {{ cloud_disk_num }} WHERE `uuid` = '0';
