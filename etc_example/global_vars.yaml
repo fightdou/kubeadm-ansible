@@ -109,7 +109,7 @@ lvm_storage_class_name: general
 lvm_volgroup_name: lvmvg
 create_lvm_storage_class: true
 # eg: /dev/vdb or /dev/vdb1
-lvm_pv_deive: /dev/vdb
+lvm_pv_device: /dev/vdb
 
 
 #################
@@ -185,7 +185,7 @@ cloud_disk_num: 1000
 #######################
 es_storage_size: 10Gi
 es_http_port: 9200
-es_data_save_days: 3
+es_data_save_days: 7
 ## At 01:00 every day
 es_date_del_time: "0 1 * * *"
 

@@ -1,4 +1,0 @@
----
-- import_tasks: lvm-csi-install.yaml
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"

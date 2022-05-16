@@ -1,12 +1,12 @@
 - name: 创建 pv
   shell: "{{ item }} || true"
   with_items:
-  - "sudo pvcreate {{lvm_pv_deive}}"
+  - "sudo pvcreate {{ lvm_pv_device }}"
 
 - name: 创建 vg
   shell: "{{ item }} || true"
   with_items:
-  - "sudo vgcreate {{lvm_volgroup_name}} {{lvm_pv_deive}}"
+  - "sudo vgcreate {{ lvm_volgroup_name }} {{ lvm_pv_device }}"
 
 - name: 创建 lvm-csi values 目录
   file:
