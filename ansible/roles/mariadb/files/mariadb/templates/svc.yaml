@@ -5,12 +5,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   ports:
-  - name: mysql
-    port: 3306
+  - name: {{ .Values.service.mariadb.name }}
+    port: {{ .Values.service.mariadb.port }}
     protocol: TCP
-    targetPort: mysql
+    targetPort: {{ .Values.service.mariadb.name }}
   selector:
     app.kubernetes.io/name: mariadb
     app.kubernetes.io/component: mariadb
     app.kubernetes.io/release_group: mariadb
+    app: mariadb
   type: ClusterIP

@@ -1,0 +1,39 @@
+- name: 创建 fsd values 目录
+  file:
+    name: "{{ init_sql_dir }}"
+    state: directory
+
+- name: 获取 mariadb host 地址
+  shell: kubectl get pod -A -o wide | grep mariadb | awk -F' ' '{print $8}'
+  register: mariadb_host
+
+- name: 记录 mariadb IP地址
+  set_fact:
+    mariadb_host_address: "{{ mariadb_host.stdout }}"
+
+- name: 复制 fsd 初始化数据库 yaml
+  template:
+    src: fsd-mysql-init.yaml.j2
+    dest: /tmp/fsd-mysql-init.yaml
+    owner: root
+    mode: 0644
+
+- name: 生成 trochilus sql 文件
+  template:
+    src: trochilus.sql.j2
+    dest: "{{ init_sql_dir }}/trochilus.sql"
+    owner: root
+    mode: 0644
+
+- name: 部署 fsd-mysql-init Job
+  shell: kubectl apply -f /tmp/fsd-mysql-init.yaml
+
+- name: 查看 fsd-mysql-init Job 是否 Completed
+  shell: kubectl get pod -A | grep klcloud-fsd-init | grep Completed
+  register: status
+  until: status is success
+  retries: 20
+  delay: 10
+
+- name: 删除 fsd-mysql-init Job
+  shell: kubectl delete job klcloud-fsd-init -n "{{ helm_install_namespace }}"

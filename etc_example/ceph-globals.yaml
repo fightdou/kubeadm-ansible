@@ -88,12 +88,6 @@ osd_pools:
     pgp_num: "{{ osd_pool_pgp_num }}"
     pool_app: "{{ unify_osd_pool_app }}"
     pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
-  troila_pools:
-    pool_name: troila
-    pg_num: "16"
-    pgp_num: "16"
-    pool_app: "{{ unify_osd_pool_app }}"
-    pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
   kubernetes_pools:
     pool_name: kubernetes
     pg_num: "16"
@@ -117,7 +111,7 @@ mgr_dashboard_ssl_port: 8443
 ###########
 # mds #
 ###########
-desktop_mount_dir: "/mnt"
+desktop_mount_dir: "/data/fsd"
 cephfs_pool_default_pg_num: 16
 cephfs_pool_default_pgp_num: 16
 

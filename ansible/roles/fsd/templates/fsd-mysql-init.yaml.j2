@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: klcloud-fsd-init
+  namespace: {{ helm_install_namespace }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: fsd-init
+          image: {{ kube_image_repository }}/fsd_init:{{ kube_image_tag }}
+          env:
+            - name: fsd_init_db_vip
+              value: "{{ mariadb_host_address }}"
+            - name: fsd_init_db_password
+              value: "{{ mariadb_root_password }}"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: fsd-init-static
+              mountPath: /home/trochilus
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: {{ docker_register_secrets_name }}
+      volumes:
+        - name: fsd-init-static
+          hostPath:
+            path: {{ init_sql_dir }}
+            type: DirectoryOrCreate
+      nodeSelector:
+        {{ control_node_role_name }}: {{ node_role_value }}
+      nodeName: {{ groups['kube-master'][0] }}

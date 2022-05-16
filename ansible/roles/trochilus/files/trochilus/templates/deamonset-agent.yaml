@@ -65,11 +65,11 @@ spec:
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
-            {{- if eq $conf "vlan_network_nic" }}
+            {{- if eq $conf "vlan_network_interface" }}
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
-            {{- if eq $conf "flat_network_nic" }}
+            {{- if eq $conf "flat_network_interface" }}
             - name: "{{ printf "%s_%s" $hostname $conf }}"
               value: "{{ $info }}"
             {{- end }}
@@ -79,7 +79,7 @@ spec:
             - name: NODE_ID
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
+                  fieldPath: status.hostIP
           command:
             - /bin/sh
             - -c
@@ -89,7 +89,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 9002
+              port: {{ .Values.service.trochilus_agent.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
@@ -99,26 +99,19 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 9002
+              port: {{ .Values.service.trochilus_agent.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "1024Mi"
-              cpu: "2000m"
           securityContext:
             privileged: true
             readOnlyRootFilesystem: false
           ports:
             - name: agent
-              containerPort: 9002
+              containerPort: {{ .Values.service.trochilus_agent.port }}
               protocol: TCP
           volumeMounts:
             - mountPath: /tmp/trochilus.sh
@@ -150,6 +143,9 @@ spec:
             - mountPath: /var/log/trochilus
               mountPropagation: Bidirectional
               name: log-dir
+            - mountPath: {{ .Values.conf.voi_settings.voi_vm_base_path }}
+              mountPropagation: Bidirectional
+              name: voi-path
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -164,6 +160,7 @@ spec:
       {{- end }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
+      priorityClassName: {{ .Values.priorityClassName }}
       volumes:
         - configMap:
             defaultMode: 420
@@ -209,3 +206,7 @@ spec:
             path: /var/log/trochilus/
             type: ""
           name: log-dir
+        - hostPath:
+            path: {{ .Values.conf.voi_settings.voi_vm_base_path }}
+            type: ""
+          name: voi-path

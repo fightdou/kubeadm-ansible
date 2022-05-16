@@ -1,0 +1,23 @@
+---
+- import_tasks: cephfs_mount.yaml
+
+- import_tasks: all_node_tasks.yaml
+
+- import_tasks: deploy_samba.yaml
+  when: inventory_hostname in groups['fsd']
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: set sambe user
+  shell: "(echo {{ fsd_cloud_disk_password }}; echo {{ fsd_cloud_disk_password }}) | smbpasswd -s -a {{ fsd_cloud_disk_user_name }}"
+  become: true
+  when: inventory_hostname in groups['fsd']
+
+- import_tasks: init-sql.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- import_tasks: install_fsd.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"

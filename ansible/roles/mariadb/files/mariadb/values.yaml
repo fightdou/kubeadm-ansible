@@ -8,8 +8,14 @@ pvc:
   size: 10Gi
 tolerationSeconds: 30
 
+service:
+  mariadb:
+    name: mysql
+    port: 3306
+
 nodeSelector:
   control_role: enabled
 ingress:
   enabled: true
   ingressClassName: nginx
+priorityClassName: ""

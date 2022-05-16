@@ -30,7 +30,7 @@ spec:
         - name: NODE_ID
           valueFrom:
             fieldRef:
-              fieldPath: spec.nodeName
+              fieldPath: status.hostIP
         ports:
         - containerPort: {{ .Values.service.prometheus.port }}
           name: web
@@ -68,7 +68,7 @@ spec:
         - name: NODE_ID
           valueFrom:
             fieldRef:
-              fieldPath: spec.nodeName
+              fieldPath: status.hostIP
         ports:
           - name: http-sidecar
             containerPort: {{ .Values.service.sidecar.http_port }}

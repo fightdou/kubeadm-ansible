@@ -14,9 +14,9 @@ image:
   pullSecrets: 
     - "{{ docker_register_secrets_name }}"
 containerPorts:
-  http: 80
-  https: 443
-  metrics: 10254
+  http: {{ ingress_http_port }}
+  https: {{ ingress_https_port }}
+  metrics: {{ ingress_metric_port }}
 hostAliases: []
 config: {}
 proxySetHeaders: {}
@@ -53,8 +53,8 @@ kind: DaemonSet
 daemonset:
   useHostPort: true
   hostPorts:
-    http: 80
-    https: 443
+    http: {{ ingress_http_port }}
+    https: {{ ingress_https_port }}
 replicaCount: 1
 updateStrategy: {}
 revisionHistoryLimit: 10
