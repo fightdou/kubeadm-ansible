@@ -17,7 +17,7 @@ system_password: 123456
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.29.183
+kube_apiserver_vip: 172.18.28.193
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -120,10 +120,8 @@ ceph_rbd_admin_user: client.admin
 # Trochilus Options
 ###################
 trochilus_support_flat_network: true
-trochilus_flat_network_interface: ""
 trochilus_support_vlan_network: false
 trochilus_network_vlan_range: 100:1000
-trochilus_vlan_network_interface: ""
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
@@ -195,19 +193,25 @@ emqx_persistence: true
 emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
+emqx_priorityclassname: "system-node-critical"
 emqx_hostnetwork: true
+emqx_mqtt_port: 1883
+emqx_mgmt_port: 8081
+emqx_mqttssl_port: 8883
+emqx_ws_port: 8083
+emqx_wss_port: 8084
 
 #################
 # role开关
 #################
-enable_baremetal: true
-enable_load_balancer: true
-enable_kube_master: true
-enable_kube_worker: true
-enable_ingress: true
-enable_ceph_csi: true
-enable_mariadb: true
-enable_redis: true
+enable_baremetal: false
+enable_load_balancer: false
+enable_kube_master: false
+enable_kube_worker: false
+enable_ingress: false
+enable_ceph_csi: false
+enable_mariadb: false
+enable_redis: false
 enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true

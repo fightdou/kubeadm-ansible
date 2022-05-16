@@ -89,9 +89,9 @@ service:
   dashboard: 18083
   externalIPs: []
   loadBalancerSourceRanges: []
-  mgmt: 8081
-  mqtt: 1883
-  mqttssl: 8883
+  mgmt: "{{ emqx_mgmt_port }}"
+  mqtt: "{{ emqx_mqtt_port }}"
+  mqttssl: "{{ emqx_mqttssl_port }}"
   nodePorts:
     dashboard: null
     dashboardtls: null
@@ -100,9 +100,9 @@ service:
     mqttssl: null
     ws: null
     wss: null
-    #  type: ClusterIP
   type: "{{ emqx_svc_type }}"
-  ws: 8083
-  wss: 8084
+  ws: "{{ emqx_ws_port }}"
+  wss: "{{ emqx_wss_port }}"
 hostnetwork: "{{ emqx_hostnetwork | bool }}"
 tolerations: []
+priorityClassName: "{{ emqx_priorityclassname }}"
