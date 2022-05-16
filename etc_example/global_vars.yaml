@@ -47,6 +47,7 @@ node_role_value: enabled
 ##############
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
+helm_wait_timeout: 300s
 
 #################
 # Haproxy options
