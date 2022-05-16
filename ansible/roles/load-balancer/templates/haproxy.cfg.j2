@@ -51,3 +51,14 @@ backend kube_api_backend
 {% for host in (groups['kube-master'] + groups['new-master']) %}
     server {{ host }} {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}:6443 check check-ssl verify none
 {% endfor %}
+
+{% if enable_emqx | bool %}
+listen emqx
+    mode tcp
+    bind {{ kube_apiserver_vip }}:{{ emqx_mqtt_port }}
+    balance {{ lb_haproxy_balance_alg }}
+    option tcplog
+{% for host in (groups['emqx']) %}
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ emqx_mqtt_port }} check inter 2000 rise 2 fall 5
+{% endfor %}
+{% endif %}
