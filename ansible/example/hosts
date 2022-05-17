@@ -140,3 +140,6 @@ compute
 
 [websockify:children]
 control
+
+[btserver:children]
+control

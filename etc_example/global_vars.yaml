@@ -114,7 +114,6 @@ create_lvm_storage_class: true
 # eg: /dev/vdb or /dev/vdb1
 lvm_pv_device: /dev/vdb
 
-
 #################
 # Ingress Options
 #################
@@ -234,20 +233,12 @@ enable_ingress: true
 enable_csi: true
 enable_mariadb: true
 enable_redis: true
-enable_baremetal: false
-enable_load_balancer: false
-enable_kube_master: false
-enable_kube_worker: false
-enable_ingress: false
-enable_ceph_csi: false
-enable_mariadb: false
-enable_redis: false
 enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
 enable_fsd: true
-enable_voi: false
+enable_btserver: true
 enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
@@ -259,7 +250,7 @@ enable_ceph: true
 ################
 redis_storage_size: 10Gi
 redis_master_password: zhuolang@Troila@123
-redis_master_group_name: kolla
+redis_master_group_name: mymaster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
@@ -273,7 +264,7 @@ websockify_port: 9003
 # btserver
 #######################
 btserver_image_tag: "{{ kube_image_tag }}"
-btserver_pod_pullPolicy: "I`fNotPresent"
+btserver_pod_pullPolicy: "IfNotPresent"
 btserver_svc_type: "ClusterIP"
 btserver_hostnetwork: "yes"
 btserver_containers_name_track: "btserver-track"
@@ -289,6 +280,7 @@ resources_requests_cpu: "200m"
 resources_requests_memory: "200Mi"
 btserver_port: "9019"
 btserver_port_track: "9020"
+
 ##############
 # VOI Options
 ##############
