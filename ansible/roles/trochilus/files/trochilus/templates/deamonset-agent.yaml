@@ -23,7 +23,7 @@ spec:
           - kubernetes-entrypoint
           name: init
           image: {{ .Values.image.entrypoint }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: POD_NAME
             valueFrom:
@@ -44,7 +44,7 @@ spec:
       containers:
         - name: trochilus-agent
           image: {{ .Values.image.trochilus_agent }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- range $_, $node_name := .Values.nodeInfo }}
             {{- range $hostname, $node_info := $node_name }}

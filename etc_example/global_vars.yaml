@@ -19,7 +19,7 @@ ipmi_password: Huawei12#$
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.222
+kube_apiserver_vip: 172.18.28.193
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -47,6 +47,7 @@ node_role_value: enabled
 ##############
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
+helm_wait_timeout: 300s
 
 #################
 # Haproxy options
@@ -125,10 +126,8 @@ ceph_rbd_admin_user: client.admin
 # Trochilus Options
 ###################
 trochilus_support_flat_network: true
-trochilus_flat_network_interface: ""
 trochilus_support_vlan_network: false
 trochilus_network_vlan_range: 100:1000
-trochilus_vlan_network_interface: ""
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
@@ -148,30 +147,30 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # Prometheus Options
 ####################
-# 数据存放目录，需挂载共享存储
-prometheus_alert_rule_dir: /opt/prometheus/rules
-prometheus_query_port: 9004
-prometheus_server_port: 9005
+prometheus_query_port: 19191
+prometheus_server_port: 9090
 thanos_sidecar_http_port: 19092
 thanos_sidecar_grpc_port: 19091
-prometheus_alertmanager_port: 9005
+prometheus_alertmanager_port: 9093
 prometheus_alertmanager_cluster_port: 9094
 prometheus_pushgateway_port: 9091
 prometheus_node_exporter_port: 9100
 prometheus_collectd_exporter_port: 9103
 prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
-pushgateway_clean_time: ""
+pushgateway_clean_time: "*/1 * * * *"
 
 ##############
 # Fsd Options
 ##############
-fsd_webhook_port: 9030
-fsd_job_port: 6666
-fsd_tcp_port: 6667
+# 如果需要外网映射，需配置外网映射的IP地址，没有的话则配置VIP
+fsd_proxy_ip: ""
+fsd_webhook_port: 9010
+fsd_job_port: 9011
+fsd_tcp_port: 9012
 fsd_tcp_file_port: 9013
 fsd_webhook_token: abc123
-fsd_nginx_port: 80
+fsd_nginx_port: 9000
 bt_server_port: 9019
 bt_tracker_port: 9020
 bt_download_port_start: 6880
@@ -208,19 +207,25 @@ emqx_persistence: true
 emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
+emqx_priorityclassname: "system-node-critical"
 emqx_hostnetwork: true
+emqx_mqtt_port: 1883
+emqx_mgmt_port: 8081
+emqx_mqttssl_port: 8883
+emqx_ws_port: 8083
+emqx_wss_port: 8084
 
 #################
 # role开关
 #################
-enable_baremetal: true
-enable_load_balancer: true
-enable_kube_master: true
-enable_kube_worker: true
-enable_ingress: true
-enable_ceph_csi: true
-enable_mariadb: true
-enable_redis: true
+enable_baremetal: false
+enable_load_balancer: false
+enable_kube_master: false
+enable_kube_worker: false
+enable_ingress: false
+enable_ceph_csi: false
+enable_mariadb: false
+enable_redis: false
 enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
@@ -238,7 +243,7 @@ enable_ceph: true
 ################
 redis_storage_size: 10Gi
 redis_master_password: zhuolang@Troila@123
-redis_master_group_name: mycluster
+redis_master_group_name: kolla
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
@@ -246,13 +251,13 @@ redis_host_network: true
 ####################
 # websockify Options
 ####################
-websockify_port: 56666
+websockify_port: 9003
 
 #######################
 # btserver
 #######################
 btserver_image_tag: "{{ kube_image_tag }}"
-btserver_pod_pullPolicy: "IfNotPresent"
+btserver_pod_pullPolicy: "I`fNotPresent"
 btserver_svc_type: "ClusterIP"
 btserver_hostnetwork: "yes"
 btserver_containers_name_track: "btserver-track"

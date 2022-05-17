@@ -9,7 +9,7 @@ spec:
       initContainers:
         - name: init
           image: {{ .Values.image.entrypoint }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - kubernetes-entrypoint
           env:
@@ -30,7 +30,7 @@ spec:
       containers:
         - name: trochilus-db-sync
           image: {{ .Values.image.db_sync }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /bin/sh
             - -c

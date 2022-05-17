@@ -2,25 +2,25 @@
 - name: 查看 docker 是否安装
   shell: docker info
   register: docker_install_info
+  ignore_errors: yes
 
 - name: 查看 docker-archive-keyring.gpg 是否存在
   shell: ls /usr/share/keyrings/docker-archive-keyring.gpg
-  when:
-    - docker_install_info is not success
+  register: docker_gpg_keyring
+  ignore_errors: yes
 
 - name: 添加 Docker GPG 公钥
   shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   when:
-    - docker_install_info is not success
+    - docker_gpg_keyring is not success
 
 - name: 添加 Docker apt 仓库
   shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  when:
-    - docker_install_info is not success
 
 - name: 查看 kubeadm 是否安装
   shell: kubeadm version
   register: kubeadm_install_info
+  ignore_errors: yes
 
 - name: 添加 kubernetes apt key gpg
   shell: curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
@@ -75,46 +75,6 @@
       - kubernetes
       - openshift
       - docker
-
-# - name: Install ansible galaxy cloud.common
-#   shell: ansible-galaxy collection install cloud.common
-#   run_once: True
-#   delegate_to: "{{ groups['kube-master'][0] }}"
-
-# - name: Install ansible galaxy kubernetes.core
-#   shell: ansible-galaxy collection install kubernetes.core
-#   run_once: True
-#   delegate_to: "{{ groups['kube-master'][0] }}"
-
-- name: 查看 docker-archive-keyring.gpg 是否存在
-  shell: ls /usr/share/keyrings/docker-archive-keyring.gpg
-  ignore_errors: True
-  register: result
-
-- name: 添加 Docker GPG 公钥
-  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  when: result is not success
-
-- name: 查看 docker 源是否存在
-  shell: ls /etc/apt/sources.list.d/docker.list
-  ignore_errors: True
-  register: docker_apt_source
-
-- name: 添加 Docker apt 仓库
-  shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  when: docker_apt_source is not success
-
-- name: 添加 apt key gpg
-  shell: curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
-
-- name: 添加 Kubernetes apt 仓库
-  apt_repository:
-    repo: "deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main"
-    state: present
-
-- name: 更新 apt 仓库
-  apt:
-    update_cache: yes
 
 - name: 安装docker
   apt:

@@ -1,5 +1,4 @@
 ---
-
 - name: mkdir btserver values
   file:
     name: /etc/kubernetes/plugins/btserver
