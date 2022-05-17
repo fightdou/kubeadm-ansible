@@ -23,7 +23,7 @@ spec:
           - kubernetes-entrypoint
           name: init
           image: {{ .Values.image.entrypoint }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: POD_NAME
             valueFrom:
@@ -44,7 +44,7 @@ spec:
       containers:
         - name: trochilus-agent
           image: {{ .Values.image.trochilus_agent }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             {{- range $_, $node_name := .Values.nodeInfo }}
             {{- range $hostname, $node_info := $node_name }}
@@ -89,7 +89,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 9002
+              port: {{ .Values.service.trochilus_agent.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
@@ -99,7 +99,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 9002
+              port: {{ .Values.service.trochilus_agent.port }}
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 50
@@ -111,7 +111,7 @@ spec:
             readOnlyRootFilesystem: false
           ports:
             - name: agent
-              containerPort: 9002
+              containerPort: {{ .Values.service.trochilus_agent.port }}
               protocol: TCP
           volumeMounts:
             - mountPath: /tmp/trochilus.sh
@@ -143,6 +143,9 @@ spec:
             - mountPath: /var/log/trochilus
               mountPropagation: Bidirectional
               name: log-dir
+            - mountPath: {{ .Values.conf.voi_settings.voi_vm_base_path }}
+              mountPropagation: Bidirectional
+              name: voi-path
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -203,3 +206,7 @@ spec:
             path: /var/log/trochilus/
             type: ""
           name: log-dir
+        - hostPath:
+            path: {{ .Values.conf.voi_settings.voi_vm_base_path }}
+            type: ""
+          name: voi-path

@@ -11,7 +11,7 @@
     - "fsd"
 
 - name: 获取 mariadb host 地址
-  shell: kubectl get pod -A -o wide | grep mariadb | awk -F' ' '{print $8}'
+  shell: kubectl get pod -A -o wide | grep mariadb  | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | sort -u
   register: mariadb_host
 
 - name: 记录 mariadb IP地址
@@ -19,7 +19,7 @@
     mariadb_host_address: "{{ mariadb_host.stdout }}"
 
 - name: 获取 redis host 地址
-  shell: kubectl get pod -A -o wide | grep redis | awk -F' ' '{print $8}'
+  shell: kubectl get pod -A -o wide | grep redis  | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}' | sort -u
   register: redis_host
 
 - name: 查看 redis host 地址
@@ -42,5 +42,5 @@
       - /etc/kubernetes/plugins/fsd/values.yaml
     state: present 
     wait: yes
-    wait_timeout: 200s
+    wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"

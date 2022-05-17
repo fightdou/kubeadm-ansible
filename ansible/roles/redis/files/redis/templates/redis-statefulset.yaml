@@ -91,6 +91,7 @@ spec:
       - name: data
         hostPath:
           path: {{ tpl .Values.hostPath.path .}}
+          type: DirectoryOrCreate
 {{- else }}
       - name: data
         emptyDir: {}

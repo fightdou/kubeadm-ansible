@@ -26,5 +26,5 @@
       - /etc/kubernetes/plugins/prometheus/values.yaml
     state: present 
     wait: yes
-    wait_timeout: 300s
+    wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"

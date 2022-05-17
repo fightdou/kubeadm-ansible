@@ -5,6 +5,7 @@ image:
   db_init: kolla/centos-source-kolla-toolbox:yoga
   db_sync: 172.18.31.155/kubernetes/trochilus-agent:latest
   pullSecrets: ""
+  pullPolicy: ""
 
 serviceAccountName: trochilus
 nodeSelector:
@@ -53,6 +54,12 @@ mariadb:
   database: trochilus
 
 conf:
+  agent_settings:
+    ipmi_username: root
+    ipmi_password: Troila12#$
+    ipmi_vendor: HUAWEI
+    host_username: root
+    host_password: 123456
   api_settings:
     enabled_volume_backends: rbd1
   image_settings:

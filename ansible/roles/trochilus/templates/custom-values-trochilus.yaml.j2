@@ -1,5 +1,4 @@
 #jinja2: trim_blocks: False
-
 image:
   trochilus_api: {{ kube_image_repository }}/trochilus-api:{{ kube_image_tag }}
   trochilus_agent: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
@@ -7,6 +6,7 @@ image:
   db_init: {{ kube_image_repository }}/centos-source-kolla-toolbox:{{ kube_image_tag }}
   db_sync: {{ kube_image_repository }}/trochilus-agent:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
+  pullPolicy: "Always"
 
 serviceAccountName: trochilus
 nodeSelector:
@@ -15,35 +15,26 @@ nodeSelector:
   trochilus_api:
     {{ control_node_role_name }}: {{ node_role_value }}
 clusterDomainSuffix: cluster.local
-replica: 2
+replica: "{% if groups['trochilus-api'] | length > 2 %}2{% else %}1{% endif %}"
 
 nodeInfo:
   {% for host in groups['trochilus-agent'] -%}
+      {% set vlan_interface_dict = hostvars[host]['vlan_network_interface'] %}
+      {% set flat_interface_list = hostvars[host]['flat_network_interface'] %}
   - {{ hostvars[host]['ansible_nodename'] }}:
       system: "{{ hostvars[host]['ansible_distribution'] }}"
       version: "{{ hostvars[host]['ansible_distribution_version'] }}"
       node_role: "{{ ['control', 'compute', 'storge'] | listintersection(hostvars[host]['group_names']) | join(',') }}"
       nic_info: "{{ hostvars[host]['nic_info'] | join(',') }}"
-      {% if hostvars[host]['vlan_network_interface'] == "" and trochilus_vlan_network_interface != "" -%}
-      vlan_network_interface: "{{ trochilus_vlan_network_interface }}"
-      {%- else -%}
-      vlan_network_interface: "{{ hostvars[host]['vlan_network_interface'] }}"
-      {% endif -%}
-      {% if hostvars[host]['flat_network_interface'] == "" and trochilus_flat_network_interface != "" -%}
-      flat_network_interface: "{{ trochilus_flat_network_interface }}"
-      {%- else -%}
-      flat_network_interface: "{{ hostvars[host]['flat_network_interface'] }}"
-      {% endif %}
+      vlan_network_interface: "{% for vlan_interface,vlan_range in vlan_interface_dict.items() %}{{ 'vlan' + loop.index | string }}:{{ vlan_interface }}{% if not loop.last %},{% endif %}{% endfor %}" 
+      flat_network_interface: "{% for flat_interface in flat_interface_list %}{{ 'flat' + loop.index | string }}:{{ flat_interface }}{% if not loop.last %},{% endif %}{% endfor %}"
   {% endfor %}
 
 networkConfig:
   support_vlan_network: {{ trochilus_support_vlan_network }}
-  vlan_network_type: vlan1
-  vlan_network_interface: {{ trochilus_vlan_network_interface }}
-  network_vlan_range: {{ trochilus_network_vlan_range }}
+  vlan_network_type: {% for vlan,vlan_range in vlan_network_interface.items() %}{{ 'vlan' + loop.index | string }}:{{ vlan_range }}{% if not loop.last %},{% endif %}{% endfor %}
   support_flat_network: {{ trochilus_support_flat_network }}
-  flat_network_type: flat1
-  flat_network_interface: {{ trochilus_flat_network_interface }}
+  flat_network_type: {% for flat in flat_network_interface %}{{ 'flat' + loop.index | string }}{% if not loop.last %},{% endif %}{% endfor %}
 
 dependencies:
   db_sync:
@@ -71,6 +62,12 @@ mariadb:
   database: trochilus
 
 conf:
+  agent_settings:
+    ipmi_username: {{ ipmi_username }}
+    ipmi_password: {{ ipmi_password }}
+    ipmi_vendor: {{ ipmi_vendor }}
+    host_username: {{ system_username }}
+    host_password: {{ system_password }}
   api_settings:
     enabled_volume_backends: rbd1
   image_settings:
@@ -91,10 +88,10 @@ conf:
     rbd_secret_uuid: {{ ceph_rbd_secret_uuid }}
   voi_settings:
     voi_image_base_path: /var/lib/trochilus/voi/images
-    voi_vm_base_path: /var/lib/trochilus/voi/vms
+    voi_vm_base_path: {{ trochilus_voi_path }}
     vm_name_template: voi-%s
   webhook_settings:
-    target_host: ""
+    target_host: "{{ kube_apiserver_vip }}"
     target_port: {{ fsd_webhook_port }}
     target_path: /api/v1/webhook/
     method: post
@@ -106,5 +103,5 @@ conf:
     expected_codes: 200,202,204
 
 ingress:
-  enabled: true
+  enabled: {{ trochilus_api_ingress }}
   ingressClassName: {{ ingress_class_name }}

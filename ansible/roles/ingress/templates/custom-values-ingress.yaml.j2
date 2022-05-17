@@ -14,9 +14,9 @@ image:
   pullSecrets: 
     - "{{ docker_register_secrets_name }}"
 containerPorts:
-  http: 80
-  https: 443
-  metrics: 10254
+  http: {{ ingress_http_port }}
+  https: {{ ingress_https_port }}
+  metrics: {{ ingress_metric_port }}
 hostAliases: []
 config: {}
 proxySetHeaders: {}
@@ -53,8 +53,8 @@ kind: DaemonSet
 daemonset:
   useHostPort: true
   hostPorts:
-    http: 80
-    https: 443
+    http: {{ ingress_http_port }}
+    https: {{ ingress_https_port }}
 replicaCount: 1
 updateStrategy: {}
 revisionHistoryLimit: 10
@@ -80,7 +80,7 @@ livenessProbe:
   enabled: true
   httpGet:
     path: /healthz
-    port: 10254
+    port: {{ ingress_metric_port }}
     scheme: HTTP
   failureThreshold: 3
   initialDelaySeconds: 10
@@ -91,7 +91,7 @@ readinessProbe:
   enabled: true
   httpGet:
     path: /healthz
-    port: 10254
+    port: {{ ingress_metric_port }}
     scheme: HTTP
   failureThreshold: 3
   initialDelaySeconds: 10
@@ -197,7 +197,7 @@ defaultBackend:
   tolerations: []
   service:
     type: ClusterIP
-    port: 80
+    port: {{ ingress_http_port }}
   pdb:
     create: false
     minAvailable: 1
@@ -206,8 +206,8 @@ defaultBackend:
 service:
   type: ClusterIP
   ports:
-    http: 80
-    https: 443
+    http: {{ ingress_http_port }}
+    https: {{ ingress_https_port }}
   targetPorts:
     http: http
     https: https
@@ -248,7 +248,7 @@ metrics:
   enabled: false
   service:
     type: ClusterIP
-    port: 9913
+    port: {{ ingress_metric_port }}
     annotations: {}
   serviceMonitor:
     enabled: false

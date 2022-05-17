@@ -36,7 +36,7 @@ spec:
           - kubernetes-entrypoint
           name: init
           image: {{ .Values.image.entrypoint }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: POD_NAME
             valueFrom:
@@ -57,7 +57,7 @@ spec:
       containers:
         - name: trochilus-api
           image: {{ .Values.image.trochilus_api }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /bin/sh
             - -c
@@ -163,8 +163,8 @@ spec:
       {{- if .Values.nodeSelector }}
       nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector.trochilus_api "context" $) | nindent 8 }}
       {{- end }}
-      serviceAccount: {{ .Values.serviceAccountName}}
-      serviceAccountName: {{ .Values.serviceAccountName}}
+      serviceAccount: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
       priorityClassName: {{ .Values.priorityClassName }}
       volumes:
         - configMap:

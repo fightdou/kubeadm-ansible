@@ -30,7 +30,11 @@
         {% set api_interface = hostvars[host]['api_interface'] %}
         {% if 'ansible_' + api_interface in hostvars[host] %}
         {% set hostnames = [hostvars[host]['ansible_nodename'], hostvars[host]['ansible_hostname']] %}
+        {% if enable_domain_deploy and host == groups['baremetal'][0] %}
+        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }} {{ docker_register_address.split(":")[0] }}
+        {% else %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}
+        {% endif %}
         {% endif %}
         {% endfor %}
   become: True
@@ -76,18 +80,13 @@
   blockinfile:
     path: /etc/hosts
     block: |-
-      {% for item in (groups['all']|unique) -%}
-      {% if hostvars[item]['ansible_host'] is defined -%}
-      {{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }} {{ hostvars[item]['inventory_hostname'] }}.{{ kube_dns_domain }}
-      {% endif %}
-      {% endfor %}
-      {% for custom_hosts_ip, custom_hosts_addr in custom_hosts.items() %}
-      {{ custom_hosts_ip }} {{ ([ custom_hosts_addr ] | flatten ) | join(' ') }}
-      {% endfor %}
+      {{ kube_apiserver_vip }} {{ kubernetes_domain_name }}
     state: present
     create: yes
     backup: yes
     marker: "# Ansible inventory hosts {mark}"
+  when:
+    - enable_domain_deploy | bool
 
 - name: 创建 systemd 配置目录
   file: 

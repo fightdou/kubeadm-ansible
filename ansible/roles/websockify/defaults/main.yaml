@@ -1,1 +1,1 @@
-replicaNum: "{% if groups['websockify'] | length > 2 %}3{% else %}1{% endif %}"
+websockify_replicaCount: "{% if groups['websockify'] | length > 2 %}3{% else %}1{% endif %}"

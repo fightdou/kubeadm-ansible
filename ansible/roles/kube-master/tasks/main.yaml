@@ -28,12 +28,13 @@
 
 - name: 创建 harbor register secrets
   shell: |
-    kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
-    kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ docker_register_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ docker_register_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
   ignore_errors: yes
-
+  when:
+    - enable_docker_auth | bool
 
 # 配置网络CNI插件
 - name: 渲染 flannel 配置文件
@@ -50,7 +51,7 @@
     state: present
     wait: yes
     wait_sleep: 5
-    wait_timeout: 180
+    wait_timeout: 300
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
@@ -69,7 +70,7 @@
     state: present
     wait: yes
     wait_sleep: 5
-    wait_timeout: 60
+    wait_timeout: 300
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
