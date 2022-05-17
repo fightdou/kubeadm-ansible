@@ -93,7 +93,7 @@ etcd_backup_expiry: "7"
 etcd_backup_dir: "/var/lib/etcd/backup"
 
 ##################
-# Ceph csi Options
+#  csi Options
 ##################
 # kubernetes ceph csi
 install_ceph_rbd_csi: true
@@ -106,6 +106,14 @@ create_cephfs_storage_class: true
 cephfs_check_port: 9083
 cephfs_service_port: 9084
 cephfs_storage_class_name: cephfs-general
+install_lvm_csi: false
+lvm_service_port: 9500
+lvm_storage_class_name: general
+lvm_volgroup_name: lvmvg
+create_lvm_storage_class: true
+# eg: /dev/vdb or /dev/vdb1
+lvm_pv_device: /dev/vdb
+
 
 #################
 # Ingress Options
@@ -189,7 +197,7 @@ cloud_disk_num: 1000
 #######################
 es_storage_size: 10Gi
 es_http_port: 9200
-es_data_save_days: 3
+es_data_save_days: 7
 ## At 01:00 every day
 es_date_del_time: "0 1 * * *"
 
@@ -218,6 +226,14 @@ emqx_wss_port: 8084
 #################
 # role开关
 #################
+enable_baremetal: true
+enable_load_balancer: true
+enable_kube_master: true
+enable_kube_worker: true
+enable_ingress: true
+enable_csi: true
+enable_mariadb: true
+enable_redis: true
 enable_baremetal: false
 enable_load_balancer: false
 enable_kube_master: false

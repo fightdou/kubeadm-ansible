@@ -52,9 +52,9 @@
     - ceph-csi-cephfs
     - ceph-csi-rbd
   roles:
-    - { role: ceph-csi,
-        tags: ceph-csi,
-        when: enable_ceph_csi| bool }
+    - { role: csi,
+        tags: csi,
+        when: enable_csi| bool }
 
 - name: Apply role mariadb
   gather_facts: false
