@@ -24,17 +24,7 @@ hostNetwork: {{ redis_host_network }}
 redis:
   port: "{{ redis_server_port }}"
   masterGroupName: "{{ redis_master_group_name }}"
-  config:
-    min-slaves-to-write: 1
-    min-slaves-max-lag: 5
-    maxmemory: "0"
-    maxmemory-policy: "volatile-lru"
-    save: "900 1"
-    repl-diskless-sync: "yes"
-    rdbcompression: "yes"
-    rdbchecksum: "yes"
-    notify-keyspace-events: Ex
-
+  config: {}
   resources: {}
     #  requests:
     #    memory: 200Mi
@@ -50,7 +40,6 @@ sentinel:
   config:
     down-after-milliseconds: 10000
     failover-timeout: 180000
-    parallel-syncs: 5
 
   resources: {}
     #  requests:
