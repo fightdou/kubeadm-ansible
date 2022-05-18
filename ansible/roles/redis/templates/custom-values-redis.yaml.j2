@@ -74,7 +74,7 @@ redisPassword: "{{ redis_master_password }}"
 authKey: auth
 
 persistentVolume:
-  enabled: "{{ enable_pvc }}"
+  enabled: {{ enable_pvc }}
   storageClass: "{{ rbd_storage_class_name }}"
   accessModes:
     - ReadWriteOnce

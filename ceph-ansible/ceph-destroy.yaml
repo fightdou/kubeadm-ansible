@@ -5,6 +5,9 @@
   vars:
     ansible_become_user: root
   tasks:
+    - name: Delete cephfs share dir file
+      shell: rm -rf {{ desktop_mount_dir }}/*
+
     - name: Umount cephfs share dir
       mount:
         path: "{{ desktop_mount_dir }}"
@@ -14,6 +17,9 @@
     - name: Cleaning ceph-mds.control service
       shell: systemctl stop ceph-mds@*
       ignore_errors: True
+    
+    - name: Delete cephfs share dir file
+      shell: rm -rf {{ desktop_mount_dir }}
 
 - name: Apply to the all mon Service Node
   hosts: "{{ groups['ceph-mons'] }}"
