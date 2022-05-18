@@ -40,7 +40,7 @@
     chart_ref: "{{ helm_charts_dir }}/fsd"
     values_files:
       - /etc/kubernetes/plugins/fsd/values.yaml
-    state: present 
+    state: present
     wait: yes
     wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"

@@ -1,7 +1,7 @@
 firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
-api_interface: ens3
+api_interface: enp2s0f0
 enable_docker_auth: true
 enable_domain_deploy: true
 docker_register_address: 172.18.31.155
@@ -19,7 +19,7 @@ ipmi_password: Huawei12#$
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.193
+kube_apiserver_vip: 172.27.125.250
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -140,6 +140,7 @@ trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 trochilus_api_ingress: true
 trochilus_voi_path: "{{ fsd_voi_dir }}"
+trochilus_voi_base_path: "/var/lib/trochilus/voi"
 
 #################
 # Mariadb Options
@@ -272,7 +273,7 @@ volume_mount_name: "btserver"
 volume_mount_path: "/btserver"
 volumes_name: "btserver"
 volumes_path: "/mnt/cephfs"
-volumes_type: "Directory"
+volumes_type: "DirectoryOrCreate"
 voi_node_role_name: "voi_role"
 resources_limits_cpu: "200m"
 resources_limits_memory: "200Mi"

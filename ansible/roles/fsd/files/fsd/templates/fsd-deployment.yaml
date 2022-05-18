@@ -46,7 +46,7 @@ spec:
             - name: fsd-voi
               mountPath: /mnt/voi
             - name: fsd-upload
-              mountPath: /root/upload
+              mountPath: /mnt/upload
             - name: fsd-static
               mountPath: /mnt/fsd/static
           env:
