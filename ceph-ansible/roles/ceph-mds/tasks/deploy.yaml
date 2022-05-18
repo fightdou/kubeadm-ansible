@@ -1,3 +1,6 @@
 ---
 - name: include deploy_mds.yml
   include_tasks: deploy_mds.yml
+
+- name: include mount_cephfs.yml
+  include_tasks: mount_cephfs.yml

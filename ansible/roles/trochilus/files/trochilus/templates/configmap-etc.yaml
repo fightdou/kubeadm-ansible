@@ -84,7 +84,7 @@ data:
     nics_info=`(echo $nic | sed "s/,/\ /g")`
 
     for key in ${nics_info[@]}; do
-      sed -i "/role/a\nic=$key" /etc/trochilus/trochilus.conf
+      sed -i "/role/a\nic = $key" /etc/trochilus/trochilus.conf
     done
 
     sed -i "s/role =/role = $role/g" /etc/trochilus/trochilus.conf

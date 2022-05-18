@@ -2,19 +2,11 @@ image:
   mariadb: {{ kube_image_repository }}/mariadb:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
 mariadb_password: {{ mariadb_root_password }}
-
-{% if only_deploy_voi %}
-storageclass: ""
-{% else %}
-
-{% endif %}
-
 persistentVolume:
   enabled: true
   storageclass: {{ cephfs_storage_class_name }}
   name: {{ mariadb_pvc_name }}
   size: {{ mariadb_storage_size }}
-
 tolerationSeconds: {{ mariadb_toleration_seconds }}
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
