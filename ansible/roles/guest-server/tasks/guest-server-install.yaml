@@ -26,5 +26,5 @@
       - /etc/kubernetes/plugins/guest-server/values.yaml
     state: present 
     wait: yes
-    wait_timeout: 120s
+    wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"

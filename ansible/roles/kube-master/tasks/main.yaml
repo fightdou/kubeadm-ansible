@@ -51,7 +51,7 @@
     state: present
     wait: yes
     wait_sleep: 5
-    wait_timeout: 180
+    wait_timeout: 300
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
@@ -70,7 +70,7 @@
     state: present
     wait: yes
     wait_sleep: 5
-    wait_timeout: 60
+    wait_timeout: 300
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 

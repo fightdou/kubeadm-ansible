@@ -1,13 +1,11 @@
 ---
-- name: Install mysql cli tools
+- name: Install samba tools
   become: True
   apt:
     name: "{{ packages }}"
     state: present
   vars:
     packages:
-      - "mariadb-client-core-10.3"
-      - "python3-pymysql"
       - "samba"
       - "samba-common"
 

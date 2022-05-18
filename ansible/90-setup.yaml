@@ -52,9 +52,9 @@
     - ceph-csi-cephfs
     - ceph-csi-rbd
   roles:
-    - { role: ceph-csi,
-        tags: ceph-csi,
-        when: enable_ceph_csi| bool }
+    - { role: csi,
+        tags: csi,
+        when: enable_csi| bool }
 
 - name: Apply role mariadb
   gather_facts: false
@@ -118,13 +118,13 @@
         tags: prometheus,
         when: enable_prometheus| bool }
 
-# - name: Apply role voi
-#   gather_facts: false
-#   hosts: voi
-#   roles:
-#     - { role: voi,
-#         tags: voi,
-#         when: enable_voi| bool }
+- name: Apply role btserver
+  gather_facts: false
+  hosts: btserver
+  roles:
+    - { role: btserver,
+        tags: btserver,
+        when: enable_btserver| bool }
 
 - name: Apply role elasticsearch
   gather_facts: false
@@ -152,16 +152,8 @@
 
 - name: Apply role guest-server
   gather_facts: false
-  hosts: guest-server
+  hosts: libvirt
   roles:
    - { role: guest-server,
        tags: guest-server,
        when: enable_guest_server| bool }
-
-- name: Apply role websockify 
-  gather_facts: false
-  hosts: websockify
-  roles:
-   - { role: websockify,
-       tags: websockify,
-       when: enable_websockify| bool }

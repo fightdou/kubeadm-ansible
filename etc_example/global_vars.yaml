@@ -47,6 +47,7 @@ node_role_value: enabled
 ##############
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
+helm_wait_timeout: 300s
 
 #################
 # Haproxy options
@@ -92,7 +93,7 @@ etcd_backup_expiry: "7"
 etcd_backup_dir: "/var/lib/etcd/backup"
 
 ##################
-# Ceph csi Options
+#  csi Options
 ##################
 # kubernetes ceph csi
 install_ceph_rbd_csi: true
@@ -105,6 +106,13 @@ create_cephfs_storage_class: true
 cephfs_check_port: 9083
 cephfs_service_port: 9084
 cephfs_storage_class_name: cephfs-general
+install_lvm_csi: false
+lvm_service_port: 9500
+lvm_storage_class_name: general
+lvm_volgroup_name: lvmvg
+create_lvm_storage_class: true
+# eg: /dev/vdb or /dev/vdb1
+lvm_pv_device: /dev/vdb
 
 #################
 # Ingress Options
@@ -146,28 +154,30 @@ mariadb_pvc_name: mariadb-pvc
 ####################
 # Prometheus Options
 ####################
-prometheus_query_port: 9004
-prometheus_server_port: 9005
+prometheus_query_port: 19191
+prometheus_server_port: 9090
 thanos_sidecar_http_port: 19092
 thanos_sidecar_grpc_port: 19091
-prometheus_alertmanager_port: 9006
+prometheus_alertmanager_port: 9093
 prometheus_alertmanager_cluster_port: 9094
 prometheus_pushgateway_port: 9091
 prometheus_node_exporter_port: 9100
 prometheus_collectd_exporter_port: 9103
 prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
-pushgateway_clean_time: ""
+pushgateway_clean_time: "*/1 * * * *"
 
 ##############
 # Fsd Options
 ##############
-fsd_webhook_port: 9030
-fsd_job_port: 6666
-fsd_tcp_port: 6667
+# 如果需要外网映射，需配置外网映射的IP地址，没有的话则配置VIP
+fsd_proxy_ip: ""
+fsd_webhook_port: 9010
+fsd_job_port: 9011
+fsd_tcp_port: 9012
 fsd_tcp_file_port: 9013
 fsd_webhook_token: abc123
-fsd_nginx_port: 80
+fsd_nginx_port: 9000
 bt_server_port: 9019
 bt_tracker_port: 9020
 bt_download_port_start: 6880
@@ -186,7 +196,7 @@ cloud_disk_num: 1000
 #######################
 es_storage_size: 10Gi
 es_http_port: 9200
-es_data_save_days: 3
+es_data_save_days: 7
 ## At 01:00 every day
 es_date_del_time: "0 1 * * *"
 
@@ -220,7 +230,7 @@ enable_load_balancer: true
 enable_kube_master: true
 enable_kube_worker: true
 enable_ingress: true
-enable_ceph_csi: true
+enable_csi: true
 enable_mariadb: true
 enable_redis: true
 enable_emqx: true
@@ -228,7 +238,7 @@ enable_libvirt: true
 enable_trochilus: true
 enable_prometheus: true
 enable_fsd: true
-enable_voi: false
+enable_btserver: true
 enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
@@ -240,7 +250,7 @@ enable_ceph: true
 ################
 redis_storage_size: 10Gi
 redis_master_password: zhuolang@Troila@123
-redis_master_group_name: mycluster
+redis_master_group_name: mymaster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
@@ -248,7 +258,28 @@ redis_host_network: true
 ####################
 # websockify Options
 ####################
-websockify_port: 56666
+websockify_port: 9003
+
+#######################
+# btserver
+#######################
+btserver_image_tag: "{{ kube_image_tag }}"
+btserver_pod_pullPolicy: "IfNotPresent"
+btserver_svc_type: "ClusterIP"
+btserver_hostnetwork: "yes"
+btserver_containers_name_track: "btserver-track"
+volume_mount_name: "btserver"
+volume_mount_path: "/btserver"
+volumes_name: "btserver"
+volumes_path: "/mnt/cephfs"
+volumes_type: "Directory"
+voi_node_role_name: "voi_role"
+resources_limits_cpu: "200m"
+resources_limits_memory: "200Mi"
+resources_requests_cpu: "200m"
+resources_requests_memory: "200Mi"
+btserver_port: "9019"
+btserver_port_track: "9020"
 
 ##############
 # VOI Options

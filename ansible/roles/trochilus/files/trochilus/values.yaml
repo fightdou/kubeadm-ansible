@@ -5,6 +5,7 @@ image:
   db_init: kolla/centos-source-kolla-toolbox:yoga
   db_sync: 172.18.31.155/kubernetes/trochilus-agent:latest
   pullSecrets: ""
+  pullPolicy: ""
 
 serviceAccountName: trochilus
 nodeSelector:
