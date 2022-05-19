@@ -99,3 +99,12 @@
     dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
 
 - import_tasks: install_package.yaml
+
+- import_tasks: set_voi_data_device.yaml
+  when: only_deploy_voi | bool
+  run_once: True
+
+- import_tasks: set_voi_virt_nic.yaml
+  when: only_deploy_voi | bool
+  run_once: True
+
