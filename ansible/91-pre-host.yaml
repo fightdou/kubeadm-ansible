@@ -1,0 +1,10 @@
+---
+- import_playbook: gather-facts.yml
+
+- name: Apply role baremetal
+  gather_facts: false
+  hosts: baremetal
+  roles:
+    - { role: baremetal,
+        tags: baremetal,
+        when: enable_baremetal| bool }

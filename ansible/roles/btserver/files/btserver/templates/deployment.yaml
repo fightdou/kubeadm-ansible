@@ -29,28 +29,25 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       hostNetwork: {{ .Values.containers.network }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: btserver
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port }}
+              port: {{ .Values.containers.port_btserver }}
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port }}
+              port: {{ .Values.containers.port_btserver }}
           volumeMounts:
-          - name: {{ .Values.volumeMounts.name }}
+          - name: btserver-dir
             mountPath: {{ .Values.volumeMounts.path }}
-          resources:
-            limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
-            requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
-        - name: {{ .Values.containers.name }}
+          ports:
+            - name: btserver
+              containerPort: {{ .Values.containers.port_btserver }}
+              protocol: TCP
+        - name: btserver-track
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository_track }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -62,20 +59,18 @@ spec:
             tcpSocket:
               port: {{ .Values.containers.port_track }}
           volumeMounts:
-          - name: {{ .Values.volumeMounts.name_track }}
-            mountPath: {{ .Values.volumeMounts.path_track }}
-          resources:
-            limits:
-              cpu: {{ .Values.resources.limits.cpu }}
-              memory: {{ .Values.resources.limits.memory }}
-            requests:
-              cpu: {{ .Values.resources.requests.cpu }}
-              memory: {{ .Values.resources.requests.memory }}
+          - name: btserver-dir
+            mountPath: {{ .Values.volumeMounts.path }}
+          ports:
+            - name: btserver-track
+              containerPort: {{ .Values.containers.port_track }}
+              protocol: TCP
       volumes:
-      - name: {{ .Values.volumes.name }}
+      - name: btserver-dir
         hostPath:
           path: {{ .Values.volumes.path }}
-          type: {{ .Values.volumes.type }}
+          type: DirectoryOrCreate
+      priorityClassName: {{ .Values.priorityClassName }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -7,7 +7,7 @@
 - name: copy dir btserver charts
   copy:
     src: "btserver"
-    dest: "{{ helm_charts_dir }}"
+    dest: "{{ helm_charts_dir }}/"
 
 
 - name: create btserver values.yml

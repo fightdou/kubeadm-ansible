@@ -13,19 +13,13 @@ image:
   pullSecrets: "{{ docker_register_secrets_name }}"  
 
 containers:
-  name: "{{ btserver_containers_name_track }}"
   network: "{{ btserver_hostnetwork }}"
-  port: "{{ btserver_port }}"
+  port_btserver: "{{ btserver_port }}"
   port_track: "{{ btserver_port_track }}"
 volumeMounts:
-  name: "{{ volume_mount_name }}"
   path: "{{ volume_mount_path }}"
-  name_track: "{{ volume_mount_name }}"
-  path_track: "{{ volume_mount_path }}"
 volumes:
-  name: "{{ volumes_name }}"
-  path: "{{ volumes_path }}"
-  type: "{{ volumes_type }}"
+  path: "{{ bt_volumes_path }}"
 
 nodeSelector: 
   "{{ voi_node_role_name }}": "{{ node_role_value }}"
@@ -69,7 +63,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: "{{ btserver_svc_type }}"
+  type: ClusterIP
   port: 80
 
 ingress:
@@ -84,21 +78,7 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
-resources: 
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-   limits:
-     cpu: "{{ resources_limits_cpu }}"
-     memory: "{{ resources_limits_memory }}"
-   requests:
-     cpu: "{{ resources_requests_cpu }}"
-     memory: "{{ resources_requests_memory }}"
 
 autoscaling:
   enabled: false
@@ -107,8 +87,8 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
+
+priorityClassName: "system-cluster-critical"
