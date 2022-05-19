@@ -1,0 +1,5 @@
+---
+- name: copying source.list to all node
+  template:
+    src: source.list.j2
+    dest: /etc/apt/sources.list

@@ -15,11 +15,19 @@ ipmi_username: root
 ipmi_password: Huawei12#$
 
 ####################
+# baremetal
+####################
+enable_aptsource: true
+enable_install_package: true
+apt_source: "172.18.28.237"
+
+
+####################
 # Kubernetes options
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.193
+kube_apiserver_vip: 172.18.30.126
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -226,17 +234,18 @@ enable_ingress: false
 enable_ceph_csi: false
 enable_mariadb: false
 enable_redis: false
-enable_emqx: true
-enable_libvirt: true
-enable_trochilus: true
-enable_prometheus: true
-enable_fsd: true
+enable_emqx: false
+enable_libvirt: false
+enable_trochilus: false
+enable_prometheus: false
+enable_fsd: false
+enable_btserver: true
 enable_voi: false
-enable_elasticsearch: true
-enable_fluentd: true
-enable_kibana: true
-enable_websockify: true
-enable_ceph: true
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
+enable_websockify: false
+enable_ceph: false
 
 ################
 # Redis Options
@@ -256,23 +265,14 @@ websockify_port: 9003
 #######################
 # btserver
 #######################
-btserver_image_tag: "{{ kube_image_tag }}"
-btserver_pod_pullPolicy: "I`fNotPresent"
-btserver_svc_type: "ClusterIP"
-btserver_hostnetwork: "yes"
-btserver_containers_name_track: "btserver-track"
-volume_mount_name: "btserver"
+btserver_listen_ports: "6880-6889"
 volume_mount_path: "/btserver"
-volumes_name: "btserver"
-volumes_path: "/mnt/cephfs"
-volumes_type: "Directory"
+bt_volumes_path: "{{ desktop_mount_dir }}/btserver"
 voi_node_role_name: "voi_role"
-resources_limits_cpu: "200m"
-resources_limits_memory: "200Mi"
-resources_requests_cpu: "200m"
-resources_requests_memory: "200Mi"
 btserver_port: "9019"
 btserver_port_track: "9020"
+
+
 ##############
 # VOI Options
 ##############

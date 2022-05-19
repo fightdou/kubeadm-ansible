@@ -10,10 +10,18 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
+  pullSecrets: docker-register-secrets
 
 containers:
-  name: btserver-track
   network: true
+  port_btserver: 9019
+  port_track: 9020
+
+volumeMounts:
+  path: /btserver
+
+volumes:
+  path: /data/fsd/btserver"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -66,12 +74,6 @@ resources: {}
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
 
 autoscaling:
   enabled: false
@@ -80,8 +82,20 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector: 
+  "voi_role: enabled"
 
 tolerations: []
 
-affinity: {}
+affinity: 
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - "btserver"
+          topologyKey: "kubernetes.io/hostname"
