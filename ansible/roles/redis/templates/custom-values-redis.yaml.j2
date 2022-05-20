@@ -24,24 +24,14 @@ hostNetwork: {{ redis_host_network }}
 redis:
   port: "{{ redis_server_port }}"
   masterGroupName: "{{ redis_master_group_name }}"
-  config:
-    min-slaves-to-write: 1
-    min-slaves-max-lag: 5
-    maxmemory: "0"
-    maxmemory-policy: "volatile-lru"
-    save: "900 1"
-    repl-diskless-sync: "yes"
-    rdbcompression: "yes"
-    rdbchecksum: "yes"
-    notify-keyspace-events: Ex
-
-  resources:
-    requests:
-      memory: 200Mi
-      cpu: 100m
-    limits:
-      memory: 700Mi
-      cpu: 500m
+  config: {}
+  resources: {}
+    #  requests:
+    #    memory: 200Mi
+    #    cpu: 100m
+    #  limits:
+    #    memory: 700Mi
+    #    cpu: 500m
 
 sentinel:
   enabled: {{ sentinel_mode }}
@@ -50,14 +40,14 @@ sentinel:
   config:
     down-after-milliseconds: 10000
     failover-timeout: 180000
-    parallel-syncs: 5
 
-  resources:
-    requests:
-      memory: 200Mi
-      cpu: 100m
-    limits:
-      memory: 512Mi
+  resources: {}
+    #  requests:
+    #    memory: 200Mi
+    #    cpu: 100m
+    #  limits:
+    #    memory: 700Mi
+    #    cpu: 500m
 
 securityContext: {}
 
@@ -84,7 +74,7 @@ redisPassword: "{{ redis_master_password }}"
 authKey: auth
 
 persistentVolume:
-  enabled: "{{ enable_pvc }}"
+  enabled: {{ enable_pvc }}
   storageClass: "{{ rbd_storage_class_name }}"
   accessModes:
     - ReadWriteOnce

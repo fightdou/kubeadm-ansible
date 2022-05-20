@@ -55,7 +55,7 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /etc/redis/redis.conf
-          subPath: redis-master.conf
+          subPath: redis.conf
         - name: data
           mountPath: /data
         - name: log

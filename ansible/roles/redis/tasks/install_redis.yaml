@@ -26,5 +26,5 @@
       - /etc/kubernetes/plugins/redis/values.yaml
     state: present 
     wait: yes
-    wait_timeout: 200s
+    wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"

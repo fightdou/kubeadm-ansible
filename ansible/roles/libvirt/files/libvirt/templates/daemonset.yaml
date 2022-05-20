@@ -23,28 +23,7 @@ spec:
       containers:
       - name: libvirt
         image: "{{ .Values.image.libvirt }}"
-        imagePullPolicy: IfNotPresent
-        env:
-          - name: KOLLA_CONFIG_STRATEGY
-            value: "COPY_ALWAYS"
-          - name: KOLLA_SERVICE_NAME
-            value: "libvirt"
-          - name: PATH
-            value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-          - name: LANG
-            value: "en_US.UTF-8"
-          - name: KOLLA_BASE_DISTRO
-            value: "ubuntu"
-          - name: KOLLA_DISTRO_PYTHON_VERSION
-            value: "3.8"
-          - name: KOLLA_BASE_ARCH
-            value: "x86_64"
-          - name: SETUPTOOLS_USE_DISTUTILS
-            value: "stdlib"
-          - name: PS1
-            value: "$(tput bold)($(printenv KOLLA_SERVICE_NAME))$(tput sgr0)[$(id -un)@$(hostname -s) $(pwd)]$ "
-          - name: DEBIAN_FRONTEND
-            value: "noninteractive"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         lifecycle:
           preStop:
             exec:
@@ -76,27 +55,21 @@ spec:
           timeoutSeconds: 5
         securityContext:
           privileged: true
+          runAsUser: 0
+          runAsGroup: 0
           readOnlyRootFilesystem: false
         volumeMounts:
-          - mountPath: /var/lib/kolla/config_files/secrets
+          - mountPath: /etc/libvirt/secrets
             name: kolla-config
-          - mountPath: /var/lib/kolla/config_files/libvirtd.conf
+          - mountPath: /etc/libvirt/libvirtd.conf
             name: libvirt-etc
             readOnly: true
             subPath: libvirtd.conf
-          - mountPath: /var/lib/kolla/config_files/qemu.conf
-            name: libvirt-etc
-            readOnly: true
-            subPath: qemu.conf
-          - mountPath: /var/lib/kolla/config_files/config.json
-            name: libvirt-etc
-            readOnly: true
-            subPath: config.json
-          - mountPath: /var/lib/kolla/config_files/secrets/{{ .Values.secret.rbd_secret_uuid }}.xml
+          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.xml
             name: libvirt-etc
             readOnly: true
             subPath: {{ .Values.secret.rbd_secret_uuid }}.xml
-          - mountPath: /var/lib/kolla/config_files/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
+          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
             name: libvirt-etc
             readOnly: true
             subPath: {{ .Values.secret.rbd_secret_uuid }}.base64
@@ -120,6 +93,9 @@ spec:
           - mountPath: /etc/ceph
             mountPropagation: Bidirectional
             name: etc-ceph
+          - mountPath: {{ .Values.trochilus_dir }}
+            mountPropagation: Bidirectional
+            name: voi-vm-dir
       dnsPolicy: ClusterFirstWithHostNet
       hostIPC: true
       hostNetwork: true
@@ -171,6 +147,10 @@ spec:
             path: /etc/libvirt/qemu
             type: ""
           name: etc-libvirt-qemu
+        - hostPath:
+            path: {{ .Values.voi_dir }}
+            type: "DirectoryOrCreate"
+          name: voi-vm-dir
 {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 -}}

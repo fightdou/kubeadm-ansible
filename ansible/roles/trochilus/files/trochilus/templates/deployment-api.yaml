@@ -36,7 +36,7 @@ spec:
           - kubernetes-entrypoint
           name: init
           image: {{ .Values.image.entrypoint }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: POD_NAME
             valueFrom:
@@ -57,7 +57,7 @@ spec:
       containers:
         - name: trochilus-api
           image: {{ .Values.image.trochilus_api }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /bin/sh
             - -c
@@ -121,6 +121,8 @@ spec:
             timeoutSeconds: 15
           securityContext:
             privileged: true
+            runAsUser: 0
+            runAsGroup: 0
             readOnlyRootFilesystem: false
           ports:
             - name: {{ .Values.service.trochilus_api.name }}
@@ -153,6 +155,12 @@ spec:
           - mountPath: /var/log/trochilus
             mountPropagation: Bidirectional
             name: log-dir
+          - mountPath: {{ .Values.conf.voi_settings.voi_vm_base_path }}
+            mountPropagation: Bidirectional
+            name: voi-vms-path
+          - mountPath: {{ .Values.conf.voi_settings.voi_image_base_path }}
+            mountPropagation: Bidirectional
+            name: voi-image-path
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -207,3 +215,11 @@ spec:
             path: /var/log/trochilus/
             type: ""
           name: log-dir
+        - hostPath:
+            path: {{ .Values.mount_dir.voi_vms_dir }}
+            type: DirectoryOrCreate
+          name: voi-vms-path
+        - hostPath:
+            path: {{ .Values.mount_dir.voi_image_dir }}
+            type: DirectoryOrCreate
+          name: voi-image-path

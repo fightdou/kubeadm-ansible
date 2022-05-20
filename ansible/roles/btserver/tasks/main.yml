@@ -1,0 +1,5 @@
+
+- import_tasks: install_btserver.yml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+

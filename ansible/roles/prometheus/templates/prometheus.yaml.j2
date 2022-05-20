@@ -38,6 +38,8 @@ scrape_configs:
 {% endfor %}
 
   - job_name: host-exporter
+    scrape_interval: 60s
+    scrape_timeout: 20s
     static_configs:
 {% for host in groups['prometheus-host-exporter'] %}
       - targets:

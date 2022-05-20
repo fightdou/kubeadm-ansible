@@ -17,14 +17,20 @@ spec:
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: fsd-init-static
-              mountPath: /home/trochilus
+              mountPath: /home/tmp
+            - name: fsd-init-trochilus
+              mountPath: /home/trochilus/trochilus.sql
       restartPolicy: Never
       imagePullSecrets:
         - name: {{ docker_register_secrets_name }}
       volumes:
         - name: fsd-init-static
           hostPath:
-            path: {{ init_sql_dir }}
+            path: "{{ fsd_static_dir }}"
+            type: DirectoryOrCreate
+        - name: fsd-init-trochilus
+          hostPath:
+            path: "{{ init_sql_dir }}"
             type: DirectoryOrCreate
       nodeSelector:
         {{ control_node_role_name }}: {{ node_role_value }}

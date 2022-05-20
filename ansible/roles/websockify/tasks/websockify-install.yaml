@@ -26,5 +26,5 @@
       - /etc/kubernetes/plugins/websockify/values.yaml
     state: present 
     wait: yes
-    wait_timeout: 180s
+    wait_timeout: "{{ helm_wait_timeout }}"
     release_namespace: "{{ helm_install_namespace }}"

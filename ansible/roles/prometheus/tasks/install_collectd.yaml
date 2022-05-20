@@ -30,7 +30,6 @@
 - name: Start check libvirt collectd script service
   service:
     enabled: yes
-    state: restarted
     name: check_libvirt_collectd
     daemon_reload: yes
 

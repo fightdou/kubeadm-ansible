@@ -1,0 +1,116 @@
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: openebs-lvm-node
+  namespace: {{ .Release.Namespace }}
+  labels:
+    openebs.io/component-name: openebs-lvm-node
+    openebs.io/version: 0.8.2
+spec:
+  selector:
+    matchLabels:
+      app: openebs-lvm-node
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 100%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: openebs-lvm-node
+        role: openebs-lvm
+        openebs.io/component-name: openebs-lvm-node
+        openebs.io/version: 0.8.2
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      priorityClassName: {{ .Values.nodeplugin.priorityClassName }}
+      serviceAccount: openebs-lvm-node-sa
+      hostNetwork: true
+      containers:
+        - name: {{ .Values.nodeplugin.registrar.name }}
+          image: "{{ .Values.nodeplugin.registrar.image.repository }}:{{ .Values.nodeplugin.registrar.image.tag }}"
+          imagePullPolicy: {{ .Values.nodeplugin.registrar.image.pullPolicy }}
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "rm -rf /registration/lvm-localpv /registration/lvm-localpv-reg.sock"]
+          env:
+            - name: ADDRESS
+              value: /plugin/csi.sock
+            - name: DRIVER_REG_SOCK_PATH
+              value: /var/lib/kubelet/plugins/lvm-localpv/csi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: NODE_DRIVER
+              value: openebs-lvm
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: registration-dir
+              mountPath: /registration
+          resources:
+{{ toYaml .Values.nodeplugin.registrar.resources | indent 12 }}
+        - name: {{ .Values.nodeplugin.plugin.name }}
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+          image: "{{ .Values.nodeplugin.plugin.image.repository }}:{{ .Values.nodeplugin.plugin.image.tag }}"
+          imagePullPolicy: {{ .Values.nodeplugin.plugin.image.pullPolicy }}
+          args:
+            - "--nodeid=$(OPENEBS_NODE_ID)"
+            - "--endpoint=$(OPENEBS_CSI_ENDPOINT)"
+            - "--plugin=$(OPENEBS_NODE_DRIVER)"
+            - "--listen-address=$(METRICS_LISTEN_ADDRESS)"
+          env:
+            - name: OPENEBS_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: OPENEBS_CSI_ENDPOINT
+              value: unix:///plugin/csi.sock
+            - name: OPENEBS_NODE_DRIVER
+              value: agent
+            - name: LVM_NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: METRICS_LISTEN_ADDRESS
+              value: :9500
+            - name: ALLOWED_TOPOLOGIES
+              value: "kubernetes.io/hostname,"
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: device-dir
+              mountPath: /dev
+            - name: pods-mount-dir
+              mountPath: /var/lib/kubelet/
+              # needed so that any mounts setup inside this container are
+              # propagated back to the host machine.
+              mountPropagation: "Bidirectional"
+          resources:
+{{ toYaml .Values.nodeplugin.plugin.resources | indent 12 }}
+      volumes:
+        - name: device-dir
+          hostPath:
+            path: /dev
+            type: Directory
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry/
+            type: DirectoryOrCreate
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/lvm-localpv/
+            type: DirectoryOrCreate
+        - name: pods-mount-dir
+          hostPath:
+            path: /var/lib/kubelet/
+            type: Directory

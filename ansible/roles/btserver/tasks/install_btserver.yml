@@ -1,0 +1,31 @@
+---
+- name: mkdir btserver values
+  file:
+    name: /etc/kubernetes/plugins/btserver
+    state: directory
+
+- name: copy dir btserver charts
+  copy:
+    src: "btserver"
+    dest: "{{ helm_charts_dir }}"
+
+
+- name: create btserver values.yml
+  template:
+    src: custom-values-btserver.yaml.j2
+    dest: /etc/kubernetes/plugins/btserver/values.yml
+    owner: root
+    mode: 0644
+
+- name: install btserver helm charts
+  kubernetes.core.helm:
+    atomic: no
+    name: btserver
+    chart_ref: "{{ helm_charts_dir }}/btserver"
+    values_files:
+      - /etc/kubernetes/plugins/btserver/values.yml
+    state: present
+    wait: yes
+    wait_timeout: 120s
+    release_namespace: "{{ helm_install_namespace }}"
+

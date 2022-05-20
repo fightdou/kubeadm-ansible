@@ -1,0 +1,25 @@
+---
+- when: ansible_facts.mounts | selectattr('mount', '==', voi_data_directory) | list | length == 0
+  block:  
+  - name: Create directory if not exists
+    file:
+      name: "{{ voi_data_directory }}"
+      state: directory
+      owner: root
+      group: root
+      mode: '0751'
+
+  - name: format datanode disks
+    filesystem: 
+      fstype: ext4 
+      force: true
+      dev: "{{ voi_data_device }}"
+
+  - name: mount datanode disks
+    mount:
+      path: "{{ voi_data_directory }}"
+      src: "{{ voi_data_device }}"
+      fstype: ext4
+      opts: "defaults,noatime,nobarrier"
+      state: mounted
+ 

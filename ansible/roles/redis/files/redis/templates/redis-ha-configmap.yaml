@@ -8,7 +8,7 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app: {{ template "redis-ha.fullname" . }}
 data:
-  redis-master.conf: |
+  redis.conf: |
     protected-mode no
     port {{ .Values.redis.port }}
     tcp-backlog 511
@@ -33,7 +33,6 @@ data:
     repl-diskless-sync-delay 5
     repl-disable-tcp-nodelay no
     slave-priority 100
-    requirepass {{ .Values.redisPassword }}
     maxclients 10000
     maxmemory 1073741824
     lazyfree-lazy-eviction no
@@ -67,32 +66,19 @@ data:
     client-output-buffer-limit pubsub 32mb 8mb 60
     hz 10
     aof-rewrite-incremental-fsync yes
-  redis.conf: |
-{{- if .Values.redis.customConfig }}
-{{ tpl .Values.redis.customConfig . | indent 4 }}
-{{- else }}
-    dir "/data"
-    {{- range $key, $value := .Values.redis.config }}
-    {{ $key }} {{ $value }}
-    {{- end }}
-{{- if .Values.auth }}
-    requirepass replace-default-auth
-    masterauth replace-default-auth
-{{- end }}
-{{- end }}
-
+    requirepass {{ .Values.redisPassword }}
+    masterauth {{ .Values.redisPassword }}
   sentinel.conf: |
 {{- if .Values.sentinel.customConfig }}
 {{ tpl .Values.sentinel.customConfig . | indent 4 }}
 {{- else }}
     dir "/data"
+    protected-mode no
     {{- $root := . -}}
     {{- range $key, $value := .Values.sentinel.config }}
     sentinel {{ $key }} {{ $root.Values.redis.masterGroupName }} {{ $value }}
     {{- end }}
-{{- if .Values.auth }}
-    sentinel auth-pass {{ .Values.redis.masterGroupName }} replace-default-auth
-{{- end }}
+    sentinel auth-pass {{ .Values.redis.masterGroupName }} {{ .Values.redisPassword }}
 {{- end }}
 
   init.sh: |
@@ -118,15 +104,11 @@ data:
         eval MY_SENTINEL_ID="\${SENTINEL_ID_$INDEX}"
         sed -i "1s/^/sentinel myid $MY_SENTINEL_ID\\n/" "$SENTINEL_CONF"
         sed -i "2s/^/sentinel monitor $MASTER_GROUP $1 $REDIS_PORT $QUORUM \\n/" "$SENTINEL_CONF"
-        echo "sentinel announce-ip $ANNOUNCE_IP" >> $SENTINEL_CONF
-        echo "sentinel announce-port $SENTINEL_PORT" >> $SENTINEL_CONF
     }
 
     redis_update() {
         echo "Updating redis config"
         echo "slaveof $1 $REDIS_PORT" >> "$REDIS_CONF"
-        echo "slave-announce-ip $ANNOUNCE_IP" >> $REDIS_CONF
-        echo "slave-announce-port $REDIS_PORT" >> $REDIS_CONF
     }
 
     copy_config() {
