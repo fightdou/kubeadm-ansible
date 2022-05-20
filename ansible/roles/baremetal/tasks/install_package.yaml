@@ -66,6 +66,7 @@
   vars:
     packages:
       - apparmor
+      - ufw
 
 - name: Install kube ansible package
   pip:
