@@ -59,20 +59,14 @@ spec:
           runAsGroup: 0
           readOnlyRootFilesystem: false
         volumeMounts:
-          - mountPath: /etc/libvirt/secrets
-            name: kolla-config
-          - mountPath: /etc/libvirt/libvirtd.conf
+          - mountPath: /etc/libvirt/qemu.conf
             name: libvirt-etc
             readOnly: true
-            subPath: libvirtd.conf
-          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.xml
+            subPath: qemu.conf
+          - mountPath: /etc/vdi_conf.ini
             name: libvirt-etc
             readOnly: true
-            subPath: {{ .Values.secret.rbd_secret_uuid }}.xml
-          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
-            name: libvirt-etc
-            readOnly: true
-            subPath: {{ .Values.secret.rbd_secret_uuid }}.base64
+            subPath: vdi_conf.ini
           - mountPath: /etc/libvirt/qemu
             name: etc-libvirt-qemu
           - mountPath: /lib/modules
@@ -90,12 +84,24 @@ spec:
           - mountPath: /etc/machine-id
             name: machine-id
             readOnly: true
-          - mountPath: /etc/ceph
-            mountPropagation: Bidirectional
-            name: etc-ceph
           - mountPath: {{ .Values.trochilus_dir }}
             mountPropagation: Bidirectional
             name: voi-vm-dir
+          {{- if .Values.enable_ceph }}
+          - mountPath: /etc/libvirt/secrets
+            name: secret-dir
+          - mountPath: /etc/ceph
+            mountPropagation: Bidirectional
+            name: etc-ceph
+          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.xml
+            name: libvirt-etc
+            readOnly: true
+            subPath: {{ .Values.secret.rbd_secret_uuid }}.xml
+          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
+            name: libvirt-etc
+            readOnly: true
+            subPath: {{ .Values.secret.rbd_secret_uuid }}.base64    
+          {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostIPC: true
       hostNetwork: true
@@ -110,15 +116,11 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       volumes:
         - emptyDir: {}
-          name: kolla-config
+          name: secret-dir
         - name: libvirt-etc
           configMap:
             defaultMode: 292
             name: libvirt-etc
-        - hostPath:
-            path: /etc/ceph
-            type: ""
-          name: etc-ceph
         - hostPath:
             path: /lib/modules
             type: ""
@@ -151,6 +153,12 @@ spec:
             path: {{ .Values.voi_dir }}
             type: "DirectoryOrCreate"
           name: voi-vm-dir
+        {{- if .Values.enable_ceph }}
+        - hostPath:
+            path: /etc/ceph
+            type: ""
+          name: etc-ceph
+        {{- end }}
 {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 -}}

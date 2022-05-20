@@ -60,14 +60,14 @@ spec:
           mountPath: /data
         - name: log
           mountPath: /var/log/redis
+      hostNetwork: {{ .Values.hostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
       volumes:
       - name: config
         configMap:
           name: {{ template "redis-ha.fullname" . }}-configmap
       - name: log
         emptyDir: {}
-      hostNetwork: {{ .Values.hostNetwork }}
-      dnsPolicy: ClusterFirstWithHostNet
 {{- if .Values.persistentVolume.enabled }}
   volumeClaimTemplates:
   - metadata:
@@ -90,7 +90,7 @@ spec:
 {{- else if .Values.hostPath.path }}
       - name: data
         hostPath:
-          path: {{ tpl .Values.hostPath.path .}}
+          path: {{ tpl .Values.hostPath.path . }}
           type: DirectoryOrCreate
 {{- else }}
       - name: data
