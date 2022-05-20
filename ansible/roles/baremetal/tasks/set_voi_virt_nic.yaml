@@ -1,0 +1,6 @@
+---
+- name: 添加虚拟网卡
+  shell: "{{ item }} || true"
+  with_items:
+    - "ip link add link {{ api_interface }} name voi0 type bridge"
+  when: api_interface == flat_network_interface[0] or api_interface == vlan_network_interface[0]

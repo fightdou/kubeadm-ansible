@@ -212,13 +212,45 @@ fileConfigs:
   02_filters.conf: |-
     <label @KUBERNETES>
       <match kubernetes.var.log.containers.fluentd**>
-        @type relabel
-        @label @FLUENT_LOG
+        @type null
       </match>
 
       <match kubernetes.var.log.containers.**_kube-system_**>
         @type null
         @id ignore_kube_system_logs
+      </match>
+
+      <match kubernetes.var.log.containers.**-csi-**>
+        @type null
+        @id ignore_csi_logs
+      </match>
+
+      <match kubernetes.var.log.containers.elasticsearch**>
+        @type null
+      </match>
+
+      <match kubernetes.var.log.containers.emqx**>
+        @type null
+      </match>
+
+      <match kubernetes.var.log.containers.ingress**>
+        @type null
+      </match>
+
+      <match kubernetes.var.log.containers.prometheus**>
+        @type null
+      </match>
+
+     <match kubernetes.var.log.containers.libvirt**>
+        @type null
+      </match>
+
+      <match kubernetes.var.log.containers.guest_server**>
+        @type null
+      </match>
+
+      <match kubernetes.var.log.containers.kibana**>
+        @type null
       </match>
 
       <filter kubernetes.**>
