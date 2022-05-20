@@ -98,6 +98,15 @@
         tags: trochilus,
         when: enable_trochilus| bool }
 
+- name: Apply role websockify
+  gather_facts: false
+  hosts: 
+    - websockify
+  roles:
+    - { role: websockify,
+        tags: websockify,
+        when: enable_websockify| bool }
+
 - name: Apply role fsd
   gather_facts: false
   hosts: fsd
@@ -117,6 +126,14 @@
     - { role: prometheus,
         tags: prometheus,
         when: enable_prometheus| bool }
+
+- name: Apply role guest-server
+  gather_facts: false
+  hosts: libvirt
+  roles:
+   - { role: guest-server,
+       tags: guest-server,
+       when: enable_guest_server| bool }
 
 - name: Apply role btserver
   gather_facts: false
@@ -149,11 +166,3 @@
    - { role: kibana,
        tags: kibana,
        when: enable_kibana| bool }
-
-- name: Apply role guest-server
-  gather_facts: false
-  hosts: libvirt
-  roles:
-   - { role: guest-server,
-       tags: guest-server,
-       when: enable_guest_server| bool }

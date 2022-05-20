@@ -91,7 +91,9 @@ spec:
       {{- end }}
       {{- if not .Values.persistence.enabled }}
       - name: emqx-data
-        emptyDir: {}
+        hostPath:
+            path: /var/lib/emqx/
+            type: DirectoryOrCreate
       {{- else if .Values.persistence.existingClaim }}
       - name: emqx-data
         persistentVolumeClaim:

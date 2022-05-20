@@ -19,7 +19,7 @@ ipmi_password: Huawei12#$
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.193
+kube_apiserver_vip: 172.18.30.30
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -210,7 +210,6 @@ kibana_node_port: 32000
 ################
 emqx_pod_pullPolicy: IfNotPresent
 emqx_svc_type: ClusterIP
-emqx_persistence: true
 emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
@@ -236,13 +235,14 @@ enable_redis: true
 enable_emqx: true
 enable_libvirt: true
 enable_trochilus: true
+enable_websockify: true
 enable_prometheus: true
+enable_guest_server: true
 enable_fsd: true
 enable_btserver: true
 enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
-enable_websockify: true
 enable_ceph: true
 
 ################
@@ -285,3 +285,6 @@ btserver_port_track: "9020"
 # VOI Options
 ##############
 only_deploy_voi: false
+voi_data_device: /dev/vdb
+voi_data_directory: {{ desktop_mount_dir }}
+

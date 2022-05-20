@@ -56,7 +56,7 @@ initContainers: {}
 nodeSelector: {}
 persistence:
   accessMode: ReadWriteOnce
-  enabled: true
+  enabled: false
   size: 20Mi
   storageClass: general
 podManagementPolicy: Parallel
