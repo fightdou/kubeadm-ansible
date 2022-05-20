@@ -21,6 +21,7 @@ spec:
           readOnlyRootFilesystem: false
         args:
           - --web.listen-address=0.0.0.0:{{ .Values.service.host_exporter.port }}
+          - --ipmi.timeout=10s
           - --config.path=/opt/config.yml
         ports:
           - containerPort: {{ .Values.service.host_exporter.port }}
@@ -28,10 +29,10 @@ spec:
             protocol: TCP
         resources:
           limits:
-            cpu: 250m
-            memory: 512Mi
+            cpu: 500m
+            memory: 1024Mi
           requests:
-            cpu: 250m
+            cpu: 500m
             memory: 512Mi
         volumeMounts:
           - mountPath: /dev

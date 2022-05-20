@@ -53,6 +53,10 @@ mariadb:
   password: 123456
   database: trochilus
 
+mount_dir:
+  voi_vms_dir: ""
+  voi_image_dir: ""
+
 conf:
   agent_settings:
     ipmi_username: root

@@ -62,3 +62,14 @@ listen emqx
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ emqx_mqtt_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
 {% endif %}
+
+{% if enable_prometheus | bool %}
+listen prometheus
+    mode tcp
+    bind {{ kube_apiserver_vip }}:{{ prometheus_server_port }}
+    balance {{ lb_haproxy_balance_alg }}
+    option tcplog
+{% for host in (groups['prometheus']) %}
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ prometheus_server_port }} check inter 2000 rise 2 fall 5
+{% endfor %}
+{% endif %}

@@ -56,7 +56,7 @@ data:
     spice_enabled = true
     spice_server_listen = ${NODE_ID}
     [voi_settings]
-    voi_image_base_path = /var/lib/trochilus/voi/images
+    voi_image_base_path = {{ .Values.conf.voi_settings.voi_image_base_path }}
     voi_vm_base_path = {{ .Values.conf.voi_settings.voi_vm_base_path }}
     vm_name_template = voi-%s
     [webhook_settings]
@@ -84,7 +84,7 @@ data:
     nics_info=`(echo $nic | sed "s/,/\ /g")`
 
     for key in ${nics_info[@]}; do
-      sed -i "/role/a\nic=$key" /etc/trochilus/trochilus.conf
+      sed -i "/role/a\nic = $key" /etc/trochilus/trochilus.conf
     done
 
     sed -i "s/role =/role = $role/g" /etc/trochilus/trochilus.conf

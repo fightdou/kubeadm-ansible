@@ -107,14 +107,6 @@
         tags: websockify,
         when: enable_websockify| bool }
 
-- name: Apply role fsd
-  gather_facts: false
-  hosts: fsd
-  roles:
-    - { role: fsd,
-        tags: fsd,
-        when: enable_fsd| bool }
-
 - name: Apply role prometheus
   gather_facts: false
   hosts: 
@@ -142,6 +134,14 @@
     - { role: btserver,
         tags: btserver,
         when: enable_btserver| bool }
+
+- name: Apply role fsd
+  gather_facts: false
+  hosts: fsd
+  roles:
+    - { role: fsd,
+        tags: fsd,
+        when: enable_fsd| bool }
 
 - name: Apply role elasticsearch
   gather_facts: false

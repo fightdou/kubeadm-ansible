@@ -44,11 +44,13 @@ spec:
             - name: fsd-prometheus-alert
               mountPath: /home/static/prometheus/alert/alertmanager.yml
             - name: fsd-voi
-              mountPath: /mnt/voi
+              mountPath: /mnt/voi/
             - name: fsd-upload
-              mountPath: /root/upload
+              mountPath: /mnt/upload
             - name: fsd-static
               mountPath: /mnt/fsd/static
+            - name: samba-dir
+              mountPath: /mnt/111/
           env:
             - name: ENV_FSD_SPRING_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
@@ -108,6 +110,10 @@ spec:
         - name: fsd-static
           hostPath:
             path: "{{ .Values.mount_dir.fsd_static }}"
+            type: DirectoryOrCreate
+        - name: samba-dir
+          hostPath:
+            path: "{{ .Values.mount_dir.samba_dir }}"
             type: DirectoryOrCreate
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
