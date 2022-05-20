@@ -1,7 +1,7 @@
 firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
-api_interface: enp2s0f0
+api_interface: ens3
 enable_docker_auth: true
 enable_domain_deploy: true
 docker_register_address: 172.18.31.155
@@ -19,7 +19,7 @@ ipmi_password: Huawei12#$
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.27.125.250
+kube_apiserver_vip: 172.18.28.222
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -31,8 +31,7 @@ docker_storage_dir: "/var/lib/docker"
 kube_pod_subnet: 10.244.0.0/16
 kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
-kube_priority_name: high-priority-nonpreempting
-kube_priority_value: 1000000
+kube_priority_name: system-node-critical
 # Pod根容器
 pod_infra_container_image: "{{ kube_image_repository }}/pause:{{ kube_image_tag }}"
 kubeadm_token: ceky52.rec2keii98oke7sl
@@ -214,7 +213,7 @@ emqx_svc_type: ClusterIP
 emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
-emqx_priorityclassname: "system-node-critical"
+emqx_priorityclassname: "{{ kube_priority_name }}"
 emqx_hostnetwork: true
 emqx_mqtt_port: 1883
 emqx_mgmt_port: 8081
@@ -286,5 +285,5 @@ btserver_port_track: "9020"
 # VOI Options
 ##############
 only_deploy_voi: false
-voi_data_device: /dev/vdb
-voi_data_directory: {{ desktop_mount_dir }}
+voi_data_device: ""
+voi_data_directory: "{{ desktop_mount_dir }}"

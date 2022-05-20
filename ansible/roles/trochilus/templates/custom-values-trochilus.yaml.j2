@@ -9,6 +9,7 @@ image:
   pullPolicy: "Always"
 
 serviceAccountName: trochilus
+priorityClassName: {{ kube_priority_name }}
 nodeSelector:
   trochilus_agent:
     {{ compute_node_role_name }}: {{ node_role_value }}
@@ -28,7 +29,7 @@ nodeInfo:
       node_role: "{{ ['control', 'compute', 'storge'] | listintersection(hostvars[host]['group_names']) | join(',') }}"
       nic_info: "{{ hostvars[host]['nic_info'] | join(',') }}"
       vlan_network_interface: "{% for vlan_interface,vlan_range in vlan_interface_dict.items() %}{% if vlan_interface == api_interface %}{{ 'vlan' + loop.index | string }}:voi0{% else %}{{ 'vlan' + loop.index | string }}:{{ vlan_interface }}{% if not loop.last %},{% endif %}{% endif %}{% endfor %}" 
-      flat_network_interface: "{% for flat_interface in flat_interface_list %}{% if flat_interface == api_interface %}{{'flat' + loop.index | string }}:voi0{% else %}{{ 'flat' + loop.index | string }}:{{ flat_interface }}{% if not loop.last %},{% endif %}}{% endif %}{% endfor %}"
+      flat_network_interface: "{% for flat_interface in flat_interface_list %}{% if flat_interface == api_interface %}{{'flat' + loop.index | string }}:voi0{% else %}{{ 'flat' + loop.index | string }}:{{ flat_interface }}{% if not loop.last %},{% endif %}{% endif %}{% endfor %}"
   {% endfor %}
 
 networkConfig:

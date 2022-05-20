@@ -12,6 +12,7 @@ replicas: 3
 labels: {}
 
 hostNetwork: false
+priorityClassName: ""
 
 ## Pods Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/

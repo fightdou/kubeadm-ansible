@@ -27,13 +27,7 @@ spec:
           - containerPort: {{ .Values.service.host_exporter.port }}
             name: http
             protocol: TCP
-        resources:
-          limits:
-            cpu: 500m
-            memory: 1024Mi
-          requests:
-            cpu: 500m
-            memory: 512Mi
+        resources: {}
         volumeMounts:
           - mountPath: /dev
             name: dev
@@ -47,6 +41,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: true
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}

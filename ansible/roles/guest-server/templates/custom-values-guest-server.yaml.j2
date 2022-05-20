@@ -9,6 +9,7 @@ klyConfig:
     prometheus_svc_addr: http://pushgateway.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
 
 serviceAccountName: guest-server
+priorityClassName: {{ kube_priority_name }}
 
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
