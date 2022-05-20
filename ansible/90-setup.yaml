@@ -165,3 +165,10 @@
    - { role: websockify,
        tags: websockify,
        when: enable_websockify| bool }
+
+- name: Apply role checknet
+  gather_facts: false
+  hosts: checknet
+  roles:
+   - { role: checknet,
+       tags: checknet }

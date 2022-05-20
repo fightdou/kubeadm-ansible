@@ -1,0 +1,5 @@
+---
+# tasks file for checknet
+- import_tasks: ping.yml
+
+- import_tasks: iperf.yml
