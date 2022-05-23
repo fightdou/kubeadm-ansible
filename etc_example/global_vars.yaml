@@ -1,7 +1,7 @@
 firewalld_disabled: true
 timezone: Asia/Shanghai
 use_domain_name_deploy: true
-#api_interface: ens3
+api_interface: ens3
 enable_docker_auth: true
 enable_domain_deploy: true
 docker_register_address: 172.18.31.155
@@ -28,7 +28,7 @@ ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.27.125.250
+kube_apiserver_vip: 172.27.30.30
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -297,4 +297,4 @@ btserver_port_track: "9020"
 ##############
 only_deploy_voi: false
 voi_data_device: /dev/vdb
-voi_data_directory: {{ desktop_mount_dir }}
+voi_data_directory: "{{ desktop_mount_dir }}"

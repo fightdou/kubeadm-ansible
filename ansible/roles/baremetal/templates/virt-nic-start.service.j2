@@ -1,0 +1,11 @@
+[Unit]
+Description= Control virt nic to start the service
+After= NetworkManager.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/ip link add link {{ api_interface }} name voi0 type bridge
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,1 @@
+enable_pvc: "{% if only_deploy_voi and not enable_ceph %}false{% else %}true{% endif %}"
