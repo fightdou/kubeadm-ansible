@@ -108,9 +108,69 @@ def filter_address(context, network_name, hostname=None):
                                   hostname=hostname))
     return address
 
+
+@contextfilter
+def filter_interface_name(context, network_name, hostname=None):
+    """returns IP address on the requested network
+
+    The output is affected by '<network_name>_*' variables:
+    '<network_name>_interface' sets the interface to obtain address for.
+    '<network_name>_address_family' controls the address family (ipv4/ipv6).
+
+    :param context: Jinja2 Context
+    :param network_name: string denoting the name of the network to get IP
+                         address for, e.g. 'api'
+    :param hostname: to override host which address is retrieved for
+    :returns: string with IP address
+    """
+
+    # NOTE(yoctozepto): watch out as Jinja2 'context' behaves not exactly like
+    # the python 'dict' (but mimics it most of the time)
+    # for example it returns a special object of type 'Undefined' instead of
+    # 'None' or value specified as default for 'get' method
+    # 'HostVars' shares this behavior
+
+    if hostname is None:
+        hostname = context.get('inventory_hostname')
+        if isinstance(hostname, Undefined):
+            raise AnsibleFilterError("'inventory_hostname' variable is unavailable")
+
+    hostvars = context.get('hostvars')
+    if isinstance(hostvars, Undefined):
+        raise AnsibleFilterError("'hostvars' variable is unavailable")
+
+    host = hostvars.get(hostname)
+    if isinstance(host, Undefined):
+        raise AnsibleFilterError("'{hostname}' not in 'hostvars'"
+                          .format(hostname=hostname))
+
+    del hostvars  # remove for clarity (no need for other hosts)
+
+    # NOTE(yoctozepto): variable "host" will *not* return Undefined
+    # same applies to all its children (act like plain dictionary)
+
+    interface_name = host.get(network_name + '_interface')
+    if interface_name is None:
+        raise AnsibleFilterError("Interface name undefined "
+                          "for network '{network_name}' "
+                          "(set '{network_name}_interface')"
+                          .format(network_name=network_name))
+
+    ansible_interface_name = interface_name.replace('-', '_')
+    interface = host.get('ansible_' + ansible_interface_name)
+    if interface is None:
+        raise AnsibleFilterError("Interface '{interface_name}' "
+                          "not present "
+                          "on host '{hostname}'"
+                          .format(interface_name=interface_name,
+                                  hostname=hostname))
+
+    return interface_name
+
 class FilterModule(object):
 
     def filters(self):
         return {
+            'filter_interface_name': filter_interface_name,
             'filter_address': filter_address
             }
