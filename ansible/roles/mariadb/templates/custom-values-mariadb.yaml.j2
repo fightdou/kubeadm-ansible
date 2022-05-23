@@ -3,7 +3,7 @@ image:
   pullSecrets: {{ docker_register_secrets_name }}
 mariadb_password: {{ mariadb_root_password }}
 persistentVolume:
-  enabled: true
+  enabled: {{ enable_pvc }}
   storageclass: {{ cephfs_storage_class_name }}
   name: {{ mariadb_pvc_name }}
   size: {{ mariadb_storage_size }}

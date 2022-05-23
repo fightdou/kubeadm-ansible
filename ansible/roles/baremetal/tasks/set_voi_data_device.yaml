@@ -1,6 +1,6 @@
 ---
 - when: ansible_facts.mounts | selectattr('mount', '==', voi_data_directory) | list | length == 0
-  block:  
+  block: 
   - name: Create directory if not exists
     file:
       name: "{{ voi_data_directory }}"
