@@ -15,6 +15,15 @@ ipmi_username: root
 ipmi_password: Huawei12#$
 
 ####################
+# baremetal
+####################
+enable_aptsource: true
+enable_install_package: true
+apt_source: "172.18.28.237"
+
+ping_interface: ['api', 'ceph_public', 'ceph_cluster']
+
+####################
 # Kubernetes options
 ####################
 kubernetes_domain_name: kunlun.cluster.local
@@ -245,6 +254,7 @@ enable_elasticsearch: true
 enable_fluentd: true
 enable_kibana: true
 enable_ceph: true
+enable_checknet: false
 
 ################
 # Redis Options

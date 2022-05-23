@@ -1,0 +1,60 @@
+---
+- import_playbook: gather-facts.yml
+
+- name: Apply role checknet
+  gather_facts: false
+  hosts: all
+  roles:
+    - { role: checknet,
+        tags: checknet }
+
+
+- name: clint test
+  hosts: allnodes
+  tasks:
+    - name: iperf client
+      vars:
+        port: 5201
+      run_iperf:
+        server_ipaddress: "{{ item | filter_address(groups.allnodes[0]) }}"
+        interval: 0
+        times: 5
+        server_port: "{% for host in groups['allnodes'] %}{% if host == inventory_hostname  %}{{ port + loop.index0 }}{% endif %}{% endfor %}"
+        net_card: "{{ item | filter_interface_name }}"
+        hostname: "{{ ansible_hostname }}"
+        net_type: "{{ item }}"
+        receive_hosts: "{{ hostvars[groups.allnodes[0]].hostname }}"
+      when: inventory_hostname != groups.allnodes[0]
+      loop: "{{ ping_interface }}"
+      loop_control:
+        extended: yes
+      register: netresult
+
+    # - name: del route
+    #   command: route del -host "{{hostvars[groups.allnodes[0]]['ansible_'+item].ipv4.address}}" metric 100 dev "{{ item }}"
+    #   with_items: "{{ interface }}"
+    #   when: inventory_hostname != groups.allnodes[0]
+      # ignore_errors: yes
+
+    - name: Echo iperf3 res to yml
+      blockinfile:
+        create: yes
+        marker: "# {{ item.param_iperf3_res.net_type }} {{ item.param_iperf3_res.uuid }} "
+        path: /home/code/test/echoiperf3.yml
+        block: |
+          - status: {{ item.rc }}
+            net_type: {{ item.param_iperf3_res.net_type }}
+            server_host: {{ item.param_iperf3_res.server_host }}
+            client_hostname: {{ item.param_iperf3_res.client_hostname }}
+            receive_speed: {{ item.param_iperf3_res.receive_speed }}
+            send_speed: {{ item.param_iperf3_res.send_speed }}
+
+      with_items: 
+        - "{{ netresult.results }}"
+      delegate_to: localhost
+      when: inventory_hostname != groups.allnodes[0]
+    # - name: _________________________________________________________________________________________
+    #   debug:
+    #     msg: "{{ item.param_iperf3_res[0] }}"
+    #   with_items: "{{ netresult.results }}"
+    #   when: inventory_hostname != groups.allnodes[0]

@@ -1,0 +1,26 @@
+---
+- name: install iperf
+  apt:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - iperf3
+  when:
+      - inventory_hostname in groups['allnodes']
+
+- name: iperf server start
+  vars:
+    port: 5201
+  command: iperf3 -s -D -p {{ port + ansible_loop.index0 }}
+  loop: "{{ groups['allnodes'] }}"
+  loop_control:
+    extended: yes
+  when: inventory_hostname == groups.allnodes[0]
+
+
+# - name: add route
+#   command: route add -host "{{hostvars[groups.allnodes[0]]['ansible_'+item].ipv4.address}}" metric 100 dev "{{ item }}" 
+#   with_items: "{{ interface }}"
+#   ignore_errors: yes
+#   when: inventory_hostname != groups.allnodes[0]
