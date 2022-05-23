@@ -66,18 +66,13 @@ spec:
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 3
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 20m
-            memory: 30Mi
+        resources: {}
         volumeMounts:
         - mountPath: /alertmanager
           name: alertmanager-main-db
         - mountPath: /etc/alertmanager/alertmanager.yaml
           name: alertmanager-etc
+      priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: true
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

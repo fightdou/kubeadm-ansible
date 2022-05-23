@@ -275,6 +275,7 @@ spec:
             containerPort: {{ .Values.exporter.port }}
 {{- end }}
       hostNetwork: {{ .Values.hostNetwork }}
+      priorityClassName: {{ .Values.priorityClassName }}
       dnsPolicy: ClusterFirstWithHostNet
       volumes:
       - name: config

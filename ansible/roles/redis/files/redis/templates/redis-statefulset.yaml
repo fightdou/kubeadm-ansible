@@ -60,6 +60,7 @@ spec:
           mountPath: /data
         - name: log
           mountPath: /var/log/redis
+      priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
       volumes:

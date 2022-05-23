@@ -39,6 +39,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: true
       securityContext:
         runAsNonRoot: true

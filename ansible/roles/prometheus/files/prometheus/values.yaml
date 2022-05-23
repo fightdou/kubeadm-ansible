@@ -11,11 +11,8 @@ image:
 
 nodeSelector:
   control_role: enabled
-
-replica:
-  query: 2
-  pushgateway: 2
-
+priorityClassName: ""
+replica: 2
 prometheusServerIP: []
 alert_rule_dir: ""
 alertmanager_dir: ""

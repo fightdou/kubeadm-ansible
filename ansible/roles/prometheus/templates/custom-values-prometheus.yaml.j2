@@ -10,6 +10,7 @@ image:
   pullSecrets: {{ docker_register_secrets_name }}
   
 replica: "{{ replica_num }}"
+priorityClassName: "{{ kube_priority_name }}"
 
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}

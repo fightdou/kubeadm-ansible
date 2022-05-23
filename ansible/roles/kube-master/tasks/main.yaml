@@ -74,19 +74,6 @@
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-# 配置驱逐优先级
-- name: 渲染 priorityClass 配置文件
-  template:
-    src: priority-class.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/priority-class.yaml
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
-- name: Deploy priorityClass in yaml file
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/priority-class.yaml
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
 - name: 校验 helm 命令是否存在
   shell: helm version
   register: helm_version

@@ -20,6 +20,7 @@ sysctlImage:
   mountHostSys: false
 
 hostNetwork: {{ redis_host_network }}
+priorityClassName: {{ kube_priority_name }}
 
 redis:
   port: "{{ redis_server_port }}"
