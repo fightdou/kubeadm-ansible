@@ -4,7 +4,8 @@ use_domain_name_deploy: true
 api_interface: ens3
 enable_docker_auth: true
 enable_domain_deploy: true
-docker_register_address: 172.18.31.155
+docker_register_address: 172.18.28.28
+docker_register_domain: kunlunyun
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
@@ -28,7 +29,7 @@ ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 ####################
 kubernetes_domain_name: kunlun.cluster.local
 kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.28.222
+kube_apiserver_vip: 172.18.28.193
 kube_apiserver_port: 8443
 kube_image_repository: 172.18.31.155/kubernetes
 kube_image_tag: latest
@@ -49,6 +50,8 @@ control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
+docker_image_path : /opt/docker.images
+docker_dpkg_path: /opt/docker.deb
 
 ##############
 # Helm options
