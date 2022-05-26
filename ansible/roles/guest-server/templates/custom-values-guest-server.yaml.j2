@@ -14,10 +14,10 @@ priorityClassName: {{ kube_priority_name }}
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
 
-resources: 
-  limits:
-    cpu: 300m
-    memory: 256Mi
-  requests:
-    cpu: 300m
-    memory: 256Mi
+resources: {} 
+#  limits:
+#    cpu: 300m
+#    memory: 256Mi
+#  requests:
+#    cpu: 300m
+#    memory: 256Mi
