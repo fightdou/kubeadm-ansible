@@ -1,0 +1,77 @@
+---
+- name: 添加私有仓库 hostname 信息到 hosts 文件中
+  blockinfile:
+    path: /etc/hosts
+    block: |-
+       {{ docker_register_address }} {{ docker_register_domain }}
+    state: present
+    create: yes
+    backup: yes
+ 
+- name: 查看 docker 是否安装
+  shell: docker info
+  register: docker_install_info
+  ignore_errors: yes
+
+- name: dpkg install docker
+  shell: "dpkg -i /opt/docker.deb/*.deb"
+  when:
+    - docker_install_info is not success
+  ignore_errors: yes
+
+- name: 确认 Docker 配置是否有修改
+  template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    mode: 0644
+  register: configuration_result
+
+- name: 重新加载 daemon
+  systemd:
+    daemon_reload: yes
+
+- name: 启动/重启 Docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
+  when: 
+  - configuration_result.changed
+
+- name: Load all image
+  community.docker.docker_image_load:
+    path: "{{ docker_image_path }}"
+
+- name: Run registry 容器
+  docker_container: 
+    image: "registry:latest"
+    name: registry    
+    state: started
+    restart: yes
+    restart_policy: always
+    ports:
+      - "{{ docker_register_port }}:5000"
+    volumes:
+      - /opt/data/registry:/var/lib/registry  
+
+- name: Get all image name 
+  shell: "docker images  --format '{{ '{{' }}.Repository{{ '}}' }}':'{{ '{{' }}.Tag{{ '}}' }}' | grep {{ docker_register_domain }}"
+  register: images_name
+
+- name: push image with local repository
+  docker_image:
+    name: "{{ item }}"
+    push: yes
+    source: local
+  with_items: "{{ images_name.stdout_lines }}"
+
+- name: Run offline-deb-repo 容器
+  docker_container: 
+    image: "offline-deb-repo:latest"
+    name: offline-deb-repo    
+    state: started
+    restart: yes
+    restart_policy: always
+    ports:
+      - "{{ offline_deb_repo_port }}:80"

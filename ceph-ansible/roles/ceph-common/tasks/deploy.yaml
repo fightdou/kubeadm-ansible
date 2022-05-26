@@ -5,6 +5,7 @@
     name: "ufw"
     enabled: false
     state: stopped
+  ignore_errors: yes
 
 - name: modprobe bcache
   shell: "modprobe bcache"

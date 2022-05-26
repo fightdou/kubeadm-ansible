@@ -54,7 +54,7 @@
   roles:
     - { role: csi,
         tags: csi,
-        when: enable_csi| bool }
+        when: enable_ceph| bool }
 
 - name: Apply role mariadb
   gather_facts: false
