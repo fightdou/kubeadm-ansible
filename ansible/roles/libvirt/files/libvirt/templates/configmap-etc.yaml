@@ -17,6 +17,15 @@ data:
     {{ .Values.secret.ceph_admin_keyring }}
   {{- end }}
 
+  libvirtd.conf: |
+    listen_tcp = 1
+    listen_tls = 0
+    auth_tcp = "none"
+    tcp_port = "16514"
+    ca_file = ""
+    log_level = 3
+    log_outputs = "3:file:/var/log/libvirt/libvirtd.log"
+
   qemu.conf: |
     security_driver = "none"
     security_default_confined = 0
