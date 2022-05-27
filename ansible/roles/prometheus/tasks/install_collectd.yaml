@@ -2,6 +2,7 @@
   apt:
     state: present
     name: "{{ packages }}"
+    install_recommends: no
   vars:
     packages:
       - collectd
