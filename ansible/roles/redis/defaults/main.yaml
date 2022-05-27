@@ -1,3 +1,4 @@
 replicaNum: "{% if groups['redis'] | length > 2 %}3{% else %}1{% endif %}"
-sentinel_mode: "{% if groups['redis'] | length > 2 %}true{% else %}false{% endif %}"
+# sentinel_mode: "{% if groups['redis'] | length > 2 %}true{% else %}false{% endif %}"
+sentinel_mode: true
 enable_pvc: "{% if only_deploy_voi and not enable_ceph %}false{% else %}true{% endif %}"

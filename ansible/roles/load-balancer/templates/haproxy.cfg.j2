@@ -52,6 +52,27 @@ backend kube_api_backend
     server {{ host }} {% if hostvars[host]['ansible_host'] is defined %}{{ hostvars[host]['ansible_host'] }}{% else %}{{ host }}{% endif %}:6443 check check-ssl verify none
 {% endfor %}
 
+{% if enable_trochilus | bool %}
+listen trochilus-api
+    mode http
+    bind {{ kube_apiserver_vip }}:{{ trochilus_api_listen_port }}
+    balance {{ lb_haproxy_balance_alg }}
+    option httplog
+{% for host in (groups['trochilus-api']) %}
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ trochilus_api_listen_port }} check inter 2000 rise 2 fall 5
+{% endfor %}
+
+listen trochilus-agent
+    mode http
+    bind {{ kube_apiserver_vip }}:{{ trochilus_agent_listen_port }}
+    balance {{ lb_haproxy_balance_alg }}
+    option httplog
+{% for host in (groups['trochilus-agent']) %}
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ trochilus_agent_listen_port }} check inter 2000 rise 2 fall 5
+{% endfor %}
+{% endif %}
+
+
 {% if enable_emqx | bool %}
 listen emqx
     mode tcp

@@ -42,7 +42,7 @@ kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
 kube_priority_name: system-node-critical
 # Pod根容器
-pod_infra_container_image: "{{ kube_image_repository }}/pause:{{ kube_image_tag }}"
+pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
 # 节点的角色名称，默认values为enabled
 control_node_role_name: control_role
