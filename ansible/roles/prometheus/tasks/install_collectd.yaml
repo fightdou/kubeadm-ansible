@@ -2,11 +2,13 @@
   apt:
     state: present
     name: "{{ packages }}"
+    install_recommends: no
   vars:
     packages:
       - collectd
       - collectd-core
       - collectd-dev
+      - libvirt0
 
 - name: Copy collectd.conf
   template:
@@ -37,5 +39,5 @@
   systemd:
     name: collectd.service
     state: restarted
-    enabled: no
+    enabled: yes
     daemon_reload: yes
