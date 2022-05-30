@@ -11,10 +11,22 @@ offline_deb_repo_port: 9865
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
+=======
+# 开启 k8s 域名部署
+use_domain_name_deploy: false
+# docker 离线源是否支持域名, docker images 前缀名称默认为 kunlunyun:5002, 这种方式需要在 /etc/hosts 文件中配置 hosts 解析，因此需设置为 true
+enable_docker_register_domain_deploy: true
+# docker registry 离线源地址
+docker_register_address: kunlunyun:5002
+# 系统用户名
 system_username: root
+# 系统密码
 system_password: 123456
+# ipmi 厂商
 ipmi_vendor: HUAWEI
+# ipmi 连接用户名
 ipmi_username: root
+# ipmi 连接密码
 ipmi_password: Huawei12#$
 
 ####################
@@ -23,7 +35,6 @@ ipmi_password: Huawei12#$
 enable_aptsource: true
 enable_install_package: true
 apt_source: "172.18.28.237"
-
 ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 
 ####################
@@ -34,7 +45,18 @@ kubernetes_version: 1.23.5
 kube_apiserver_vip: 172.18.31.31
 kube_apiserver_port: 8443
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
+=======
+# k8s 集群 VIP 配置
+kube_apiserver_vip: 172.18.28.193
+# k8s 集群域名
+kubernetes_domain_name: kunlun.cluster.local=
+# k8s 集群 VIP 端口
+kube_apiserver_port: 8443
+# docker 镜像 namespace
+kube_image_repository: "{{ docker_register_address }}/kubernetes"
+# docker 镜像 tag
 kube_image_tag: latest
+kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
 kubelet_root_dir: "/var/lib/kubelet"
@@ -45,6 +67,7 @@ kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
 kube_priority_name: system-node-critical
 # Pod根容器
+=======
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
 # 节点的角色名称，默认values为enabled
@@ -61,6 +84,14 @@ docker_dpkg_path: /opt/docker.deb
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
 helm_wait_timeout: 300s
+
+################
+# Harbor options
+################
+enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% end %}"
+harbor_username: admin
+harbor_password: Harbor12345
+docker_register_secrets_name: docker-register-secrets
 
 #################
 # Haproxy options

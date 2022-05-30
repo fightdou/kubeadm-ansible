@@ -2,6 +2,13 @@
   command: kubeadm reset -f
   ignore_errors: true
 
+- name: unmap rbd
+  shell: |
+    for rbd in `ls /dev/rbd/kubernetes/`;do rbd unmap -o force /dev/rbd/kubernetes/$rbd; done
+  ignore_errors: true
+  become: true
+  when: enable_ceph | bool
+
 - name: 停止 kubelet 服务
   service:
     name: kubelet

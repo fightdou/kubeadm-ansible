@@ -8,4 +8,3 @@
 - import_tasks: set_voi_virt_nic.yaml
   when: only_deploy_voi | bool
   run_once: True
-
