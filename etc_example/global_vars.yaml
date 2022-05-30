@@ -11,7 +11,6 @@ offline_deb_repo_port: 9865
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
-=======
 # 开启 k8s 域名部署
 use_domain_name_deploy: false
 # docker 离线源是否支持域名, docker images 前缀名称默认为 kunlunyun:5002, 这种方式需要在 /etc/hosts 文件中配置 hosts 解析，因此需设置为 true
@@ -45,7 +44,6 @@ kubernetes_version: 1.23.5
 kube_apiserver_vip: 172.18.31.31
 kube_apiserver_port: 8443
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
-=======
 # k8s 集群 VIP 配置
 kube_apiserver_vip: 172.18.28.193
 # k8s 集群域名
@@ -67,7 +65,6 @@ kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
 kube_priority_name: system-node-critical
 # Pod根容器
-=======
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
 # 节点的角色名称，默认values为enabled
