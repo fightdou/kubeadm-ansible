@@ -35,7 +35,7 @@ redis:
     #    cpu: 500m
 
 sentinel:
-  enabled: {{ sentinel_mode }}
+  enabled: true
   port: "{{ redis_sentinel_port }}"
   quorum: 2
   config:

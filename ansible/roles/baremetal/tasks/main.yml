@@ -30,7 +30,7 @@
         {% set api_interface = hostvars[host]['api_interface'] %}
         {% if 'ansible_' + api_interface in hostvars[host] %}
         {% set hostnames = [hostvars[host]['ansible_nodename'], hostvars[host]['ansible_hostname']] %}
-        {% if enable_domain_deploy and host == groups['baremetal'][0] %}
+        {% if enable_docker_register_domain_deploy and host == groups['baremetal'][0] %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }} {{ docker_register_address.split(":")[0] }}
         {% else %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}
@@ -86,7 +86,7 @@
     backup: yes
     marker: "# Ansible inventory hosts {mark}"
   when:
-    - enable_domain_deploy | bool
+    - enable_docker_register_domain_deploy | bool
 
 - name: 创建 systemd 配置目录
   file: 
@@ -107,4 +107,3 @@
 - import_tasks: set_voi_virt_nic.yaml
   when: only_deploy_voi | bool
   run_once: True
-
