@@ -45,7 +45,7 @@
 
 - name: Run registry 容器
   docker_container: 
-    image: "registry:latest"
+    image: "{{ kube_image_repository }}/registry:{{ kube_image_tag }}"
     name: registry    
     state: started
     restart: yes
@@ -68,7 +68,7 @@
 
 - name: Run offline-deb-repo 容器
   docker_container: 
-    image: "offline-deb-repo:latest"
+    image: "{{ kube_image_repository }}/offline-deb-repo:{{ kube_image_tag }}"
     name: offline-deb-repo    
     state: started
     restart: yes

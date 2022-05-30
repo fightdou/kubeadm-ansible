@@ -68,7 +68,7 @@ nodeplugin:
 
 provisioner:
   name: provisioner
-  replicaCount: 3
+  replicaCount: "{% if groups['ceph-csi-rbd'] | length > 2 %}3{% else %}1{% endif %}"
   strategy:
     type: RollingUpdate
     rollingUpdate:

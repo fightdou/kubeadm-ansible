@@ -63,6 +63,10 @@ spec:
             name: libvirt-etc
             readOnly: true
             subPath: qemu.conf
+          - mountPath: /etc/libvirt/libvirtd.conf
+            name: libvirt-etc
+            readOnly: true
+            subPath: libvirtd.conf
           - mountPath: /etc/vdi_conf.ini
             name: libvirt-etc
             readOnly: true

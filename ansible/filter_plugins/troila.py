@@ -12,7 +12,7 @@ def listintersection(source_list, dest_list):
     source_set = set(source_list)
     dest_set = set(dest_list)
 
-    return list(source_set & dest_set)
+    return list(source_set & dest_set).sort()
 
 # ---- Ansible filters ----
 class FilterModule(object):
