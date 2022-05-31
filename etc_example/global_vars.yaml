@@ -3,9 +3,9 @@ timezone: Asia/Shanghai
 # 开启 k8s 域名部署
 use_domain_name_deploy: false
 # docker 离线源是否支持域名, docker images 前缀名称默认为 kunlunyun:5002, 这种方式需要在 /etc/hosts 文件中配置 hosts 解析，因此需设置为 true
-enable_docker_register_domain_deploy: false
+enable_docker_register_domain_deploy: true
 # docker registry 离线源地址
-docker_register_address: 172.18.31.155
+docker_register_address: kunlunyun:5002
 # 系统用户名
 system_username: root
 # 系统密码
@@ -66,7 +66,7 @@ helm_wait_timeout: 300s
 ################
 # Harbor options
 ################
-enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% endif %}"
+enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% end %}"
 harbor_username: admin
 harbor_password: Harbor12345
 docker_register_secrets_name: docker-register-secrets
