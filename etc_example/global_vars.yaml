@@ -8,9 +8,13 @@ enable_docker_register_domain_deploy: false
 docker_register_address: 172.18.31.155
 # 系统用户名
 system_username: root
+# 系统密码
 system_password: 123456
+# ipmi 厂商
 ipmi_vendor: HUAWEI
+# ipmi 连接用户名
 ipmi_username: root
+# ipmi 连接密码
 ipmi_password: Huawei12#$
 
 ####################
@@ -19,18 +23,22 @@ ipmi_password: Huawei12#$
 enable_aptsource: true
 enable_install_package: true
 apt_source: "172.18.28.237"
-
 ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 
 ####################
 # Kubernetes options
 ####################
-kubernetes_domain_name: kunlun.cluster.local
-kubernetes_version: 1.23.5
+# k8s 集群 VIP 配置
 kube_apiserver_vip: 172.18.28.193
+# k8s 集群域名
+kubernetes_domain_name: kunlun.cluster.local=
+# k8s 集群 VIP 端口
 kube_apiserver_port: 8443
-kube_image_repository: 172.18.31.155/kubernetes
+# docker 镜像 namespace
+kube_image_repository: "{{ docker_register_address }}/kubernetes"
+# docker 镜像 tag
 kube_image_tag: latest
+kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
 kubelet_root_dir: "/var/lib/kubelet"
@@ -148,6 +156,7 @@ ceph_rbd_admin_user: client.admin
 ###################
 trochilus_support_flat_network: true
 trochilus_support_vlan_network: false
+trochilus_network_vlan_range: 100:1000
 trochilus_libvirt_driver: qemu
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
