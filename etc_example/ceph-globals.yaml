@@ -12,16 +12,16 @@ fsid: 116d4de8-fd14-491f-811f-c1bdd8fac12a
 cephx: true
 
 ## ceph 管理网段
-ceph_public_network: 172.27.125.0/24
-ceph_cluster_network: 172.27.125.0/24
+ceph_public_network: 172.18.28.0/22
+ceph_cluster_network: 172.18.28.0/22
 
 ## ceph osd 最小副本数 和 最大副本数
-osd_pool_default_size: 3
+osd_pool_default_size: 1
 osd_pool_default_min_size: 1
 
 ## ceph pg、pgp组数量
-osd_pool_default_pg_num: 32
-osd_pool_default_pgp_num: 32
+osd_pool_default_pg_num: 16
+osd_pool_default_pgp_num: 16
 
 ## 默认关闭所有debug 配置项
 ceph_config_debug_default: "0/0"
@@ -47,7 +47,7 @@ ceph_aio: false
 
 ## 是否开启 bcache 模式，不能与 cache_tiering 同时开启
 ## 需要在ceph-multiplenodes 填入 bcache_map_list 的列表参数。
-bcache: true
+bcache: false
 
 ## 设置bcache缓存模式,默认为写回模式，
 ## 可选参数分别是: writethrough writeback writearound
@@ -68,8 +68,8 @@ unify_osd_pool_app: "rbd"
 unify_osd_pool_cursh_rule: "hdd-rule"
 unify_osd_cache_pool_cursh_rule: "ssd-rule"
 
-osd_pool_pg_num: "32"
-osd_pool_pgp_num: "32"
+osd_pool_pg_num: "16"
+osd_pool_pgp_num: "16"
 ## osd_pools 字典的key 参数可自行描述
 ## pool_name 变量为要创建的pool 的名称
 ## pg_num、pgp_num 为对应pool_name 的参数

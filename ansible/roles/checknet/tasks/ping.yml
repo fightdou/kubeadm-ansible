@@ -20,10 +20,11 @@
     path: /home/code/test/echoping.yml
     block: |
       - nettype: {{ item.nettype }}
-        source_host: {{ inventory_hostname }}
+        mtu: {{ hostvars[inventory_hostname]['ansible_' + item.nettype | filter_interface_name ].mtu }}
+        source_host: {{ hostname }}
         source_interface: {{ item.nettype | filter_interface_name }}
         source_interface_address: {{ item.nettype | filter_address }}
-        dest_host: {{ item.dest_host }}
+        dest_host: {{ hostvars[item.dest_host].hostname }}
         dest_interface: {{ item.nettype | filter_interface_name(item.dest_host) }}
         dest_interface_address: {{ item.dest_ip }}
         status: {{ item.status }} 
