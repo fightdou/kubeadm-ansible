@@ -26,7 +26,9 @@
     mode: 0644
 
 - name: 部署 fsd-mysql-init Job
-  shell: kubectl apply -f /tmp/fsd-mysql-init.yaml
+  kubernetes.core.k8s:
+    state: present
+    src: /tmp/fsd-mysql-init.yaml
 
 - name: 查看 fsd-mysql-init Job 是否 Completed
   shell: kubectl get pod -A | grep klcloud-fsd-init | grep Completed
