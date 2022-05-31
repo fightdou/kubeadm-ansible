@@ -99,4 +99,4 @@
     dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
 
 - name: 添加离线源
-  shell: echo "deb [trusted=yes] http://{{ docker_register_domain }}:{{offline_deb_repo_port}} focal/" | sudo tee /etc/apt/sources.list > /dev/null
+  shell: echo "deb [trusted=yes] http://{{ docker_register_domain }}:{{offline_deb_repo_port}}/ubuntu focal/" | sudo tee /etc/apt/sources.list > /dev/null
