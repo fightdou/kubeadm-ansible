@@ -1,0 +1,7 @@
+---
+- name: Apply role prepare
+  gather_facts: True
+  hosts: baremetal
+  roles:
+    - { role: prepare,
+        tags: prepare }

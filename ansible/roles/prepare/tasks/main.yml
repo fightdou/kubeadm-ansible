@@ -1,0 +1,5 @@
+- import_tasks: container_prepare.yaml
+  run_once: True
+  delegate_to: "{{ groups['baremetal'][0] }}"
+
+- import_tasks: baremetal_prepare.yaml
