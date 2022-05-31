@@ -29,7 +29,9 @@ data:
   qemu.conf: |
     security_driver = "none"
     security_default_confined = 0
-  
+    user="root"
+    group="root"
+
   vdi_conf.ini: |
     [common]
     log_level=0

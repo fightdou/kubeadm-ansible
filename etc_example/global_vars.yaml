@@ -34,7 +34,7 @@ ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 # k8s 集群 VIP 配置
 kube_apiserver_vip: 172.18.28.193
 # k8s 集群域名
-kubernetes_domain_name: kunlun.cluster.local=
+kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
 kube_apiserver_port: 8443
 # docker 镜像 namespace
@@ -59,8 +59,8 @@ control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
-docker_image_path : /opt/docker.images/images.latest.tar.gz
-docker_dpkg_path: /opt/docker.deb
+docker_image_path : /opt/offline/kunlunyun-latest.tar.gz
+docker_dpkg_path: /opt/offline/deb-packages
 
 ##############
 # Helm options
@@ -162,8 +162,7 @@ ceph_rbd_admin_user: client.admin
 ###################
 trochilus_support_flat_network: true
 trochilus_support_vlan_network: false
-trochilus_network_vlan_range: 100:1000
-trochilus_libvirt_driver: qemu
+trochilus_libvirt_driver: kvm
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 trochilus_api_ingress: true
