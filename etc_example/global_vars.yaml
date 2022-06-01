@@ -5,7 +5,10 @@ use_domain_name_deploy: false
 # docker 离线源是否支持域名, docker images 前缀名称默认为 kunlunyun:5002, 这种方式需要在 /etc/hosts 文件中配置 hosts 解析，因此需设置为 true
 enable_docker_register_domain_deploy: true
 # docker registry 离线源地址
-docker_register_address: kunlunyun:5002
+docker_register_address: "{{ hostvars[groups['baremetal'][0]]['ansible_' + api_interface]['ipv4']['address'] }}"
+docker_register_domain: kunlunyun
+docker_register_port: 5002
+offline_deb_repo_port: 9865
 # 系统用户名
 system_username: root
 # 系统密码
@@ -31,11 +34,11 @@ ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 # k8s 集群 VIP 配置
 kube_apiserver_vip: 172.18.28.193
 # k8s 集群域名
-kubernetes_domain_name: kunlun.cluster.local=
+kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
 kube_apiserver_port: 8443
 # docker 镜像 namespace
-kube_image_repository: "{{ docker_register_address }}/kubernetes"
+kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
 # docker 镜像 tag
 kube_image_tag: latest
 kubernetes_version: 1.23.5
@@ -48,6 +51,7 @@ kube_pod_subnet: 10.244.0.0/16
 kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
 kube_priority_name: system-node-critical
+# Pod根容器
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
 # 节点的角色名称，默认values为enabled
@@ -55,6 +59,8 @@ control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
+docker_image_path : /opt/offline/kunlunyun-latest.tar.gz
+docker_dpkg_path: /opt/offline/deb-packages
 
 ##############
 # Helm options
@@ -156,8 +162,7 @@ ceph_rbd_admin_user: client.admin
 ###################
 trochilus_support_flat_network: true
 trochilus_support_vlan_network: false
-trochilus_network_vlan_range: 100:1000
-trochilus_libvirt_driver: qemu
+trochilus_libvirt_driver: kvm
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 trochilus_api_ingress: true
@@ -252,7 +257,6 @@ enable_load_balancer: true
 enable_kube_master: true
 enable_kube_worker: true
 enable_ingress: true
-enable_csi: true
 enable_mariadb: true
 enable_redis: true
 enable_emqx: true
@@ -263,10 +267,10 @@ enable_prometheus: true
 enable_guest_server: true
 enable_fsd: true
 enable_btserver: true
-enable_elasticsearch: true
-enable_fluentd: true
-enable_kibana: true
-enable_ceph: true
+enable_elasticsearch: "{% if groups['elasticsearch'] | length > 2 %}true{% else %}false{% endif %}"
+enable_fluentd: "{% if groups['fluentd'] | length > 2 %}true{% else %}false{% endif %}"
+enable_kibana: "{% if groups['kibana'] | length > 2 %}true{% else %}false{% endif %}"
+enable_ceph: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 enable_checknet: false
 
 ################
