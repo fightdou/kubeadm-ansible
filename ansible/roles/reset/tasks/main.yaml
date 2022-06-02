@@ -9,6 +9,13 @@
   become: true
   when: enable_ceph | bool
 
+- name: 清除清除系统缓存的定时任务
+  cron:
+    name: "clean linux cache"
+    state: absent
+  when: inventory_hostname in groups["control"]
+  ignore_errors: true
+
 - name: 停止 kubelet 服务
   service:
     name: kubelet

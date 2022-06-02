@@ -114,6 +114,12 @@
   when: inventory_hostname in groups['all_using_limit_control_True']
   ignore_errors: yes
 
+- name: 创建定时任务,每天晚上2点清除系统缓存
+  cron:
+    name: "clean linux cache"
+    hour: "2"
+    job: "sync && echo 1 > /proc/sys/vm/drop_caches"
+  when: inventory_hostname in groups["control"]
 
 # 备份etcd
 - block:
@@ -144,3 +150,4 @@
         /usr/local/bin/etcdtools cleanup
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+
