@@ -12,6 +12,7 @@ image:
 nodeSelector:
   control_role: enabled
 priorityClassName: ""
+pushgatewayVIP: ""
 replica: 2
 prometheusServerIP: []
 alert_rule_dir: ""
