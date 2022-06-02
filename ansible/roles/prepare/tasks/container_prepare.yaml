@@ -14,7 +14,7 @@
   ignore_errors: yes
 
 - name: dpkg install docker
-  shell: "dpkg -i /opt/docker.deb/*.deb"
+  shell: "dpkg -i {{ docker_dpkg_path }}/*.deb"
   when:
     - docker_install_info is not success
   ignore_errors: yes
