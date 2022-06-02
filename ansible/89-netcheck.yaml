@@ -40,7 +40,7 @@
       blockinfile:
         create: yes
         marker: "# {{ item.param_iperf3_res.net_type }} {{ item.param_iperf3_res.uuid }} "
-        path: /home/code/test/echoiperf3.yml
+        path: "{{ netcheck_path }}/echoiperf3.yml"
         block: |
           - status: {{ item.rc }}
             net_type: {{ item.param_iperf3_res.net_type }}
@@ -48,7 +48,6 @@
             client_hostname: {{ item.param_iperf3_res.client_hostname }}
             receive_speed: {{ item.param_iperf3_res.receive_speed }}
             send_speed: {{ item.param_iperf3_res.send_speed }}
-
       with_items: 
         - "{{ netresult.results }}"
       delegate_to: localhost
