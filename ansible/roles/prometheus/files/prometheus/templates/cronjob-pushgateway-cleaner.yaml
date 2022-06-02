@@ -27,7 +27,7 @@ spec:
             image: {{ .Values.image.pushgateway_cleaner }}
             imagePullPolicy: IfNotPresent
             args:
-              - --metric-url=http://pushgateway.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.pushgateway.port }}/metrics
+              - --metric-url=http://{{ .Values.pushgatewayVIP }}:{{ .Values.service.pushgateway.port }}/metrics
             resources:
               limits:
                 cpu: "1"

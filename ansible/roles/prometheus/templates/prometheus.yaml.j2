@@ -24,7 +24,7 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
     - targets:
-      - pushgateway.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_pushgateway_port }}
+      - {{ kube_apiserver_vip }}:{{ prometheus_pushgateway_port }}
 
   - job_name: node-exporter
     static_configs:

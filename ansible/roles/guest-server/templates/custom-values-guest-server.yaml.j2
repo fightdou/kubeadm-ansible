@@ -5,8 +5,8 @@ pullSecrets: {{ docker_register_secrets_name }}
 # Allows you to add any config files in /opt/microservice/kly/bin/config
 # such as kls.yml
 klyConfig:
-    mqtt_svc_addr: tcp://emqx.{{ helm_install_namespace }}.svc.cluster.local:1883
-    prometheus_svc_addr: http://pushgateway.{{ helm_install_namespace }}.svc.cluster.local:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
+    mqtt_svc_addr: tcp://{{ kube_apiserver_vip }}:{{ emqx_mqtt_port }}
+    prometheus_svc_addr: http://{{ kube_apiserver_vip }}:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
 
 serviceAccountName: guest-server
 priorityClassName: {{ kube_priority_name }}
