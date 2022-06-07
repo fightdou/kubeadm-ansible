@@ -30,25 +30,22 @@ spec:
       hostNetwork: {{ .Values.containers.network }}
       priorityClassName: {{ .Values.priorityClassName }}
       containers:
-        - name: btserver
+        - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port_btserver }}
+              port: {{ .Values.containers.port }}
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port_btserver }}
+              port: {{ .Values.containers.port }}
           volumeMounts:
-          - name: btserver-dir
+          - name: {{ .Values.volumeMounts.name }}
             mountPath: {{ .Values.volumeMounts.path }}
-          ports:
-            - name: btserver
-              containerPort: {{ .Values.containers.port_btserver }}
-              protocol: TCP
-        - name: btserver-track
+          resources: {}
+        - name: {{ .Values.containers.name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository_track }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -60,18 +57,14 @@ spec:
             tcpSocket:
               port: {{ .Values.containers.port_track }}
           volumeMounts:
-          - name: btserver-dir
-            mountPath: {{ .Values.volumeMounts.path }}
-          ports:
-            - name: btserver-track
-              containerPort: {{ .Values.containers.port_track }}
-              protocol: TCP
+          - name: {{ .Values.volumeMounts.name_track }}
+            mountPath: {{ .Values.volumeMounts.path_track }}
+          resources: {}
       volumes:
-      - name: btserver-dir
+      - name: {{ .Values.volumes.name }}
         hostPath:
           path: {{ .Values.volumes.path }}
-          type: DirectoryOrCreate
-      priorityClassName: {{ .Values.priorityClassName }}
+          type: {{ .Values.volumes.type }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

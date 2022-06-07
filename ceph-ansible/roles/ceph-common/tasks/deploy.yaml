@@ -47,9 +47,6 @@
       - libradosstriper1
       - libradosstriper-dev
       - python3-rgw
-      - libjs-jquery
-      - python3-pyinotify
-      - python3-werkzeug
       - ceph-common
       - ceph-base
       - ceph-mds

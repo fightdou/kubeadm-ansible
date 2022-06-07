@@ -1,18 +1,8 @@
 ---
-- name: copy ansible pubkey to dest dir
-  copy:
-    src: /root/kubeadm-ansible/ansible/roles/baremetal/files/ansible-archive-keyring.gpg
-    dest: /usr/share/keyrings/ansible-archive-keyring.gpg
-
 - name: 查看 docker 是否安装
   shell: docker info
   register: docker_install_info
-  ignore_errors: True
-
-- name: copy Docker pubkey to dest dir
-  copy:
-    src: /root/kubeadm-ansible/ansible/roles/baremetal/files/docker-archive-keyring.gpg
-    dest: /usr/share/keyrings/docker-archive-keyring.gpg
+  ignore_errors: yes
 
 - name: 查看 kubeadm 是否安装
   shell: kubeadm version

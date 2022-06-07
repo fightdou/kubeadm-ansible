@@ -7,13 +7,9 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.containers.port_btserver }}
-      targetPort: btserver
+    - port: {{ .Values.service.port }}
+      targetPort: http
       protocol: TCP
-      name: btserver
-    - port: {{ .Values.containers.port_track }}
-      targetPort: btserver-track
-      protocol: TCP
-      name: btserver-track
+      name: http
   selector:
     {{- include "btserver.selectorLabels" . | nindent 4 }}

@@ -63,39 +63,6 @@ listen emqx
 {% endfor %}
 {% endif %}
 
-{% if enable_btserver | bool %}
-listen btserver
-    mode tcp
-    bind {{ kube_apiserver_vip }}:{{ btserver_listen_ports }}
-    balance {{ lb_haproxy_balance_alg }}
-    option tcplog
-{% for host in (groups['btserver']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }} check port {{ btserver_listen_ports }} inter 2000 rise 2 fall 5
-{% endfor %}
-{% endif %}
-
-{% if enable_btserver | bool %}
-listen btserverport
-    mode tcp
-    bind {{ kube_apiserver_vip }}:{{ btserver_port }}
-    balance {{ lb_haproxy_balance_alg }}
-    option tcplog
-{% for host in (groups['btserver']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }}:{{ btserver_port }} check inter 2000 rise 2 fall 5
-{% endfor %}
-{% endif %}
-
-{% if enable_btserver | bool %}
-listen btservertrackerport
-    mode tcp
-    bind {{ kube_apiserver_vip }}:{{ btserver_port_track }}
-    balance {{ lb_haproxy_balance_alg }}
-    option tcplog
-{% for host in (groups['btserver']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }}:{{ btserver_port_track }} check inter 2000 rise 2 fall 5
-{% endfor %}
-{% endif %}
-
 {% if enable_prometheus | bool %}
 listen prometheus
     mode tcp
