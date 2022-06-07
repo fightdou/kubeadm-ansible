@@ -64,6 +64,7 @@ spec:
           hostPath:
              path: /var/log/klylog/
              type: ""
+      priorityClassName: {{ .Values.priorityClassName }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

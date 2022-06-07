@@ -1,6 +1,7 @@
 image:
-  libvirt: {{ kube_image_repository }}/ubuntu-source-nova-libvirt:{{ kube_image_tag }}
+  libvirt: {{ kube_image_repository }}/libvirt:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
+  pullPolicy: "Always"
 libvirt_tls: false
 nova_libvirt_port: 16509
 # The number of max files qemu can open
@@ -15,3 +16,6 @@ serviceAccountName: libvirt
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
 priorityClassName: {{ kube_priority_name }}
+trochilus_dir: "{{ trochilus_voi_base_path }}"
+voi_dir: "{{ fsd_voi_dir }}"
+enable_ceph: {{ enable_ceph }}

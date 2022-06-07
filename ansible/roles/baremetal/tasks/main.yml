@@ -1,8 +1,10 @@
 ---
-- import_tasks: pre-install.yml
-
-- import_tasks: apt-source.yml
-  when: enable_aptsource | bool
-
 - import_tasks: install_package.yaml
-  when: enable_install_package | bool
+
+- import_tasks: set_voi_data_device.yaml
+  when: only_deploy_voi | bool
+  run_once: True
+
+- import_tasks: set_voi_virt_nic.yaml
+  when: only_deploy_voi | bool
+  run_once: True

@@ -23,28 +23,7 @@ spec:
       containers:
       - name: libvirt
         image: "{{ .Values.image.libvirt }}"
-        imagePullPolicy: IfNotPresent
-        env:
-          - name: KOLLA_CONFIG_STRATEGY
-            value: "COPY_ALWAYS"
-          - name: KOLLA_SERVICE_NAME
-            value: "libvirt"
-          - name: PATH
-            value: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-          - name: LANG
-            value: "en_US.UTF-8"
-          - name: KOLLA_BASE_DISTRO
-            value: "ubuntu"
-          - name: KOLLA_DISTRO_PYTHON_VERSION
-            value: "3.8"
-          - name: KOLLA_BASE_ARCH
-            value: "x86_64"
-          - name: SETUPTOOLS_USE_DISTUTILS
-            value: "stdlib"
-          - name: PS1
-            value: "$(tput bold)($(printenv KOLLA_SERVICE_NAME))$(tput sgr0)[$(id -un)@$(hostname -s) $(pwd)]$ "
-          - name: DEBIAN_FRONTEND
-            value: "noninteractive"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         lifecycle:
           preStop:
             exec:
@@ -76,30 +55,22 @@ spec:
           timeoutSeconds: 5
         securityContext:
           privileged: true
+          runAsUser: 0
+          runAsGroup: 0
           readOnlyRootFilesystem: false
         volumeMounts:
-          - mountPath: /var/lib/kolla/config_files/secrets
-            name: kolla-config
-          - mountPath: /var/lib/kolla/config_files/libvirtd.conf
-            name: libvirt-etc
-            readOnly: true
-            subPath: libvirtd.conf
-          - mountPath: /var/lib/kolla/config_files/qemu.conf
+          - mountPath: /etc/libvirt/qemu.conf
             name: libvirt-etc
             readOnly: true
             subPath: qemu.conf
-          - mountPath: /var/lib/kolla/config_files/config.json
+          - mountPath: /etc/libvirt/libvirtd.conf
             name: libvirt-etc
             readOnly: true
-            subPath: config.json
-          - mountPath: /var/lib/kolla/config_files/secrets/{{ .Values.secret.rbd_secret_uuid }}.xml
+            subPath: libvirtd.conf
+          - mountPath: /etc/vdi_conf.ini
             name: libvirt-etc
             readOnly: true
-            subPath: {{ .Values.secret.rbd_secret_uuid }}.xml
-          - mountPath: /var/lib/kolla/config_files/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
-            name: libvirt-etc
-            readOnly: true
-            subPath: {{ .Values.secret.rbd_secret_uuid }}.base64
+            subPath: vdi_conf.ini
           - mountPath: /etc/libvirt/qemu
             name: etc-libvirt-qemu
           - mountPath: /lib/modules
@@ -117,9 +88,24 @@ spec:
           - mountPath: /etc/machine-id
             name: machine-id
             readOnly: true
+          - mountPath: {{ .Values.trochilus_dir }}
+            mountPropagation: Bidirectional
+            name: voi-vm-dir
+          {{- if .Values.enable_ceph }}
+          - mountPath: /etc/libvirt/secrets
+            name: secret-dir
           - mountPath: /etc/ceph
             mountPropagation: Bidirectional
             name: etc-ceph
+          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.xml
+            name: libvirt-etc
+            readOnly: true
+            subPath: {{ .Values.secret.rbd_secret_uuid }}.xml
+          - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
+            name: libvirt-etc
+            readOnly: true
+            subPath: {{ .Values.secret.rbd_secret_uuid }}.base64    
+          {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostIPC: true
       hostNetwork: true
@@ -134,15 +120,11 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       volumes:
         - emptyDir: {}
-          name: kolla-config
+          name: secret-dir
         - name: libvirt-etc
           configMap:
             defaultMode: 292
             name: libvirt-etc
-        - hostPath:
-            path: /etc/ceph
-            type: ""
-          name: etc-ceph
         - hostPath:
             path: /lib/modules
             type: ""
@@ -171,6 +153,16 @@ spec:
             path: /etc/libvirt/qemu
             type: ""
           name: etc-libvirt-qemu
+        - hostPath:
+            path: {{ .Values.voi_dir }}
+            type: "DirectoryOrCreate"
+          name: voi-vm-dir
+        {{- if .Values.enable_ceph }}
+        - hostPath:
+            path: /etc/ceph
+            type: ""
+          name: etc-ceph
+        {{- end }}
 {{- if .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 -}}

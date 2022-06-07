@@ -74,19 +74,6 @@
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-# 配置驱逐优先级
-- name: 渲染 priorityClass 配置文件
-  template:
-    src: priority-class.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/priority-class.yaml
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
-- name: Deploy priorityClass in yaml file
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/priority-class.yaml
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
-
 - name: 校验 helm 命令是否存在
   shell: helm version
   register: helm_version
@@ -112,17 +99,27 @@
     - helm_version is not success
 
 - name: 查看 k8s 节点 标签
-  shell: kubectl get nodes --show-labels | grep {{ control_node_role_name }} | wc -l
+  shell: kubectl get nodes --show-labels | grep {{ inventory_hostname }} | grep {{ control_node_role_name }} | wc -l
   register: node_role
 
-- name: 设置 control node lables
-  shell: kubectl label node {{ item }} {{ control_node_role_name }}={{ node_role_value }}
-  with_items: "{{ groups['control'] }}"
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
-  when:
-    - node_role.stdout == "0"
+- name: group not have control labels node
+  group_by:
+    key: "all_using_limit_control_{{ node_role.stdout == '0' }}"
 
+- name: 设置 control node lables
+  shell: kubectl label node {{ inventory_hostname }} {{ control_node_role_name }}={{ node_role_value }}
+  # with_items: "{{ groups['control'] }}"
+  # run_once: True
+  # delegate_to: "{{ groups['kube-master'][0] }}"
+  when: inventory_hostname in groups['all_using_limit_control_True']
+  ignore_errors: yes
+
+- name: 创建定时任务,每天晚上2点清除系统缓存
+  cron:
+    name: "clean linux cache"
+    hour: "2"
+    job: "sync && echo 1 > /proc/sys/vm/drop_caches"
+  when: inventory_hostname in groups["control"]
 
 # 备份etcd
 - block:
@@ -153,3 +150,4 @@
         /usr/local/bin/etcdtools cleanup
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+

@@ -1,0 +1,4 @@
+---
+# defaults file for checknet
+ping_interface: ['api', 'ceph_public', 'ceph_cluster']
+netcheck_path: "/home/history/"

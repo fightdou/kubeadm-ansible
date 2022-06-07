@@ -3,7 +3,7 @@
 ##
 image:
   repository: redis
-  tag: 5.0.5-alpine
+  tag: 4.0.11
   pullPolicy: IfNotPresent
 ## replicas number for each component
 replicas: 3
@@ -12,6 +12,7 @@ replicas: 3
 labels: {}
 
 hostNetwork: false
+priorityClassName: ""
 
 ## Pods Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
@@ -51,18 +52,18 @@ redis:
   config:
     ## Additional redis conf options can be added below
     ## For all available options see http://download.redis.io/redis-stable/redis.conf
-    min-slaves-to-write: 1
-    min-slaves-max-lag: 5   # Value in seconds
-    maxmemory: "0"       # Max memory to use for each redis instance. Default is unlimited.
-    maxmemory-policy: "volatile-lru"  # Max memory policy to use for each redis instance. Default is volatile-lru.
+    # min-slaves-to-write: 1
+    # min-slaves-max-lag: 5   # Value in seconds
+    # maxmemory: "0"       # Max memory to use for each redis instance. Default is unlimited.
+    # maxmemory-policy: "volatile-lru"  # Max memory policy to use for each redis instance. Default is volatile-lru.
     # Determines if scheduled RDB backups are created. Default is false.
     # Please note that local (on-disk) RDBs will still be created when re-syncing with a new slave. The only way to prevent this is to enable diskless replication.
-    save: "900 1"
+    # save: "900 1"
     # When enabled, directly sends the RDB over the wire to slaves, without using the disk as intermediate storage. Default is false.
-    repl-diskless-sync: "yes"
-    rdbcompression: "yes"
-    rdbchecksum: "yes"
-    notify-keyspace-events: Ex
+    # repl-diskless-sync: "yes"
+    # rdbcompression: "yes"
+    # rdbchecksum: "yes"
+    # notify-keyspace-events: Ex
 
   ## Custom redis.conf files used to override default settings. If this file is
   ## specified then the redis.config above will be ignored.
@@ -89,7 +90,6 @@ sentinel:
     down-after-milliseconds: 10000
     ## Failover timeout value in milliseconds
     failover-timeout: 180000
-    parallel-syncs: 5
 
   ## Custom sentinel.conf files used to override default settings. If this file is
   ## specified then the sentinel.config above will be ignored.

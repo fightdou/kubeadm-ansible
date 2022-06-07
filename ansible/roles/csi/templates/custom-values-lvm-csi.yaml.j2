@@ -1,0 +1,89 @@
+imagePullSecrets: 
+  - name: {{ docker_register_secrets_name }}
+driverName: local.csi.openebs.io
+
+nodeplugin:
+  priorityClassName: ""
+  registrar:
+    name: csi-node-driver-registrar 
+    image: 
+      repository: {{ kube_image_repository }}/csi-node-driver-registrar
+      tag: {{ kube_image_tag }}
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  plugin:
+    name: openebs-lvm-plugin
+    image:
+      repository: {{ kube_image_repository }}/lvm-driver
+      tag: {{ kube_image_tag }}
+      pullPolicy: IfNotPresent 
+    resources: {}
+
+provisioner:
+  replicaCount: 1
+  priorityClassName: ""
+  provisioner:
+    name: csi-provisioner
+    image:
+      repository: {{ kube_image_repository }}/csi-provisioner
+      tag: {{ kube_image_tag }}
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  resizer:
+    name: csi-resizer
+    image:
+      repository: {{ kube_image_repository }}/csi-resizer
+      tag: {{ kube_image_tag }}
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  snapshotter:
+    name: csi-snapshotter
+    image:
+      repository: {{ kube_image_repository }}/csi-snapshotter
+      tag: {{ kube_image_tag }}
+      pullPolicy: IfNotPresent
+    resources: {}
+
+  controller:
+    name: snapshot-controller
+    image:
+      repository: {{ kube_image_repository }}/snapshot-controller
+      tag: {{ kube_image_tag }}
+      pullPolicy: IfNotPresent
+    resources: {}
+
+service:
+  port: {{ lvm_service_port }}
+
+storageClass:
+  # Specifies whether the Storage class should be created
+  create: {{ create_lvm_storage_class }}
+  name: {{ lvm_storage_class_name }}
+  volgroup: {{ lvm_volgroup_name }}
+  storage: lvm
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80

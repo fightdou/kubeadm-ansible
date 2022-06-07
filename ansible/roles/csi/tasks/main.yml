@@ -1,0 +1,25 @@
+---
+- import_tasks: set-ceph-vars.yaml
+  when: 
+    - install_ceph_rbd_csi or install_ceph_cephfs_csi | bool
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- import_tasks: ceph-rbd-csi-install.yaml
+  when: 
+    - install_ceph_rbd_csi | bool
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- import_tasks: ceph-cephfs-csi-install.yaml
+  when: 
+    - install_ceph_cephfs_csi | bool
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- import_tasks: lvm-csi-install.yaml
+  when: 
+    - install_lvm_csi | bool
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+

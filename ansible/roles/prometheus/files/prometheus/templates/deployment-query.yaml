@@ -61,6 +61,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       serviceAccount: {{ .Values.serviceAccountName}}

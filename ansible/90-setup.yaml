@@ -52,9 +52,9 @@
     - ceph-csi-cephfs
     - ceph-csi-rbd
   roles:
-    - { role: ceph-csi,
-        tags: ceph-csi,
-        when: enable_ceph_csi| bool }
+    - { role: csi,
+        tags: csi,
+        when: enable_ceph| bool }
 
 - name: Apply role mariadb
   gather_facts: false
@@ -98,13 +98,14 @@
         tags: trochilus,
         when: enable_trochilus| bool }
 
-- name: Apply role fsd
+- name: Apply role websockify
   gather_facts: false
-  hosts: fsd
+  hosts: 
+    - websockify
   roles:
-    - { role: fsd,
-        tags: fsd,
-        when: enable_fsd| bool }
+    - { role: websockify,
+        tags: websockify,
+        when: enable_websockify| bool }
 
 - name: Apply role prometheus
   gather_facts: false
@@ -118,6 +119,14 @@
         tags: prometheus,
         when: enable_prometheus| bool }
 
+- name: Apply role guest-server
+  gather_facts: false
+  hosts: libvirt
+  roles:
+   - { role: guest-server,
+       tags: guest-server,
+       when: enable_guest_server| bool }
+
 - name: Apply role btserver
   gather_facts: false
   hosts: btserver
@@ -125,6 +134,14 @@
     - { role: btserver,
         tags: btserver,
         when: enable_btserver| bool }
+
+- name: Apply role fsd
+  gather_facts: false
+  hosts: fsd
+  roles:
+    - { role: fsd,
+        tags: fsd,
+        when: enable_fsd| bool }
 
 - name: Apply role elasticsearch
   gather_facts: false
@@ -149,11 +166,3 @@
    - { role: kibana,
        tags: kibana,
        when: enable_kibana| bool }
-
-- name: Apply role guest-server
-  gather_facts: false
-  hosts: libvirt
-  roles:
-   - { role: guest-server,
-       tags: guest-server,
-       when: enable_guest_server| bool }

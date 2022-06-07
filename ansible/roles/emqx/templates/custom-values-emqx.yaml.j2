@@ -12,8 +12,8 @@ affinity:
           topologyKey: "kubernetes.io/hostname"
 containerSecurityContext:
   enabled: true
-  runAsNonRoot: true
-  runAsUser: 1000
+  runAsNonRoot: false
+  runAsUser: 0
 emqxAclConfig: |
   {allow, {user, "dashboard"}, subscribe, ["$SYS/#"]}. {allow, {ipaddr, "127.0.0.1"}, pubsub, ["$SYS/#", "#"]}. {deny, all, subscribe, ["$SYS/#", {eq, "#"}]}. {allow, all}.
 emqxConfig:
@@ -64,7 +64,7 @@ nodeSelector:
   "{{ control_node_role_name }}": "{{ node_role_value }}"
 persistence:
   accessMode: "{{ emqx_persistence_accessMode }}"
-  enabled: "{{ emqx_persistence | bool }}"
+  enabled: {{ emqx_persistence }}
   size: "{{ emqx_persistence_size }}"
   storageClass: "{{ emqx_persistence_storageClass }}"
 podManagementPolicy: Parallel
@@ -72,18 +72,18 @@ podSecurityContext:
   enabled: true
   fsGroup: 1000
   fsGroupChangePolicy: Always
-  runAsUser: 1000
+  runAsUser: 0
   supplementalGroups:
   - 1000
 recreatePods: false
 replicaCount: "{{ emqx_pod_replicaCount }}"
-resources:
-    requests:
-      memory: 700Mi
-      cpu: 500m
-    limits:
-      memory: 700Mi
-      cpu: 500m
+resources: {}
+#    requests:
+#      memory: 700Mi
+#      cpu: 500m
+#    limits:
+#      memory: 700Mi
+#      cpu: 500m
 service:
   annotations: {}
   dashboard: 18083

@@ -1,0 +1,10 @@
+{{- if .Values.storageClass.create -}}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.storageClass.name }}
+parameters:
+  storage: {{ .Values.storageClass.storage }}
+  volgroup: {{ .Values.storageClass.volgroup }}
+provisioner: {{ .Values.driverName }}
+{{- end -}}

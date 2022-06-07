@@ -1,6 +1,4 @@
 ---
-- import_tasks: cephfs_mount.yaml
-
 - import_tasks: all_node_tasks.yaml
 
 - import_tasks: deploy_samba.yaml

@@ -37,6 +37,7 @@ mount_dir:
   voi_dir: "{{ fsd_voi_dir }}"
   upload_dir: "{{ fsd_voi_upload_dir }}"
   fsd_static: "{{ fsd_static_dir }}"
+  samba_dir: "{{ fsd_cloud_disk_root_path }}"
 
 fsd_env:
   redis_password: "{{ redis_master_password }}"
@@ -49,7 +50,7 @@ fsd_env:
   vnc_port: "{{ websockify_port }}"
   desktop_bt_port_start: "{{ bt_download_port_start }}"
   desktop_bt_port_end: "{{ bt_download_port_end }}"
-  cloud_disk_root_path: "{{ fsd_cloud_disk_root_path }}"
+  cloud_disk_root_path: "/mnt/111"
   cloud_disk_share_disk_path: "{{ fsd_cloud_disk_share_disk_path }}"
   cloud_disk_username: "{{ fsd_cloud_disk_user_name }}"
   cloud_disk_password: "{{ fsd_cloud_disk_password }}"

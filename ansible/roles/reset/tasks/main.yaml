@@ -2,6 +2,20 @@
   command: kubeadm reset -f
   ignore_errors: true
 
+- name: unmap rbd
+  shell: |
+    for rbd in `ls /dev/rbd/kubernetes/`;do rbd unmap -o force /dev/rbd/kubernetes/$rbd; done
+  ignore_errors: true
+  become: true
+  when: enable_ceph | bool
+
+- name: 清除清除系统缓存的定时任务
+  cron:
+    name: "clean linux cache"
+    state: absent
+  when: inventory_hostname in groups["control"]
+  ignore_errors: true
+
 - name: 停止 kubelet 服务
   service:
     name: kubelet

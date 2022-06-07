@@ -21,18 +21,13 @@ spec:
           readOnlyRootFilesystem: false
         args:
           - --web.listen-address=0.0.0.0:{{ .Values.service.host_exporter.port }}
+          - --ipmi.timeout=10s
           - --config.path=/opt/config.yml
         ports:
           - containerPort: {{ .Values.service.host_exporter.port }}
             name: http
             protocol: TCP
-        resources:
-          limits:
-            cpu: 250m
-            memory: 512Mi
-          requests:
-            cpu: 250m
-            memory: 512Mi
+        resources: {}
         volumeMounts:
           - mountPath: /dev
             name: dev
@@ -46,6 +41,7 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: true
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}

@@ -1,0 +1,16 @@
+---
+- when: api_interface in flat_network_interface or api_interface in vlan_network_interface
+  block:
+  - name: Create virt-nic-start script service
+    template:
+      src: virt-nic-start.service.j2
+      dest: /etc/systemd/system/virt-nic-start.service
+      mode: "755"
+
+  - name: Start virt-nic-start script service
+    service:
+      enabled: yes
+      state: restarted
+      name: virt-nic-start
+    ignore_errors: yes
+

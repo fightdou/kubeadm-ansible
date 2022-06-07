@@ -1,0 +1,55 @@
+--- 
+- name: mkdir node history dir
+  file:
+    state: directory
+    path: "{{ netcheck_path }}"
+    mode: 755
+  delegate_to: "{{ groups.allnodes[0] }}"
+  run_once: true
+
+- name: delete ping and iperf3 output file
+  file:
+    path: "{{ netcheck_path }}/{{ item }}"
+    state: absent
+  with_items:
+    - "echoping.yml"
+    - "echoiperf3.yml"
+  delegate_to: "{{ groups.allnodes[0] }}"
+  run_once: true
+
+- name: Check network ping
+  ansible_ping:
+    ipaddress: "{% for host in groups['allnodes'] %}{% if host != inventory_hostname  %}{{ item | filter_address(host) }}_{{ host }}{% if not loop.last %},{% endif %}{% endif %}{% endfor %}"
+    interface: "{{ item | filter_interface_name }}"
+    nettype: "{{ item }}"
+    times: 3
+  with_items: "{{ ping_interface }}"
+  register: res_ping_reg
+
+- name: Handler troila netcard params
+  run_ping: 
+    res_ping_reg_res: "{{ res_ping_reg.results }}"
+  register: handler_params_reg
+
+- name: Echo ping res to yml
+  blockinfile:
+    create: yes
+    marker: "# {{ item.nettype }} {{ item.uuid }} "
+    path: "{{ netcheck_path }}/echoping.yml"
+    block: |
+      - nettype: {{ item.nettype }}
+        mtu: {{ hostvars[inventory_hostname]['ansible_' + item.nettype | filter_interface_name ].mtu }}
+        speed: {{ hostvars[inventory_hostname]['ansible_' + item.nettype | filter_interface_name ].speed }}
+        source_host: {{ hostname }}
+        source_interface: {{ item.nettype | filter_interface_name }}
+        source_interface_address: {{ item.nettype | filter_address }}
+        dest_host: {{ hostvars[item.dest_host].hostname }}
+        dest_interface: {{ item.nettype | filter_interface_name(item.dest_host) }}
+        dest_interface_address: {{ item.dest_ip }}
+        status: {{ item.status }} 
+        ip: {{ item.dest_ip }}
+        sudu: {{ item.sudu }}
+        plr: {{ item.plr }}
+  with_items: 
+    - "{{ handler_params_reg.param_ping_res }}"
+  delegate_to: "{{ groups.allnodes[0] }}"

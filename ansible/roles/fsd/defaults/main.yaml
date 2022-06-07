@@ -1,10 +1,8 @@
-desktop_mount_shell_dir: "/etc/ceph/cephmount"
-cephmount_service_dir: "/usr/lib/systemd/system/"
 fsd_cloud_disk_root_path: "{{ desktop_mount_dir }}/111"
 fsd_cloud_disk_share_disk_path: "ShareA"
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
 fsd_voi_upload_dir: "{{ desktop_mount_dir }}/upload"
-fsd_static_dir: /var/nginx/nginx_page/static
+fsd_static_dir: "{{ desktop_mount_dir }}/static"
 fsd_log: /var/log/fsd
 init_sql_dir: /tmp/fsd
 ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}"

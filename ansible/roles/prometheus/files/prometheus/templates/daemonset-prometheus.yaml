@@ -44,13 +44,7 @@ spec:
           periodSeconds: 60
           successThreshold: 1
           timeoutSeconds: 10
-        resources:
-          limits:
-            cpu: "4"
-            memory: 2Gi
-          requests:
-            cpu: 200m
-            memory: 400Mi
+        resources: {}
         volumeMounts:
           - mountPath: {{ .Values.alert_rule_dir }}
             name: rule-file
@@ -77,6 +71,7 @@ spec:
         volumeMounts:
           - name: prometheus-etc
             mountPath: /etc/prometheus
+      priorityClassName: {{ .Values.priorityClassName }}
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

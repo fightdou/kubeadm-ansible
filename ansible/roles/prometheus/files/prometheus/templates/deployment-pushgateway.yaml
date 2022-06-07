@@ -4,10 +4,10 @@ metadata:
   name: pushgateway
   namespace: {{ .Release.Namespace | quote }}
 spec:
+  replicas: {{ .Values.replica }}
   selector:
     matchLabels:
       app.kubernetes.io/name: pushgateway
-  replicas: {{ .Values.replica }}
   template:
     metadata:
       labels:
@@ -26,25 +26,22 @@ spec:
       containers:
       - name: pushgateway
         args:
-          - --web.listen-address=0.0.0.0:{{ .Values.service.pushgateway.port }}
+          - --web.listen-address={{ .Values.pushgatewayVIP }}:{{ .Values.service.pushgateway.port }}
         image: {{ .Values.image.pushgateway }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: {{ .Values.service.pushgateway.port }}
           name: http
           protocol: TCP
-        resources:
-          limits:
-            cpu: "1"
-            memory: 500Mi
-          requests:
-            cpu: 102m
-            memory: 180Mi
+        resources: {}
+      priorityClassName: {{ .Values.priorityClassName }}
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       {{- if .Values.nodeSelector }}

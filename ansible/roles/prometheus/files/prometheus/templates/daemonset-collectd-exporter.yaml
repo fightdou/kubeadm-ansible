@@ -27,18 +27,19 @@ spec:
             hostPort: 25826
             protocol: UDP
             name: udp
-        resources:
-          limits:
-            cpu: 250m
-            memory: 180Mi
-          requests:
-            cpu: 102m
-            memory: 180Mi
+        resources: {}
+          # limits:
+          #   cpu: 250m
+          #   memory: 180Mi
+          # requests:
+          #   cpu: 102m
+          #   memory: 180Mi
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: true
       securityContext:
         runAsNonRoot: true

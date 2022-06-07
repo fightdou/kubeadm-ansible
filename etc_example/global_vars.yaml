@@ -1,17 +1,23 @@
 firewalld_disabled: true
 timezone: Asia/Shanghai
-use_domain_name_deploy: true
-api_interface: ens3
-enable_docker_auth: true
-enable_domain_deploy: true
-docker_register_address: 172.18.31.155
-harbor_username: admin
-harbor_password: Harbor12345
-docker_register_secrets_name: docker-register-secrets
+# 开启 k8s 域名部署
+use_domain_name_deploy: false
+# docker 离线源是否支持域名, docker images 前缀名称默认为 kunlunyun:5002, 这种方式需要在 /etc/hosts 文件中配置 hosts 解析，因此需设置为 true
+enable_docker_register_domain_deploy: true
+# docker registry 离线源地址
+docker_register_address: "{{ hostvars[groups['baremetal'][0]]['ansible_' + api_interface]['ipv4']['address'] }}"
+docker_register_domain: kunlunyun
+docker_register_port: 5002
+offline_deb_repo_port: 9865
+# 系统用户名
 system_username: root
+# 系统密码
 system_password: 123456
+# ipmi 厂商
 ipmi_vendor: HUAWEI
+# ipmi 连接用户名
 ipmi_username: root
+# ipmi 连接密码
 ipmi_password: Huawei12#$
 
 ####################
@@ -20,17 +26,22 @@ ipmi_password: Huawei12#$
 enable_aptsource: true
 enable_install_package: true
 apt_source: "172.18.28.237"
-
+ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 
 ####################
 # Kubernetes options
 ####################
+# k8s 集群 VIP 配置
+kube_apiserver_vip: 172.18.28.193
+# k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
-kubernetes_version: 1.23.5
-kube_apiserver_vip: 172.18.30.126
+# k8s 集群 VIP 端口
 kube_apiserver_port: 8443
-kube_image_repository: 172.18.31.155/kubernetes
+# docker 镜像 namespace
+kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
+# docker 镜像 tag
 kube_image_tag: latest
+kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
 kubelet_root_dir: "/var/lib/kubelet"
@@ -39,16 +50,17 @@ docker_storage_dir: "/var/lib/docker"
 kube_pod_subnet: 10.244.0.0/16
 kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
-kube_priority_name: high-priority-nonpreempting
-kube_priority_value: 1000000
+kube_priority_name: system-node-critical
 # Pod根容器
-pod_infra_container_image: "{{ kube_image_repository }}/pause:{{ kube_image_tag }}"
+pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
 # 节点的角色名称，默认values为enabled
 control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
+docker_image_path : /opt/offline/kunlunyun-latest.tar.gz
+docker_dpkg_path: /opt/offline/deb-packages
 
 ##############
 # Helm options
@@ -56,6 +68,14 @@ node_role_value: enabled
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
 helm_wait_timeout: 300s
+
+################
+# Harbor options
+################
+enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% endif %}"
+harbor_username: admin
+harbor_password: Harbor12345
+docker_register_secrets_name: docker-register-secrets
 
 #################
 # Haproxy options
@@ -101,7 +121,7 @@ etcd_backup_expiry: "7"
 etcd_backup_dir: "/var/lib/etcd/backup"
 
 ##################
-# Ceph csi Options
+#  csi Options
 ##################
 # kubernetes ceph csi
 install_ceph_rbd_csi: true
@@ -114,6 +134,13 @@ create_cephfs_storage_class: true
 cephfs_check_port: 9083
 cephfs_service_port: 9084
 cephfs_storage_class_name: cephfs-general
+install_lvm_csi: false
+lvm_service_port: 9500
+lvm_storage_class_name: general
+lvm_volgroup_name: lvmvg
+create_lvm_storage_class: true
+# eg: /dev/vdb or /dev/vdb1
+lvm_pv_device: /dev/vdb
 
 #################
 # Ingress Options
@@ -135,12 +162,12 @@ ceph_rbd_admin_user: client.admin
 ###################
 trochilus_support_flat_network: true
 trochilus_support_vlan_network: false
-trochilus_network_vlan_range: 100:1000
-trochilus_libvirt_driver: qemu
+trochilus_libvirt_driver: kvm
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 trochilus_api_ingress: true
 trochilus_voi_path: "{{ fsd_voi_dir }}"
+trochilus_voi_base_path: "/var/lib/trochilus/voi"
 
 #################
 # Mariadb Options
@@ -197,7 +224,7 @@ cloud_disk_num: 1000
 #######################
 es_storage_size: 10Gi
 es_http_port: 9200
-es_data_save_days: 3
+es_data_save_days: 7
 ## At 01:00 every day
 es_date_del_time: "0 1 * * *"
 
@@ -211,11 +238,10 @@ kibana_node_port: 32000
 ################
 emqx_pod_pullPolicy: IfNotPresent
 emqx_svc_type: ClusterIP
-emqx_persistence: true
 emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
-emqx_priorityclassname: "system-node-critical"
+emqx_priorityclassname: "{{ kube_priority_name }}"
 emqx_hostnetwork: true
 emqx_mqtt_port: 1883
 emqx_mgmt_port: 8081
@@ -226,33 +252,33 @@ emqx_wss_port: 8084
 #################
 # role开关
 #################
-enable_baremetal: false
-enable_load_balancer: false
-enable_kube_master: false
-enable_kube_worker: false
-enable_ingress: false
-enable_ceph_csi: false
-enable_mariadb: false
-enable_redis: false
-enable_emqx: false
-enable_libvirt: false
-enable_trochilus: false
-enable_prometheus: false
-enable_fsd: false
+enable_baremetal: true
+enable_load_balancer: true
+enable_kube_master: true
+enable_kube_worker: true
+enable_ingress: true
+enable_mariadb: true
+enable_redis: true
+enable_emqx: true
+enable_libvirt: true
+enable_trochilus: true
+enable_websockify: true
+enable_prometheus: true
+enable_guest_server: true
+enable_fsd: true
 enable_btserver: true
-enable_voi: false
-enable_elasticsearch: false
-enable_fluentd: false
-enable_kibana: false
-enable_websockify: false
-enable_ceph: false
+enable_elasticsearch: "{% if groups['elasticsearch'] | length > 2 %}true{% else %}false{% endif %}"
+enable_fluentd: "{% if groups['fluentd'] | length > 2 %}true{% else %}false{% endif %}"
+enable_kibana: "{% if groups['kibana'] | length > 2 %}true{% else %}false{% endif %}"
+enable_ceph: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
+enable_checknet: false
 
 ################
 # Redis Options
 ################
 redis_storage_size: 10Gi
 redis_master_password: zhuolang@Troila@123
-redis_master_group_name: kolla
+redis_master_group_name: mymaster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
@@ -272,8 +298,9 @@ voi_node_role_name: "voi_role"
 btserver_port: "9019"
 btserver_port_track: "9020"
 
-
 ##############
 # VOI Options
 ##############
 only_deploy_voi: false
+voi_data_device: ""
+voi_data_directory: "{{ desktop_mount_dir }}"

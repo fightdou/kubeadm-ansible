@@ -11,8 +11,9 @@ def listintersection(source_list, dest_list):
 
     source_set = set(source_list)
     dest_set = set(dest_list)
+    re_list = sorted(list(source_set & dest_set))
 
-    return list(source_set & dest_set)
+    return re_list
 
 # ---- Ansible filters ----
 class FilterModule(object):

@@ -2,7 +2,7 @@
 
 count=0; while [ "$count" -lt "100" ]; do
     sleep 2
-    status=`ps aux | grep -v grep |grep '/usr/sbin/libvirtd'| wc -l`
+    status=`ps aux | grep -v grep |grep 'libvirtd --listen'| wc -l`
     if [ $status -gt 0 ]; then
         systemctl restart collectd
         exit 0

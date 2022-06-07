@@ -1,4 +1,4 @@
-{{- if .Values.sentinel.enabled }}
+{{- if not .Values.hostNetwork }}
 {{- $fullName := include "redis-ha.fullname" . }}
 {{- $replicas := int .Values.replicas }}
 {{- $root := . }}
