@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: pushgateway
   namespace: {{ .Release.Namespace | quote }}
 spec:
+  replicas: {{ .Values.replica }}
   selector:
     matchLabels:
       app.kubernetes.io/name: pushgateway
@@ -12,6 +13,16 @@ spec:
       labels:
         app.kubernetes.io/name: pushgateway
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: {{ .Values.affinity.key }}
+                operator: In
+                values:
+                - {{ .Values.affinity.value }}
+            weight: 100
       containers:
       - name: pushgateway
         args:
