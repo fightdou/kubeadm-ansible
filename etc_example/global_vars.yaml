@@ -26,16 +26,26 @@ ipmi_password: Huawei12#$
 enable_aptsource: true
 enable_install_package: true
 apt_source: "172.18.28.237"
+<<<<<<< HEAD
 ping_interface: ['api', 'ceph_public', 'ceph_cluster']
+=======
+
+>>>>>>> 9320784f33db1a8344637a4569a4b7e414758b3d
 
 ####################
 # Kubernetes options
 ####################
+<<<<<<< HEAD
 # k8s 集群 VIP 配置
 kube_apiserver_vip: 172.18.28.193
 # k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
+=======
+kubernetes_domain_name: kunlun.cluster.local
+kubernetes_version: 1.23.5
+kube_apiserver_vip: 172.18.30.126
+>>>>>>> 9320784f33db1a8344637a4569a4b7e414758b3d
 kube_apiserver_port: 8443
 # docker 镜像 namespace
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
@@ -252,6 +262,7 @@ emqx_wss_port: 8084
 #################
 # role开关
 #################
+<<<<<<< HEAD
 enable_baremetal: true
 enable_load_balancer: true
 enable_kube_master: true
@@ -272,6 +283,28 @@ enable_fluentd: "{% if groups['fluentd'] | length > 2 %}true{% else %}false{% en
 enable_kibana: "{% if groups['kibana'] | length > 2 %}true{% else %}false{% endif %}"
 enable_ceph: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 enable_checknet: false
+=======
+enable_baremetal: false
+enable_load_balancer: false
+enable_kube_master: false
+enable_kube_worker: false
+enable_ingress: false
+enable_ceph_csi: false
+enable_mariadb: false
+enable_redis: false
+enable_emqx: false
+enable_libvirt: false
+enable_trochilus: false
+enable_prometheus: false
+enable_fsd: false
+enable_btserver: true
+enable_voi: false
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
+enable_websockify: false
+enable_ceph: false
+>>>>>>> 9320784f33db1a8344637a4569a4b7e414758b3d
 
 ################
 # Redis Options
@@ -291,13 +324,20 @@ websockify_port: 9003
 #######################
 # btserver
 #######################
+<<<<<<< HEAD
 btserver_listen_ports: "6880-6889"
+=======
+>>>>>>> 9320784f33db1a8344637a4569a4b7e414758b3d
 volume_mount_path: "/btserver"
 bt_volumes_path: "{{ desktop_mount_dir }}/btserver"
 voi_node_role_name: "voi_role"
 btserver_port: "9019"
 btserver_port_track: "9020"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9320784f33db1a8344637a4569a4b7e414758b3d
 ##############
 # VOI Options
 ##############
