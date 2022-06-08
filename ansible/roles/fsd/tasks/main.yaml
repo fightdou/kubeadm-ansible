@@ -12,6 +12,8 @@
   become: true
   when: inventory_hostname in groups['fsd']
 
+- import_tasks: get_node_data.yaml
+
 - import_tasks: init-sql.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"

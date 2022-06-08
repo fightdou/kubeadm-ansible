@@ -1,2 +1,2 @@
 USE klcloud_fsd;
-UPDATE `des_resource_pool` SET `vdi_cpu_num` = {{ vdi_cpu_num }}, `vdi_memory_num` = {{ vdi_memory_num }}, `vdi_storage_num` = {{ vdi_storage_num }}, `cloud_disk_num` = {{ cloud_disk_num }} WHERE `uuid` = '0';
+UPDATE `des_resource_pool` SET `vdi_cpu_num` = {{ total_vcpus }}, `vdi_memory_num` = {{ total_mems }}, `vdi_storage_num` = {{ vdi_storage_num }}, `cloud_disk_num` = {{ cloud_disk_num }} WHERE `uuid` = '0';

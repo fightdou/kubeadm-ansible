@@ -23,9 +23,6 @@ ipmi_password: Huawei12#$
 ####################
 # baremetal
 ####################
-enable_aptsource: true
-enable_install_package: true
-apt_source: "172.18.28.237"
 ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 
 ####################
@@ -218,6 +215,11 @@ vdi_cpu_num: 50
 vdi_memory_num: 16
 vdi_storage_num: 1000
 cloud_disk_num: 1000
+reserved_host_cpus: 2
+reserved_host_memory_mb: 16
+# 每个osd需要留2G内存
+ceph_reserved_host_memory_mb: 6
+cpu_allocation_ratio: 8
 
 #######################
 # elasticsearch Options
