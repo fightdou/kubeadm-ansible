@@ -292,21 +292,10 @@ websockify_port: 9003
 #######################
 # btserver
 #######################
-btserver_image_tag: "{{ kube_image_tag }}"
-btserver_pod_pullPolicy: "IfNotPresent"
-btserver_svc_type: "ClusterIP"
-btserver_hostnetwork: "yes"
-btserver_containers_name_track: "btserver-track"
-volume_mount_name: "btserver"
+btserver_listen_ports: "6880-6889"
 volume_mount_path: "/btserver"
-volumes_name: "btserver"
-volumes_path: "/mnt/cephfs"
-volumes_type: "DirectoryOrCreate"
+bt_volumes_path: "{{ desktop_mount_dir }}/btserver"
 voi_node_role_name: "voi_role"
-resources_limits_cpu: "200m"
-resources_limits_memory: "200Mi"
-resources_requests_cpu: "200m"
-resources_requests_memory: "200Mi"
 btserver_port: "9019"
 btserver_port_track: "9020"
 
