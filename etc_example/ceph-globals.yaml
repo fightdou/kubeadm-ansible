@@ -199,3 +199,7 @@ mons_secret:
 #密码待放入password.yaml文件
 mgr_dashboard_login_pass: "YAd2lqIiujazweP8"
 rgw_admin_password: "YAd2lqIiujazweP8"
+
+#查找crushmap.txt文件指定行内容
+osd: ["        step chooseleaf firstn 0 type osd"]
+host: ["        step chooseleaf firstn 0 type host"]
