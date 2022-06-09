@@ -88,7 +88,7 @@ listen trochilus
 {% if enable_btserver | bool %}
 listen btserver
     mode tcp
-    bind {{ kube_apiserver_vip }}:{{ btserver_listen_ports }}
+    bind {{ fsd_proxy_ip }}:{{ btserver_listen_ports }}
     balance {{ lb_haproxy_balance_alg }}
     option tcplog
 {% for host in (groups['btserver']) %}
@@ -99,21 +99,21 @@ listen btserver
 {% if enable_btserver | bool %}
 listen btserverport
     mode tcp
-    bind {{ kube_apiserver_vip }}:{{ btserver_port }}
+    bind {{ fsd_proxy_ip }}:{{ bt_server_port }}
     balance {{ lb_haproxy_balance_alg }}
     option tcplog
 {% for host in (groups['btserver']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }}:{{ btserver_port }} check inter 2000 rise 2 fall 5
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ bt_server_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
 {% endif %}
 
 {% if enable_btserver | bool %}
 listen btservertrackerport
     mode tcp
-    bind {{ kube_apiserver_vip }}:{{ btserver_port_track }}
+    bind {{ fsd_proxy_ip }}:{{ bt_tracker_port }}
     balance {{ lb_haproxy_balance_alg }}
     option tcplog
 {% for host in (groups['btserver']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }}:{{ btserver_port_track }} check inter 2000 rise 2 fall 5
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ bt_tracker_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
 {% endif %}
