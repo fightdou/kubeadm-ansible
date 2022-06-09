@@ -4,6 +4,7 @@
 
 replicaCount: {{ websockify_replicaCount }}
 priorityClassName: {{ kube_priority_name }}
+listenAddress: {{ fsd_proxy_ip }}
 
 image:
   repository: {{ kube_image_repository }}/websockify

@@ -36,7 +36,7 @@ spec:
           command:
             - websockify
           args:
-            - 0.0.0.0:{{ .Values.service.port }}
+            - {{ .Values.listenAddress }}:{{ .Values.service.port }}
             - --token-plugin=trochilus.websockify.token_plugin.Base64TokenApi
           ports:
             - name: tcp
