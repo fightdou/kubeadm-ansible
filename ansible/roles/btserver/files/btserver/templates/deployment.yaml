@@ -1,13 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "btserver.fullname" . }}
+  name: btserver
   labels:
     {{- include "btserver.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "btserver.selectorLabels" . | nindent 6 }}
@@ -27,44 +25,42 @@ spec:
       serviceAccountName: {{ include "btserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      hostNetwork: {{ .Values.containers.network }}
+      hostNetwork: {{ .Values.hostNetwork }}
       priorityClassName: {{ .Values.priorityClassName }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: btserver
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ .Values.image.btserver }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port }}
+              port: {{ .Values.service.btserver }}
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port }}
+              port: {{ .Values.service.btserver }}
           volumeMounts:
-          - name: {{ .Values.volumeMounts.name }}
-            mountPath: {{ .Values.volumeMounts.path }}
-          resources: {}
-        - name: {{ .Values.containers.name }}
+          - name: btserver
+            mountPath: /mnt/voi
+        - name: btserver-track
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository_track }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ .Values.image.btserver_track }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port_track }}
+              port: {{ .Values.service.btserver_track }}
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.containers.port_track }}
+              port: {{ .Values.service.btserver_track }}
           volumeMounts:
-          - name: {{ .Values.volumeMounts.name_track }}
-            mountPath: {{ .Values.volumeMounts.path_track }}
-          resources: {}
+          - name: btserver
+            mountPath: /mnt/voi
       volumes:
-      - name: {{ .Values.volumes.name }}
+      - name: btserver
         hostPath:
-          path: {{ .Values.volumes.path }}
-          type: {{ .Values.volumes.type }}
+          path: {{ .Values.btserver_share_path }}
+          type: DirectoryOrCreate
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

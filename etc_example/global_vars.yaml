@@ -206,10 +206,6 @@ fsd_tcp_port: 9012
 fsd_tcp_file_port: 9013
 fsd_webhook_token: abc123
 fsd_nginx_port: 9000
-bt_server_port: 9019
-bt_tracker_port: 9020
-bt_download_port_start: 6880
-bt_download_port_end: 6889
 fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
 fsd_host_network: true
@@ -292,24 +288,12 @@ websockify_port: 9003
 #######################
 # btserver
 #######################
-btserver_listen_ports: "6880-6889"
-btserver_image_tag: "{{ kube_image_tag }}"
-btserver_pod_pullPolicy: "IfNotPresent"
-btserver_svc_type: "ClusterIP"
-btserver_hostnetwork: "yes"
-btserver_containers_name_track: "btserver-track"
-volume_mount_name: "btserver"
-volume_mount_path: "/btserver"
-volumes_name: "btserver"
-volumes_path: "/mnt/cephfs"
-volumes_type: "DirectoryOrCreate"
-voi_node_role_name: "voi_role"
-resources_limits_cpu: "200m"
-resources_limits_memory: "200Mi"
-resources_requests_cpu: "200m"
-resources_requests_memory: "200Mi"
-btserver_port: "9019"
-btserver_port_track: "9020"
+btserver_share_path: "{{ fsd_voi_dir }}"
+bt_server_port: 9019
+bt_tracker_port: 9020
+bt_download_port_start: 6880
+bt_download_port_end: 6889
+btserver_listen_ports: "{{ bt_download_port_start }}-{{ bt_download_port_end }}"
 
 ##############
 # VOI Options
