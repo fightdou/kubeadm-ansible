@@ -41,6 +41,12 @@ fsd_env:
   redis_password: zhuolang@Troila@123
   redis_master_name: mycluster
   redis_server_address: redis.default.svc.cluster.local
+  mariadb_server_address: mariadb.default.svc.cluster.local
+  emqx_server_address: emqx.default.svc.cluster.local
+  thanos_server_address: thanos-query.default.svc.cluster.local
+  fsd_job_server_address: fsd-job.default.svc.cluster.local
+  trochilus_server_address: trochilus-api.default.svc.cluster.local
+  btserver_server_address: btserver.default.svc.cluster.local
   netty_codec_mac: 60f81dad19ae
   deploy_mode: all
   proxy_ip: 172.18.28.222
@@ -48,12 +54,12 @@ fsd_env:
   vnc_port: 9003
   desktop_bt_port_start: "6880"
   desktop_bt_port_end: "6889"
+  share_root_path: "/mnt"
   cloud_disk_root_path: "/mnt/111"
   cloud_disk_share_disk_path: "ShareA"
   cloud_disk_username: "troila"
   cloud_disk_password: "Troila12"
 
 fsd_job_env:
-  mariadb_host: 172.18.29.183:3306
   mariadb_username: root
   mariadb_password: 123456

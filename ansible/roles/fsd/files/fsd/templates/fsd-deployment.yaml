@@ -49,22 +49,32 @@ spec:
             - name: fsd-prometheus-alert
               mountPath: /home/static/prometheus/alert/alertmanager.yml
             - name: fsd-voi
-              mountPath: /mnt/voi/
+              mountPath: "{{ .Values.containerPath.voi }}"
             - name: fsd-upload
-              mountPath: /mnt/upload
+              mountPath: "{{ .Values.containerPath.upload }}"
             - name: fsd-static
-              mountPath: /mnt/fsd/static
+              mountPath: "{{ .Values.containerPath.fsd_static }}"
             - name: samba-dir
-              mountPath: /mnt/111/
+              mountPath: "{{ .Values.fsd_env.cloud_disk_share_disk_path }}"
           env:
             - name: ENV_FSD_SPRING_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
             - name: ENV_FSD_SPRING_REDIS_PASSWORD
               value: "{{ .Values.fsd_env.redis_password }}"
-            - name: ENV_FSD_SPRING_REDIS_MASTER
-              value: "{{ .Values.fsd_env.redis_master_name }}"
-            - name: ENV_FSD_SPRING_REDIS_SERVERS
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_REDIS
               value: "{{ .Values.fsd_env.redis_server_address }}"
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_MYSQL
+              value: "{{ .Values.fsd_env.mariadb_server_address }}"
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_EMQX
+              value: "{{ .Values.fsd_env.emqx_server_address }}"
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_THANOS
+              value: "{{ .Values.fsd_env.thanos_server_address }}"
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_JOB
+              value: "{{ .Values.fsd_env.fsd_job_server_address }}"
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_VIRTUALAPI
+              value: "{{ .Values.fsd_env.trochilus_server_address }}"
+            - name: ENV_FSD_BIZ_DEPLOY_SVC_BTSERVER
+              value: "{{ .Values.fsd_env.btserver_server_address }}"
             - name: ENV_FSD_COMMON_NETTY_CODEC_MAC
               value: "{{ .Values.fsd_env.netty_codec_mac }}"
             - name: ENV_FSD_BIZ_DEPLOY_MODE
@@ -83,6 +93,8 @@ spec:
               value: "{{ .Values.fsd_env.desktop_bt_port_start }}"
             - name: ENV_FSD_BIZ_DESKTOP_BT_PORTEND
               value: "{{ .Values.fsd_env.desktop_bt_port_end }}"
+            - name: ENV_FSD_BIZ_PATH_SHAREROOTPATH
+              value: "{{ .Values.fsd_env.share_root_path }}"
             - name: ENV_FSD_BIZ_CLOUDDISK_ROOTPATH
               value: "{{ .Values.fsd_env.cloud_disk_root_path }}"
             - name: ENV_FSD_BIZ_CLOUDDISK_SHAREDDISKMAPPATH
@@ -103,7 +115,7 @@ spec:
         - name: fsd-prometheus-alert
           hostPath:
             path: "{{ .Values.mount_dir.alertmanager_conf }}"
-            type: DirectoryOrCreate
+            type: FileOrCreate
         - name: fsd-voi
           hostPath:
             path: "{{ .Values.mount_dir.voi_dir }}"
