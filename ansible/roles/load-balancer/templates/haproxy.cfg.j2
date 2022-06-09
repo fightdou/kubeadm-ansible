@@ -55,7 +55,7 @@ backend kube_api_backend
 {% if enable_emqx | bool %}
 listen emqx
     mode tcp
-    bind {{ kube_apiserver_vip }}:{{ emqx_mqtt_port }}
+    bind {{ fsd_proxy_ip }}:{{ emqx_mqtt_port }}
     balance {{ lb_haproxy_balance_alg }}
     option tcplog
 {% for host in (groups['emqx']) %}

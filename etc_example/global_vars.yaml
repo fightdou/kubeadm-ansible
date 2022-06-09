@@ -199,7 +199,7 @@ pushgateway_clean_time: "*/1 * * * *"
 # Fsd Options
 ##############
 # 如果需要外网映射，需配置外网映射的IP地址，没有的话则配置VIP
-fsd_proxy_ip: ""
+fsd_proxy_ip: "{{ kube_apiserver_vip }}"
 fsd_webhook_port: 9010
 fsd_job_port: 9011
 fsd_tcp_port: 9012
