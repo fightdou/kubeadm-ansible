@@ -1,10 +1,38 @@
 ---
+- name: Gets the content of the specified row
+  shell: cat /home/crushmap.txt | grep "firstn"
+  register: my_string
+  delegate_to: "{{ groups['ceph-osds'][0] }}"
+  run_once: true
+  ignore_errors: true
+
 - name: create and set aio crush_rules
   delegate_to: "{{ groups['ceph-osds'][0] }}"
   run_once: true
   block:
-    - name: remove default crush_rule "replicated_rule"
-      command: ceph osd crush rule rm "replicated_rule"
+    - name: Export the binary file of ceph Crushmap
+      command: ceph osd getcrushmap -o /home/crushmap.bin
 
-    - name: create default crush_rule "replicated_rule" with type osd
-      command: ceph osd crush rule create-replicated replicated_rule default osd
+    - name: Parse the crushmap binary
+      command: crushtool -d /home/crushmap.bin -o /home/crushmap.txt
+
+    - name: Edit modifies the isolation domain to osd
+      lineinfile:
+        path: /home/crushmap.txt
+        regexp: "firstn"
+        line: "        step chooseleaf firstn 0 type osd"
+      when: ceph_aio
+
+    - name: Edit modifies the isolation domain to host
+      lineinfile:
+        path: /home/crushmap.txt
+        regexp: "firstn"
+        line: "        step chooseleaf firstn 0 type host"
+      when: not ceph_aio
+      
+    - name: Convert back to binary crushmap-new.bin
+      command: crushtool -c /home/crushmap.txt -o /home/crushmap-new.bin
+
+    - name: Update binaries to ceph
+      command: ceph osd setcrushmap -i /home/crushmap-new.bin
+  when: not ((not ceph_aio and host == my_string.stdout_lines) or (ceph_aio and osd == my_string.stdout_lines))
