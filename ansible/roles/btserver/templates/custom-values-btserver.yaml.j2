@@ -1,35 +1,23 @@
-# Default values for btserver.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: "{{ btserver_pod_replicaCount }}"
-priorityClassName: "{{ kube_priority_name }}"
-
 image:
-  repository: "{{ btserver_image_repository }}"
-  repository_track: "{{ btserver_image_repository_track }}"
-  pullPolicy: "{{ btserver_pod_pullPolicy }}"
+  btserver: "{{ kube_image_repository }}/btserver:{{ kube_image_tag }}"
+  btserver_track: "{{ kube_image_repository }}/btserver_track:{{ kube_image_tag }}"
+  pullPolicy: "IfNotPresent"
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "{{ btserver_image_tag }}"
   pullSecrets: "{{ docker_register_secrets_name }}"  
 
-containers:
-  name: "{{ btserver_containers_name_track }}"
-  network: "{{ btserver_hostnetwork }}"
-  port: "{{ btserver_port }}"
-  port_track: "{{ btserver_port_track }}"
-volumeMounts:
-  name: "{{ volume_mount_name }}"
-  path: "{{ volume_mount_path }}"
-  name_track: "{{ volume_mount_name }}"
-  path_track: "{{ volume_mount_path }}"
-volumes:
-  name: "{{ volumes_name }}"
-  path: "{{ volumes_path }}"
-  type: "{{ volumes_type }}"
+replicaCount: "{{ replicaCount }}"
+priorityClassName: "{{ kube_priority_name }}"
 
-nodeSelector: 
-  "{{ voi_node_role_name }}": "{{ node_role_value }}"
+service:
+  btserver: "{{ bt_server_port }}"
+  btserver_track: "{{ bt_tracker_port }}"
+
+btserver_share_path: "{{ btserver_share_path }}"
+hostNetwork: true
+
+nodeSelector:
+  {{ control_node_role_name }}: {{ node_role_value }}
+
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
@@ -44,72 +32,24 @@ affinity:
           topologyKey: "kubernetes.io/hostname"
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
 
 serviceAccount:
-  # Specifies whether a service account should be created
   create: true
-  # Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
   name: ""
 
 podAnnotations: {}
-
 podSecurityContext: {}
-  # fsGroup: 2000
-
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: "{{ btserver_svc_type }}"
-  port: 80
-
 ingress:
   enabled: false
   className: ""
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
   hosts:
     - host: chart-example.local
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#   limits:
-#    cpu: "{{ resources_limits_cpu }}"
-#    memory: "{{ resources_limits_memory }}"
-#   requests:
-#     cpu: "{{ resources_requests_cpu }}"
-#     memory: "{{ resources_requests_memory }}"
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
