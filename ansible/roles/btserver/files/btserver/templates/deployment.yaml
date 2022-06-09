@@ -29,6 +29,11 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       containers:
         - name: btserver
+          env:
+            - name: ENV_BTSERVER_BIND_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.btserver }}
@@ -43,6 +48,11 @@ spec:
           - name: btserver
             mountPath: /mnt/voi
         - name: btserver-track
+          env:
+            - name: ENV_BTSERVER_BIND_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.btserver_track }}
