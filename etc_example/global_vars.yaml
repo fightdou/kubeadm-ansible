@@ -292,6 +292,7 @@ websockify_port: 9003
 #######################
 # btserver
 #######################
+btserver_listen_ports: "6880-6889"
 btserver_image_tag: "{{ kube_image_tag }}"
 btserver_pod_pullPolicy: "IfNotPresent"
 btserver_svc_type: "ClusterIP"
