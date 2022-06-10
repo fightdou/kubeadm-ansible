@@ -32,7 +32,7 @@ ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 # Kubernetes options
 ####################
 # k8s 集群 VIP 配置
-kube_apiserver_vip: 172.18.30.126
+kube_apiserver_vip: 172.18.28.193
 # k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
