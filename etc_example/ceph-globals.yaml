@@ -75,8 +75,6 @@ unify_osd_pool_app: "rbd"
 unify_osd_pool_cursh_rule: "hdd-rule"
 unify_osd_cache_pool_cursh_rule: "ssd-rule"
 
-osd_pool_pg_num: "16"
-osd_pool_pgp_num: "16"
 ## osd_pools 字典的key 参数可自行描述
 ## pool_name 变量为要创建的pool 的名称
 ## pg_num、pgp_num 为对应pool_name 的参数
@@ -163,8 +161,8 @@ rgw_pool_default_app: "rgw"
 radosgw_pools:
   thanos_data_pools:
     pool_name: thanos_data
-    pg_num: "{{ osd_pool_pg_num }}"
-    pgp_num: "{{ osd_pool_pgp_num }}"
+    pg_num: "{{ osd_pool_default_pg_num }}"
+    pgp_num: "{{ osd_pool_default_pgp_num }}"
     pool_app: "{{ rgw_pool_default_app }}"
   thanos_index_pools:
     pool_name: thanos_index

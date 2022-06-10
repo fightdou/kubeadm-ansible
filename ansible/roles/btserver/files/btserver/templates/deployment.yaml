@@ -41,7 +41,7 @@ spec:
               port: {{ .Values.service.btserver }}
           volumeMounts:
           - name: btserver
-            mountPath: /mnt/voi
+            mountPath: {{ .Values.containerPath }}
         - name: btserver-track
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -55,7 +55,7 @@ spec:
               port: {{ .Values.service.btserver_track }}
           volumeMounts:
           - name: btserver
-            mountPath: /mnt/voi
+            mountPath: {{ .Values.containerPath }}
       volumes:
       - name: btserver
         hostPath:

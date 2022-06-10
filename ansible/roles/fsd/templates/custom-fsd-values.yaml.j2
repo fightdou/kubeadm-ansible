@@ -41,8 +41,13 @@ mount_dir:
 
 fsd_env:
   redis_password: "{{ redis_master_password }}"
-  redis_master_name: "{{ redis_master_group_name }}"
-  redis_server_address: "{{ redis_server_address }}"
+  redis_server_address: redis.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
+  mariadb_server_address: mariadb.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
+  emqx_server_address: emqx.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
+  thanos_server_address: thanos-query.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
+  fsd_job_server_address: fsd-job.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
+  trochilus_server_address: trochilus-api.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
+  btserver_server_address: btserver.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}
   netty_codec_mac: "{{ fsd_netty_codec_mac }}"
   deploy_mode: all
   proxy_ip: "{{ proxy_ip }}"
@@ -50,12 +55,17 @@ fsd_env:
   vnc_port: "{{ websockify_port }}"
   desktop_bt_port_start: "{{ bt_download_port_start }}"
   desktop_bt_port_end: "{{ bt_download_port_end }}"
-  cloud_disk_root_path: "/mnt/111"
+  share_root_path: "{{ fsd_share_root_path }}"
+  cloud_disk_root_path: "{{ fsd_share_root_path }}/111"
   cloud_disk_share_disk_path: "{{ fsd_cloud_disk_share_disk_path }}"
   cloud_disk_username: "{{ fsd_cloud_disk_user_name }}"
   cloud_disk_password: "{{ fsd_cloud_disk_password }}"
 
 fsd_job_env:
-  mariadb_host: "{{ mariadb_host_address }}:{{ mariadb_port }}"
   mariadb_username: root
   mariadb_password: "{{ mariadb_root_password }}"
+
+containerPath:
+  fsd_static: "{{ fsd_share_root_path }}/fsd/static"
+  upload: "{{ fsd_share_root_path }}/upload"
+  voi: "{{ fsd_share_root_path }}/voi"

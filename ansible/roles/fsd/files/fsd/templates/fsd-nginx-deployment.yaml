@@ -28,8 +28,10 @@ spec:
           image: {{ .Values.image.fsd_nginx }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: fsd_init_vip
-              value: "{{ .Values.fsd_env.deploy_vip }}"
+            - name: FSD_NGINX_NODEIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           command:
             - /bin/sh
             - -c
@@ -64,10 +66,16 @@ spec:
           volumeMounts:
             - name: fsd-static
               mountPath: /usr/local/dist/static
+            - name: fsd-voi
+              mountPath: "{{ .Values.containerPath.voi }}"
       volumes:
         - name: fsd-static
           hostPath:
             path: {{ .Values.mount_dir.fsd_static }}
+            type: DirectoryOrCreate
+        - name: fsd-voi
+          hostPath:
+            path: {{ .Values.mount_dir.voi_dir }}
             type: DirectoryOrCreate
       securityContext: {}
       {{- if .Values.image.pullSecrets }}

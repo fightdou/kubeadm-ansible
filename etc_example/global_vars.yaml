@@ -162,7 +162,7 @@ trochilus_support_vlan_network: false
 trochilus_libvirt_driver: kvm
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
-trochilus_api_ingress: true
+trochilus_api_ingress: false
 trochilus_voi_path: "{{ fsd_voi_dir }}"
 trochilus_voi_base_path: "/var/lib/trochilus/voi"
 
@@ -207,11 +207,13 @@ fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
 fsd_host_network: true
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
+fsd_share_root_path: "/mnt"
 vdi_desktop_num: 10000
 vdi_storage_num: 1000
 cloud_disk_num: 1000
+# 默认预留内存和 CPU
 reserved_host_cpus: 2
-reserved_host_memory_mb: 16
+reserved_host_memory_mb: 16384
 # 每个osd需要留2G内存
 ceph_reserved_host_memory_mb: 6
 cpu_allocation_ratio: 8
@@ -275,7 +277,6 @@ enable_checknet: false
 ################
 redis_storage_size: 10Gi
 redis_master_password: zhuolang@Troila@123
-redis_master_group_name: mymaster
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: true
@@ -299,6 +300,6 @@ btserver_listen_ports: "{{ bt_download_port_start }}-{{ bt_download_port_end }}"
 # VOI Options
 ##############
 only_deploy_voi: false
-voi_storage_num: ""
+voi_storage_num: 0
 voi_data_device: ""
 voi_data_directory: "{{ desktop_mount_dir }}"

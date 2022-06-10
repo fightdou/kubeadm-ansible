@@ -1,24 +1,20 @@
 global:
-  resolve_timeout: "5m"
+  resolve_timeout: "1m"
 route:
   group_by:
-    - "serverRule"
-    - "desktopRule"
+    - "alertname"
   group_wait: "10s"
-  group_interval: "10s"
-  repeat_interval: "10m"
+  group_interval: "1m"
+  repeat_interval: "100y"
   receiver: "web.hook"
 receivers:
   - name: "web.hook"
     webhook_configs:
-    - url: "http://{{ kube_apiserver_vip }}:{{ fsd_webhook_port }}/api/v1/alarm/log/webhook"
+    - url: "http://fsd-tcp.{{ helm_install_namespace }}.svc.{{ kube_dns_domain }}:{{ fsd_webhook_port }}/api/v1/alarm/log/webhook"
 inhibit_rules:
-- source_match:
-    severity: "critical"
-  target_match:
-    severity: "warning"
-  equal:
-  - "serverRule"
-  - "desktopRule"
-  - "dev"
-  - "instance"
+  - source_match:
+      severity: "critical"
+    target_match:
+      severity: "warning"
+    equal:
+      - "alertname"

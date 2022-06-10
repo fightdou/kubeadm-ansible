@@ -70,7 +70,7 @@ spec:
         volumeMounts:
         - mountPath: /alertmanager
           name: alertmanager-main-db
-        - mountPath: /etc/alertmanager/alertmanager.yaml
+        - mountPath: /etc/alertmanager/alertmanager.yml
           name: alertmanager-etc
       priorityClassName: {{ .Values.priorityClassName }}
       hostNetwork: true
@@ -89,6 +89,6 @@ spec:
       - emptyDir: {}
         name: alertmanager-main-db
       - hostPath:
-          path: {{ .Values.alertmanager_dir }}/alertmanager.yaml
+          path: {{ .Values.alertmanager_dir }}/alertmanager.yml
           type: ""
         name: alertmanager-etc
