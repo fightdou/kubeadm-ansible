@@ -67,7 +67,7 @@ spec:
             name: libvirt-etc
             readOnly: true
             subPath: libvirtd.conf
-          - mountPath: /etc/vdi_conf.ini
+          - mountPath: /etc/vdi/vdi_conf.ini
             name: libvirt-etc
             readOnly: true
             subPath: vdi_conf.ini

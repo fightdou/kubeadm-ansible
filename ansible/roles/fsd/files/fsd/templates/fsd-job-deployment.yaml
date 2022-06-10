@@ -7,15 +7,15 @@ spec:
   selector:
     matchLabels:
       type: fsd-job
-  template:
-    metadata:
-      labels:
-        type: fsd-job
   strategy:
     rollingUpdate:
       maxUnavailable: 2
       maxSurge: 0
     type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        type: fsd-job
     spec:
       affinity:
         podAntiAffinity:
