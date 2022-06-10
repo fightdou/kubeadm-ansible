@@ -34,7 +34,7 @@ nodeInfo:
 
 networkConfig:
   support_vlan_network: {{ trochilus_support_vlan_network }}
-  vlan_network_type: {% for vlan,vlan_range in vlan_network_interface.items() %}{{ 'vlan' + loop.index | string }}:{{ vlan_range }}{% if not loop.last %},{% endif %}{% endfor %}
+  vlan_network_type: {% for vlan,vlan_ranges in vlan_network_interface.items() %}{% set index = loop.index %}{% for vlan_range in vlan_ranges %}{{ 'vlan' + index | string }}:{{ vlan_range }}{% if not loop.last %},{% endif %}{% endfor %}{% endfor %}
   support_flat_network: {{ trochilus_support_flat_network }}
   flat_network_type: {% for flat in flat_network_interface %}{{ 'flat' + loop.index | string }}{% if not loop.last %},{% endif %}{% endfor %}
 
