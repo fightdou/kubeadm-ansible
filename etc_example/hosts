@@ -4,9 +4,9 @@
 # 没有bond时：nic_info = ["ens3:172.18.31.92:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
 # ceph 有ssd时: bcache_map_list=[{'cache':'/dev/nvme0n1','data':'/dev/sda /dev/sdb /dev/sdc'},{'cache':'/dev/nvme1n1','data':'/dev/sdb /dev/sdc /dev/sdd'}]
 [allnodes]
-172.18.31.92 hostname=control1 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4':'1:100',}" ceph_volume_data="['/dev/vdb']" nic_info="['ens3:172.18.31.92:1100', 'ens4::0100']"
-172.18.28.5 hostname=control2 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4': '1:100'}" ceph_volume_data="['/dev/vdb']" nic_info="['ens3:172.18.28.5:1100', 'ens4::0100']"
-172.18.30.72 hostname=control3 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4': '1:100'}" ceph_volume_data="['/dev/vdb']" nic_info="['ens3:172.18.30.72:1100', 'ens5::0100']"
+172.18.31.92 hostname=control1 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4':['1:100','1001:1000']}" ceph_volume_data="['/dev/vdb']" nic_info="['ens3:172.18.31.92:1100', 'ens4::0100']"
+172.18.28.5 hostname=control2 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4': ['1:100','1001:1000']}" ceph_volume_data="['/dev/vdb']" nic_info="['ens3:172.18.28.5:1100', 'ens4::0100']"
+172.18.30.72 hostname=control3 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4': ['1:100','1001:1000']}" ceph_volume_data="['/dev/vdb']" nic_info="['ens3:172.18.30.72:1100', 'ens5::0100']"
 
 [control]
 172.18.31.92

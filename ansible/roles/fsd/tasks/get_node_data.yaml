@@ -1,0 +1,22 @@
+---
+- name: Set init total_vcpus var
+  set_fact:
+    total_vcpus: 0
+
+- name: Set init total_mems var
+  set_fact:
+    total_mems: 0
+
+# cpu 每台暂定保留2
+- name: Set total_vcpus var
+  set_fact:
+    total_vcpus: "{{ total_vcpus | int + (hostvars[item].ansible_processor_vcpus - reserved_host_cpus) * cpu_allocation_ratio }}"
+  run_once: True
+  with_items: "{{ groups['compute'] }}"
+
+# 内存每台机器保留16
+- name: Set total_mems vars
+  set_fact:
+    total_mems: "{{ total_mems | int + ((hostvars[item].ansible_memtotal_mb - reserved_host_memory_mb) / 1024 - ceph_reserved_host_memory_mb ) | int }}"
+  run_once: True
+  with_items: "{{ groups['compute'] }}"
