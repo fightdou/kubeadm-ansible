@@ -33,10 +33,15 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: NODE_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
           command:
             - websockify
           args:
-            - {{ .Values.listenAddress }}:{{ .Values.service.port }}
+            - $(NODE_ID):{{ .Values.service.port }}
             - --token-plugin=trochilus.websockify.token_plugin.Base64TokenApi
           ports:
             - name: tcp
