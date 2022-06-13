@@ -193,6 +193,7 @@ spec:
             - "--v={{ .Values.logLevel }}"
             - "--drivername=$(DRIVER_NAME)"
             - "--drivernamespace=$(DRIVER_NAMESPACE)"
+            - "--timeout=10s"
           env:
             - name: DRIVER_NAMESPACE
               valueFrom:
@@ -220,7 +221,7 @@ spec:
             - "--metricsport={{ .Values.provisioner.httpMetrics.containerPort }}"
             - "--metricspath=/metrics"
             - "--polltime=60s"
-            - "--timeout=3s"
+            - "--timeout=10s"
           env:
             - name: CSI_ENDPOINT
               value: "unix:///csi/{{ .Values.provisionerSocketFile }}"

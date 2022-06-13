@@ -7,7 +7,7 @@ listenAddress: {{ fsd_proxy_ip }}
 
 image:
   repository: {{ kube_image_repository }}/websockify
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: {{ kube_image_tag }}
 

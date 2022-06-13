@@ -138,6 +138,7 @@ spec:
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--v={{ .Values.logLevel }}"
             - "--drivername=$(DRIVER_NAME)"
+            - "--timeout=10s"
 {{- if .Values.provisioner.profiling.enabled }}
             - "--enableprofiling={{ .Values.provisioner.profiling.enabled }}"
 {{- end }}
@@ -182,7 +183,7 @@ spec:
             - "--metricsport={{ .Values.provisioner.httpMetrics.containerPort }}"
             - "--metricspath=/metrics"
             - "--polltime=60s"
-            - "--timeout=3s"
+            - "--timeout=10s"
           env:
             - name: CSI_ENDPOINT
               value: "unix:///csi/{{ .Values.provisionerSocketFile }}"

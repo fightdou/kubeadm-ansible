@@ -64,7 +64,7 @@ docker_dpkg_path: /opt/offline/deb-packages
 ##############
 helm_install_namespace: default
 helm_charts_dir: /opt/helm-charts
-helm_wait_timeout: 300s
+helm_wait_timeout: 600s
 
 ################
 # Harbor options

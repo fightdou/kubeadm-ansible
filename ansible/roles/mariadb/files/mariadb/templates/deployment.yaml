@@ -55,11 +55,11 @@ spec:
                   password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
               fi
               mysqladmin status -uroot -p"${password_aux}"
-          failureThreshold: 3
-          initialDelaySeconds: 120
-          periodSeconds: 10
+          failureThreshold: 10
+          initialDelaySeconds: 60
+          periodSeconds: 60
           successThreshold: 1
-          timeoutSeconds: 1
+          timeoutSeconds: 30
         readinessProbe:
           exec:
             command:
@@ -71,11 +71,11 @@ spec:
                   password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
               fi
               mysqladmin status -uroot -p"${password_aux}"
-          failureThreshold: 3
+          failureThreshold: 10
           initialDelaySeconds: 30
-          periodSeconds: 10
+          periodSeconds: 30
           successThreshold: 1
-          timeoutSeconds: 1
+          timeoutSeconds: 30
         name: mariadb
         ports:
         - containerPort: {{ .Values.service.mariadb.port }}

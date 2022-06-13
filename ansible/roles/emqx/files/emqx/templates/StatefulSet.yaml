@@ -207,15 +207,17 @@ spec:
               path: /status
               port: {{ .Values.emqxConfig.EMQX_MANAGEMENT__LISTENER__HTTP | default 8082 }}
             initialDelaySeconds: 10
-            periodSeconds: 5
+            periodSeconds: 10
             failureThreshold: 30
+            timeoutSeconds: 10
           livenessProbe:
             httpGet:
               path: /status
               port: {{ .Values.emqxConfig.EMQX_MANAGEMENT__LISTENER__HTTP | default 8082 }}
             initialDelaySeconds: 60
-            periodSeconds: 30
+            periodSeconds: 60
             failureThreshold: 10
+            timeoutSeconds: 10
           lifecycle:
             preStop:
               exec:

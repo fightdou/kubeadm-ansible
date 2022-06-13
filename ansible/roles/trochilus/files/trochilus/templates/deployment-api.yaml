@@ -104,8 +104,8 @@ spec:
               path: /
               port: {{ .Values.service.trochilus_api.port }}
               scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 50
+            failureThreshold: 5
+            initialDelaySeconds: 60
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15
@@ -114,9 +114,9 @@ spec:
               path: /
               port: {{ .Values.service.trochilus_api.port }}
               scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 50
-            periodSeconds: 60
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 15
           securityContext:
