@@ -42,9 +42,19 @@ spec:
           livenessProbe:
             tcpSocket:
               port: {{ .Values.service.port }}
+            failureThreshold: 5
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
           readinessProbe:
             tcpSocket:
               port: {{ .Values.service.port }}
+            failureThreshold: 5
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 15
           resources: {}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

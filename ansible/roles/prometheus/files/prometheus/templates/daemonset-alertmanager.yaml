@@ -42,9 +42,9 @@ spec:
             path: /-/healthy
             port: web
             scheme: HTTP
-          periodSeconds: 10
+          periodSeconds: 60
           successThreshold: 1
-          timeoutSeconds: 3
+          timeoutSeconds: 10
         name: alertmanager
         ports:
         - containerPort: {{ .Values.service.alertmanager.port }}
@@ -62,10 +62,10 @@ spec:
             path: /-/ready
             port: web
             scheme: HTTP
-          initialDelaySeconds: 3
-          periodSeconds: 5
+          initialDelaySeconds: 10
+          periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 3
+          timeoutSeconds: 10
         resources: {}
         volumeMounts:
         - mountPath: /alertmanager

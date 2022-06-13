@@ -44,9 +44,9 @@ spec:
               path: /
               port: {{ .Values.service.fsd_nginx.port }}
               scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 50
-            periodSeconds: 60
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 15
           readinessProbe:
@@ -54,8 +54,8 @@ spec:
               path: /
               port: {{ .Values.service.fsd_nginx.port }}
               scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 50
+            failureThreshold: 5
+            initialDelaySeconds: 60
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15

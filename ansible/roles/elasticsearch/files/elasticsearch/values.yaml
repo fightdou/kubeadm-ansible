@@ -228,11 +228,11 @@ terminationGracePeriod: 120
 sysctlVmMaxMapCount: 262144
 
 readinessProbe:
-  failureThreshold: 3
-  initialDelaySeconds: 10
+  failureThreshold: 5
+  initialDelaySeconds: 30
   periodSeconds: 10
-  successThreshold: 3
-  timeoutSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 20
 
 # https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-health.html#request-params wait_for_status
 clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
