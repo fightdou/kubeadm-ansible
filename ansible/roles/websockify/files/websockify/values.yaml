@@ -2,7 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
 priorityClassName: ""
 
 image:
@@ -15,6 +14,7 @@ imagePullSecrets:
   - name: "docker-register-secrets"
 nameOverride: ""
 fullnameOverride: ""
+tokenSource: http://fsd-nginx:9000/api/v1
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -77,9 +77,7 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: 
-    control_role: enabled
+nodeSelector:
+  control_role: enabled
 
 tolerations: []
-
-affinity: {}

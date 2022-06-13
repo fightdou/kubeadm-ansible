@@ -1,13 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: {{ include "websockify.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "websockify.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "websockify.selectorLabels" . | nindent 6 }}
@@ -20,13 +18,6 @@ spec:
       labels:
         {{- include "websockify.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "websockify.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -42,7 +33,8 @@ spec:
             - websockify
           args:
             - $(NODE_ID):{{ .Values.service.port }}
-            - --token-plugin=trochilus.websockify.token_plugin.Base64TokenApi
+            - --token-plugin=trochilus.websockify.token_plugin.Base64JsonTokenRemoteApi
+            - --token-source={{ .Values.tokenSource }}
           ports:
             - name: tcp
               containerPort: {{ .Values.service.port }}
@@ -53,20 +45,22 @@ spec:
           readinessProbe:
             tcpSocket:
               port: {{ .Values.service.port }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          resources: {}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "websockify.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       priorityClassName: {{ .Values.priorityClassName }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
