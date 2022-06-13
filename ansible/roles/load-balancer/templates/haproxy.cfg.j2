@@ -67,7 +67,7 @@ listen emqx
 listen websockify
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ websockify_port }}
-    balance {{ lb_haproxy_balance_alg }}
+    balance sourc
     option tcplog
 {% for host in (groups['websockify']) %}
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ websockify_port }} check inter 2000 rise 2 fall 5
