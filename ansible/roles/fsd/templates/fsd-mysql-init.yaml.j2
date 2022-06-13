@@ -19,7 +19,7 @@ spec:
             - name: fsd-init-static
               mountPath: /home/tmp
             - name: fsd-init-trochilus
-              mountPath: /home/trochilus/trochilus.sql
+              mountPath: /home/trochilus
       restartPolicy: Never
       imagePullSecrets:
         - name: {{ docker_register_secrets_name }}
