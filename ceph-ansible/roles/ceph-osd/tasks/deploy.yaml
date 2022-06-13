@@ -211,8 +211,6 @@
 
 - name: include type_osd_crush_rules.yaml
   include_tasks: type_osd_crush_rules.yaml
-  when:
-    - ceph_aio | bool
 
 - name: include trochilus_config.yml
   include_tasks: trochilus_config.yml
