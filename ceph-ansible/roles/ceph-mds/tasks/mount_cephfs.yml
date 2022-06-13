@@ -18,10 +18,10 @@
   become: true
   mount:
     path: "{{ desktop_mount_dir }}"
-    src: "{{ mon_hosts }}:/"
+    src: "id=admin,conf=/etc/ceph/ceph.conf"
     state: mounted
-    fstype: ceph
-    opts: name=admin,secret={{ mons_secret.client_admin.client_admin_secret }},_netdev,noatime
+    fstype: fuse.ceph
+    opts: default
   register: result
   until: result is success
   retries: 10

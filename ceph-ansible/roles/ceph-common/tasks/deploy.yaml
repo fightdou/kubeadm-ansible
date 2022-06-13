@@ -52,6 +52,7 @@
       - ceph-mds
       - ceph
       - radosgw
+      - ceph-fuse
 
 - name: Install mon deb packages
   apt:
