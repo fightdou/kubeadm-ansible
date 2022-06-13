@@ -28,12 +28,3 @@ Usage:
         {{- tpl (.value | toYaml) .context }}
     {{- end }}
 {{- end -}}
-
-{{/*
-Return the Database host
-*/}}
-{{- define "mariadb.databaseHost" -}}
-{{- $releaseNamespace := .Release.Namespace }}
-{{- $clusterDomain := .Values.clusterDomainSuffix }}
-{{- printf "%s.%s.svc.%s" "mariadb" $releaseNamespace $clusterDomain -}}
-{{- end -}}
