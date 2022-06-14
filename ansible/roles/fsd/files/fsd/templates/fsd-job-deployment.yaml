@@ -7,6 +7,11 @@ spec:
   selector:
     matchLabels:
       type: fsd-job
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -31,8 +36,8 @@ spec:
               protocol: TCP
               name: {{ .Values.service.fsd_job.name }}
           env:
-            - name: ENV_FSD_COMMON_JOB_MYSQL_HOST
-              value: "{{ .Values.fsd_job_env.mariadb_host }}"
+            - name: ENV_FSD_COMMON_JOB_MYSQL_SVC
+              value: "{{ .Values.fsd_env.mariadb_server_address }}"
             - name: ENV_FSD_COMMON_JOB_MYSQL_USERNAME
               value: "{{ .Values.fsd_job_env.mariadb_username }}"
             - name: ENV_FSD_COMMON_JOB_MYSQL_PASSWORD

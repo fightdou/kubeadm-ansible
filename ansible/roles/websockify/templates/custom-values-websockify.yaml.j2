@@ -2,13 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: {{ websockify_replicaCount }}
 priorityClassName: {{ kube_priority_name }}
 listenAddress: {{ fsd_proxy_ip }}
 
 image:
   repository: {{ kube_image_repository }}/websockify
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: {{ kube_image_tag }}
 
@@ -16,6 +15,7 @@ imagePullSecrets:
   - name: {{ docker_register_secrets_name }}
 nameOverride: ""
 fullnameOverride: ""
+tokenSource: http://fsd-nginx:{{ fsd_nginx_port }}/api/v1
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -72,5 +72,3 @@ nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
 
 tolerations: []
-
-affinity: {}

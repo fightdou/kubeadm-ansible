@@ -37,22 +37,22 @@ spec:
               - bash
               - -c
               - /usr/bin/virsh list
-          failureThreshold: 3
+          failureThreshold: 10
           initialDelaySeconds: 30
           periodSeconds: 60
           successThreshold: 1
-          timeoutSeconds: 5
+          timeoutSeconds: 30
         readinessProbe:
           exec:
             command:
               - bash
               - -c
               - /usr/bin/virsh list
-          failureThreshold: 3
-          initialDelaySeconds: 15
-          periodSeconds: 60
+          failureThreshold: 10
+          initialDelaySeconds: 30
+          periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 5
+          timeoutSeconds: 30
         securityContext:
           privileged: true
           runAsUser: 0
@@ -67,7 +67,7 @@ spec:
             name: libvirt-etc
             readOnly: true
             subPath: libvirtd.conf
-          - mountPath: /etc/vdi_conf.ini
+          - mountPath: /etc/vdi/vdi_conf.ini
             name: libvirt-etc
             readOnly: true
             subPath: vdi_conf.ini

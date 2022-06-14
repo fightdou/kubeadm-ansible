@@ -63,25 +63,25 @@ listen emqx
 {% endfor %}
 {% endif %}
 
-{% if enable_prometheus | bool %}
-listen prometheus
+{% if enable_websockify | bool %}
+listen websockify
     mode tcp
-    bind {{ kube_apiserver_vip }}:{{ prometheus_server_port }}
-    balance {{ lb_haproxy_balance_alg }}
+    bind {{ fsd_proxy_ip }}:{{ websockify_port }}
+    balance source
     option tcplog
-{% for host in (groups['prometheus']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }}:{{ prometheus_server_port }} check inter 2000 rise 2 fall 5
+{% for host in (groups['websockify']) %}
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ websockify_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
 {% endif %}
 
-{% if enable_trochilus | bool %}
-listen trochilus
+{% if enable_fsd | bool %}
+listen fsd-nginx
     mode tcp
-    bind {{ kube_apiserver_vip }}:{{ trochilus_api_listen_port }}
+    bind {{ fsd_proxy_ip }}:{{ fsd_nginx_port }}
     balance {{ lb_haproxy_balance_alg }}
     option tcplog
-{% for host in (groups['trochilus-api']) %}
-    server {{ host }} {{ 'api' | filter_address(host) }}:{{ trochilus_api_listen_port }} check inter 2000 rise 2 fall 5
+{% for host in (groups['fsd']) %}
+    server {{ host }} {{ 'api' | filter_address(host) }}:{{ fsd_nginx_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
 {% endif %}
 
@@ -94,9 +94,7 @@ listen btserver
 {% for host in (groups['btserver']) %}
     server {{ host }} {{ 'api' | filter_address(host) }} check port {{ btserver_listen_ports }} inter 2000 rise 2 fall 5
 {% endfor %}
-{% endif %}
 
-{% if enable_btserver | bool %}
 listen btserverport
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ bt_server_port }}
@@ -105,9 +103,7 @@ listen btserverport
 {% for host in (groups['btserver']) %}
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ bt_server_port }} check inter 2000 rise 2 fall 5
 {% endfor %}
-{% endif %}
 
-{% if enable_btserver | bool %}
 listen btservertrackerport
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ bt_tracker_port }}

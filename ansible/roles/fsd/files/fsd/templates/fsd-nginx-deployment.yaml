@@ -7,6 +7,11 @@ spec:
   selector:
     matchLabels:
       fsd: web
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
   replicas: {{ .Values.replica }}
   template:
     metadata:
@@ -28,8 +33,10 @@ spec:
           image: {{ .Values.image.fsd_nginx }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: fsd_init_vip
-              value: "{{ .Values.fsd_env.deploy_vip }}"
+            - name: FSD_NGINX_NODEIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           command:
             - /bin/sh
             - -c
@@ -42,9 +49,9 @@ spec:
               path: /
               port: {{ .Values.service.fsd_nginx.port }}
               scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 50
-            periodSeconds: 60
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 15
           readinessProbe:
@@ -52,8 +59,8 @@ spec:
               path: /
               port: {{ .Values.service.fsd_nginx.port }}
               scheme: HTTP
-            failureThreshold: 3
-            initialDelaySeconds: 50
+            failureThreshold: 5
+            initialDelaySeconds: 60
             periodSeconds: 60
             successThreshold: 1
             timeoutSeconds: 15
@@ -64,10 +71,16 @@ spec:
           volumeMounts:
             - name: fsd-static
               mountPath: /usr/local/dist/static
+            - name: fsd-voi
+              mountPath: "{{ .Values.containerPath.voi }}"
       volumes:
         - name: fsd-static
           hostPath:
             path: {{ .Values.mount_dir.fsd_static }}
+            type: DirectoryOrCreate
+        - name: fsd-voi
+          hostPath:
+            path: {{ .Values.mount_dir.voi_dir }}
             type: DirectoryOrCreate
       securityContext: {}
       {{- if .Values.image.pullSecrets }}

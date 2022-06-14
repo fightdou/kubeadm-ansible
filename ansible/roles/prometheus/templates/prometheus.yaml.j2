@@ -5,6 +5,10 @@ global:
   external_labels:
     monitor: '{{ ansible_hostname }}'
 alerting:
+  alert_relabel_configs:
+  - source_labels:
+    regex: "monitor"
+    action: labeldrop
   alertmanagers:
     - static_configs:
       - targets:

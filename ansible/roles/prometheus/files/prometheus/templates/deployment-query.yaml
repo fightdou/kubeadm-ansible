@@ -5,6 +5,11 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.replica }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
   selector:
     matchLabels:
       app.kubernetes.io/name: thanos-query
@@ -34,6 +39,9 @@ spec:
           httpGet:
             path: /-/healthy
             port: http
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 10
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true

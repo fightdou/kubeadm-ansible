@@ -27,7 +27,7 @@ data:
     enabled_volume_backends = {{ .Values.conf.api_settings.enabled_volume_backends }}
     supported_instance_metadatas = k1, k2
     [database]
-    connection = mysql+pymysql://{{ .Values.mariadb.database }}:{{ .Values.mariadb.password }}@{{ include "mariadb.databaseHost" . }}:3306/{{ .Values.mariadb.database }}
+    connection = mysql+pymysql://{{ .Values.mariadb.database }}:{{ .Values.mariadb.password }}@mariadb:3306/{{ .Values.mariadb.database }}
     [image_settings]
     enabled_image_store = {{ .Values.conf.image_settings.enabled_image_store }}
     rbd_store_config_file = /etc/ceph/ceph.conf

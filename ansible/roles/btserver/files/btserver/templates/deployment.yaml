@@ -6,6 +6,11 @@ metadata:
     {{- include "btserver.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
   selector:
     matchLabels:
       {{- include "btserver.selectorLabels" . | nindent 6 }}
@@ -29,6 +34,11 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       containers:
         - name: btserver
+          env:
+            - name: ENV_BTSERVER_BIND_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.btserver }}
@@ -41,8 +51,13 @@ spec:
               port: {{ .Values.service.btserver }}
           volumeMounts:
           - name: btserver
-            mountPath: /mnt/voi
+            mountPath: {{ .Values.containerPath }}
         - name: btserver-track
+          env:
+            - name: ENV_BTSERVER_BIND_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.btserver_track }}
@@ -55,7 +70,7 @@ spec:
               port: {{ .Values.service.btserver_track }}
           volumeMounts:
           - name: btserver
-            mountPath: /mnt/voi
+            mountPath: {{ .Values.containerPath }}
       volumes:
       - name: btserver
         hostPath:

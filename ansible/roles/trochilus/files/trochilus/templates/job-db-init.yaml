@@ -44,7 +44,7 @@ spec:
           - name: DB_USER_PASSWORD
             value: "{{ .Values.mariadb.password }}"
           - name: DB_HOST_NAME
-            value: {{ include "mariadb.databaseHost" . }}
+            value: mariadb
           - name: DB_ROOT_PASSWORD
             value: "{{ .Values.mariadb.root_password }}"
         volumeMounts:

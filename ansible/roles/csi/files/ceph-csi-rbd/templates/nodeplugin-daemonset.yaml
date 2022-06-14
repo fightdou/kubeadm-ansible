@@ -74,6 +74,7 @@ spec:
             - "--csi-addons-endpoint=$(CSI_ADDONS_ENDPOINT)"
             - "--v={{ .Values.logLevel }}"
             - "--drivername=$(DRIVER_NAME)"
+            - "--timeout=10s"
 {{- if .Values.topology.enabled }}
             - "--domainlabels={{ .Values.topology.domainLabels | join "," }}"
 {{- end }}
@@ -150,7 +151,7 @@ spec:
             - "--metricsport={{ .Values.nodeplugin.httpMetrics.containerPort }}"
             - "--metricspath=/metrics"
             - "--polltime=60s"
-            - "--timeout=3s"
+            - "--timeout=10s"
           env:
             - name: CSI_ENDPOINT
               value: "unix:///csi/{{ .Values.pluginSocketFile }}"

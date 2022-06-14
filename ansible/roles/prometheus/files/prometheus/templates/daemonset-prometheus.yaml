@@ -35,8 +35,17 @@ spec:
         - containerPort: {{ .Values.service.prometheus.port }}
           name: web
           protocol: TCP
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /-/healthy
+            port: web
+            scheme: HTTP
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 10
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 5
           httpGet:
             path: /-/ready
             port: web
