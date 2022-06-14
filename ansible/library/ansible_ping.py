@@ -2,13 +2,15 @@ from sys import stdout
 from ansible.module_utils.basic import *
 from pkg_resources import require
 
-def build_ping_cmd(interface, ipaddress, times):
+def build_ping_cmd(times, interval, interface, ipaddress):
 
     cmd = ['ping',]
 
     base_cmd = [
         '-c',
         times,
+        '-i',
+        interval,
         '-I',
         interface,
         ipaddress
@@ -24,6 +26,7 @@ def main():
             ipaddress=dict(type='str', required=True),
             interface=dict(type='str', required=True),
             times=dict(type='str',default='3'),
+            interval=dict(type='str',default='1'),
             nettype=dict(type='str', required=True)
         ),
         supports_check_mode=True,
@@ -33,12 +36,13 @@ def main():
     interface = module.params.get('interface')
     times = module.params.get('times')
     nettype = module.params.get('nettype')
+    interval = module.params.get('interval')
     address_list = ipaddress.split(',')
     ping_info = []
     for address in address_list:
         if address:
             address_info = address.split('_')[0]
-            cmd = build_ping_cmd(interface, address_info, times)
+            cmd = build_ping_cmd(times, interval, interface, address_info )
             rc, out, err = module.run_command(cmd)
             dest_host = address.split('_')[1]
             ping_info_dict = { 'ipaddress': address_info, 'interface': interface, 'dest_host': dest_host, 'nettype':nettype, 'status':rc, 'out': out}

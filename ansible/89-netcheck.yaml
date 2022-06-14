@@ -9,8 +9,15 @@
         tags: checknet }
 
 
-- name: clint test
+# - name: del route
+#   command: route del -host "{{hostvars[groups.allnodes[0]]['ansible_'+item].ipv4.address}}" metric 100 dev "{{ item }}"
+#   with_items: "{{ interface }}"
+#   when: inventory_hostname != groups.allnodes[0]
+  # ignore_errors: yes
+
+- name: ping and iperf3 output
   hosts: allnodes
+  serial: 1
   tasks:
     - name: iperf client
       vars:
@@ -30,16 +37,6 @@
         extended: yes
       register: netresult
 
-    # - name: del route
-    #   command: route del -host "{{hostvars[groups.allnodes[0]]['ansible_'+item].ipv4.address}}" metric 100 dev "{{ item }}"
-    #   with_items: "{{ interface }}"
-    #   when: inventory_hostname != groups.allnodes[0]
-      # ignore_errors: yes
-
-- name: ping and iperf3 output
-  hosts: allnodes
-  serial: 1
-  tasks:
     - name: Echo ping res to yml
       blockinfile:
         create: yes
@@ -79,9 +76,3 @@
         - "{{ netresult.results }}"
       delegate_to: "{{ groups.allnodes[0] }}"
       when: inventory_hostname != groups.allnodes[0]
-
-    # - name: _________________________________________________________________________________________
-    #   debug:
-    #     msg: "{{ item.param_iperf3_res[0] }}"
-    #   with_items: "{{ netresult.results }}"
-    #   when: inventory_hostname != groups.allnodes[0]
