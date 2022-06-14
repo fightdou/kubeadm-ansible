@@ -22,7 +22,8 @@
     ipaddress: "{% for host in groups['allnodes'] %}{{ item | filter_address(host) }}_{{ host }}{% if not loop.last %},{% endif %}{% endfor %}"
     interface: "{{ item | filter_interface_name }}"
     nettype: "{{ item }}"
-    times: 3
+    interval: 0.01
+    times: 100
   with_items: "{{ ping_interface }}"
   register: res_ping_reg
 
