@@ -9,7 +9,7 @@ spec:
       type: fsd-job
   strategy:
     rollingUpdate:
-      maxUnavailable: 2
+      maxUnavailable: 1
       maxSurge: 0
     type: RollingUpdate
   template:

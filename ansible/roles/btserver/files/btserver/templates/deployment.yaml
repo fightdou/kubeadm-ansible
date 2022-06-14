@@ -6,6 +6,11 @@ metadata:
     {{- include "btserver.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
   selector:
     matchLabels:
       {{- include "btserver.selectorLabels" . | nindent 6 }}
