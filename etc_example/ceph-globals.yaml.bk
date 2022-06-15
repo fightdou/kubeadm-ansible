@@ -1,0 +1,199 @@
+---
+###########
+# config #
+###########
+## ceph 集群名称
+cluster: ceph
+
+## ceph 集群的fsid
+fsid: 116d4de8-fd14-491f-811f-c1bdd8fac12a
+
+## ceph keyring 认证
+cephx: true
+
+## ceph 管理网段
+ceph_public_network: 172.18.28.0/22
+ceph_cluster_network: 172.18.28.0/22
+
+## ceph osd 最小副本数 和 最大副本数
+osd_pool_default_size: 2
+osd_pool_default_min_size: 1
+
+## ceph pg、pgp组数量
+osd_pool_default_pg_num: 16
+osd_pool_default_pgp_num: 16
+
+## 默认关闭所有debug 配置项
+ceph_config_debug_default: "0/0"
+
+images_pool_pg_num: 16
+images_pool_pgp_num: "{{ images_pool_pg_num }}"
+volumes_poll_pg_num: 16
+volumes_poll_pgp_num: "{{ volumes_poll_pg_num }}"
+cephfs_pool_default_pg_num: 16
+cephfs_pool_default_pgp_num: "{{ cephfs_pool_default_pg_num }}"
+
+###########
+# mons #
+###########
+
+###########
+# osds #
+###########
+## osd service 存储类型
+objectstore: bluestore
+
+## 对接 openstack config
+trochilus_config: true
+
+## 是否开启aio模式，默认为false
+## aio模式意味着osd节点小于3(一台或两台的集群都认为是aio)，
+## aio模式下默认规则采取host隔离，3副本池将永久降级且安全性降低，
+## 开启该选项用以改变隔离域为osd级别。
+ceph_aio: false
+
+## 是否开启 bcache 模式，不能与 cache_tiering 同时开启
+## 需要在ceph-multiplenodes 填入 bcache_map_list 的列表参数。
+bcache: false
+
+## 设置bcache缓存模式,默认为写回模式，
+## 可选参数分别是: writethrough writeback writearound
+bcache_mode: writeback
+
+## 设置bcache缓存盘阈值，默认为40%
+bcache_writeback_percent: 40
+
+## 设置缓存最小回刷速率,默认为2048。
+bcache_writeback_rate_minimum: 2048
+
+## 是否开启pool application 功能。
+## 必要变量 pool_app
+osd_pool_application: true
+
+## osd_pools 的变量如需自定义，自行修改其字典参数。
+unify_osd_pool_app: "rbd"
+unify_osd_pool_cursh_rule: "hdd-rule"
+unify_osd_cache_pool_cursh_rule: "ssd-rule"
+
+## osd_pools 字典的key 参数可自行描述
+## pool_name 变量为要创建的pool 的名称
+## pg_num、pgp_num 为对应pool_name 的参数
+## pool_cursh_rule 开启cache_tiering 缓存池功能后，需要为其指定cursh_rule 创建的规则
+## cache_name 开启cache_tiering 缓存池功能后，指定创建的缓存池，对应必要参数为cache_pg_num、cache_pgp_num、cache_pool_cursh_rule
+osd_pools:
+  images_pools:
+    pool_name: images
+    pg_num: "{{ images_pool_pg_num }}"
+    pgp_num: "{{ images_pool_pgp_num }}"
+    pool_app: "{{ unify_osd_pool_app }}"
+    pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
+  volume_pools:
+    pool_name: volumes
+    pg_num: "{{ volumes_poll_pg_num }}"
+    pgp_num: "{{ volumes_poll_pgp_num }}"
+    pool_app: "{{ unify_osd_pool_app }}"
+    pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
+  kubernetes_pools:
+    pool_name: kubernetes
+    pg_num: "16"
+    pgp_num: "16"
+    pool_app: "{{ unify_osd_pool_app }}"
+    pool_cursh_rule: "{{ unify_osd_pool_cursh_rule }}"
+
+###########
+# mgrs #
+###########
+
+## mgr service dashboard
+## mgr_dashboard_login_pass 自动生成在/etc/kolla/passwords.yml
+mgr_dashboard: "no"
+mgr_dashboard_login_name: admin
+## 假设mgr_dashboard_ssl=false ，mgr_dashboard_port 生效。
+mgr_dashboard_ssl: false
+mgr_dashboard_port: 8443
+mgr_dashboard_ssl_port: 8443
+
+###########
+# mds #
+###########
+desktop_mount_dir: "/data/fsd"
+desktop_mount_shell_dir: "/etc/ceph/cephmount"
+cephmount_service_dir: "/usr/lib/systemd/system/"
+
+cephfs_pools:
+  cephfs_metadata_pools:
+    pool_name: cephfs_metadata
+    pg_num: "32"
+    pgp_num: "32"
+  cephfs_data_pools:
+    pool_name: cephfs_data
+    pg_num: "{{ cephfs_pool_default_pg_num }}"
+    pgp_num: "{{ cephfs_pool_default_pgp_num }}"
+
+
+###########
+# radosgw #
+###########
+
+## 部署ceph-radosgw服务
+deploy_radosgw: false
+
+radosgw_port: "7408"
+
+## 对接S3对象存储
+deploy_s3cmd: true
+create_admin_user: true
+create_thanos_user: true
+rgw_zonegroup: "default"
+rgw_zone: "default"
+rgw_placement_id: "thanos"
+admin_user_id: "admin"
+admin_display_name: "admin role of this rgw cluster"
+admin_caps: "buckets=*;users=*;usage=*;metadata=*"
+thanos_user_uid: "thanos"
+thanos_user_access_key: "thanos"
+thanos_user_secret_key: "thanos"
+
+rgw_pool_default_pg_num: 16
+rgw_pool_default_pgp_num: 16
+rgw_pool_default_app: "rgw"
+
+radosgw_pools:
+  thanos_data_pools:
+    pool_name: thanos_data
+    pg_num: "{{ osd_pool_default_pg_num }}"
+    pgp_num: "{{ osd_pool_default_pgp_num }}"
+    pool_app: "{{ rgw_pool_default_app }}"
+  thanos_index_pools:
+    pool_name: thanos_index
+    pg_num: "{{ rgw_pool_default_pg_num }}"
+    pgp_num: "{{ rgw_pool_default_pgp_num }}"
+    pool_app: "{{ rgw_pool_default_app }}"
+  thanos_non_ec_pools:
+    pool_name: thanos_non_ec
+    pg_num: "{{ rgw_pool_default_pg_num }}"
+    pgp_num: "{{ rgw_pool_default_pgp_num }}"
+    pool_app: "{{ rgw_pool_default_app }}"
+
+## monitor service keyring和subsystemd权限
+mons_secret:
+  mon:
+    mon_secret: AQAhettdAAAAABAAh2KuoKPIBz2D3wJIkC8jhw==
+    mon_ceph_authtool_cap:
+      mon: allow *
+  client_admin:
+    client_admin_secret: AQAhettdAAAAABAAEER/quKJylhED6vQx7c8Vw==
+    client_admin_ceph_authtool_cap:
+      mon: allow *
+      osd: allow *
+      mds: allow *
+      mgr: allow *
+  client_bootstrap:
+    client_bootstrap_osd_secret: AQAiettdAAAAABAAQvMLY+7LEZwGdGHGCTv+1g==
+    client_bootstrap_osd_ceph_authtool_cap:
+      mon: allow profile bootstrap-osd
+
+
+#密码待放入password.yaml文件
+mgr_dashboard_login_pass: "YAd2lqIiujazweP8"
+rgw_admin_password: "YAd2lqIiujazweP8"
