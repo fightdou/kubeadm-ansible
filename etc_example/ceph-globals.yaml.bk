@@ -46,6 +46,9 @@ objectstore: bluestore
 ## 对接 openstack config
 trochilus_config: true
 
+## 资源池pg自动平衡 on/off
+pg_autoscale_mode: "off"
+
 ## 是否开启aio模式，默认为false
 ## aio模式意味着osd节点小于3(一台或两台的集群都认为是aio)，
 ## aio模式下默认规则采取host隔离，3副本池将永久降级且安全性降低，
