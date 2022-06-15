@@ -169,8 +169,8 @@ trochilus_voi_base_path: "/var/lib/trochilus/voi"
 #################
 # Mariadb Options
 #################
-mariadb_root_password: zhuolang@Troila@123
-mariadb_trochilus_password: zhuolang@Troila@123
+mariadb_root_password: 123456
+mariadb_trochilus_password: 123456
 mariadb_port: 3306
 mariadb_storage_size: 10Gi
 mariadb_toleration_seconds: 10
