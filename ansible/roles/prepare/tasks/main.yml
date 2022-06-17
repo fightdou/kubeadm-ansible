@@ -1,5 +1,18 @@
+- name: get offline info
+  docker_container_info:
+    name: offline-deb-repo
+  register: offline_info
+  delegate_to: "{{ groups['baremetal'][0] }}"
+
+- name: get registry info
+  docker_container_info:
+    name: registry
+  register: registry_info
+  delegate_to: "{{ groups['baremetal'][0] }}"
+
 - import_tasks: container_prepare.yaml
   run_once: True
   delegate_to: "{{ groups['baremetal'][0] }}"
+  when: not offline_info.exists or not registry_info.exists
 
 - import_tasks: baremetal_prepare.yaml
