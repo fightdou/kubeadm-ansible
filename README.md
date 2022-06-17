@@ -6,7 +6,7 @@
 
 ## 修改 globals 文件
 
-需修改 ceph-globals.yaml 与 globals_vars.yaml
+修改 ceph-globals.yaml 与 globals_vars.yaml
 
 ## 安装 ansible
 
@@ -19,7 +19,14 @@ apt install ansible
 
 ## 部署脚本
 
-首先 部署 ceph 环境
+首先加载离线资源
+
+```
+cd kubeadm-ansible
+ansible-playbook -i etc_example/hosts -e @etc_example/global_vars.yaml -e @etc_example/ceph-globals.yaml ansible/91-prepare.yaml
+```
+
+部署 ceph 环境
 
 ```
 cd kubeadm-ansible

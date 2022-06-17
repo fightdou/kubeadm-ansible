@@ -15,17 +15,19 @@
     mode: 0755
 
 - name: Mount cephfs share dir
+  command: "ceph-fuse -m {{ mon_hosts }}  {{ desktop_mount_dir }}" 
   become: true
-  mount:
-    path: "{{ desktop_mount_dir }}"
-    src: "id=admin,conf=/etc/ceph/ceph.conf"
-    state: mounted
-    fstype: fuse.ceph
-    opts: default
   register: result
   until: result is success
   retries: 10
   delay: 6
+
+- name: echo cephfs mount to fstab
+  blockinfile:
+    marker: "# ceph_fuse mount"
+    path: "/etc/fstab"
+    block: |
+      id=admin,conf=/etc/ceph/ceph.conf {{ desktop_mount_dir }} fuse.ceph defaults 0 0
 
 - name: Make cephfs shell dir
   become: true

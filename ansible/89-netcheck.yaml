@@ -9,8 +9,15 @@
         tags: checknet }
 
 
-- name: clint test
+# - name: del route
+#   command: route del -host "{{hostvars[groups.allnodes[0]]['ansible_'+item].ipv4.address}}" metric 100 dev "{{ item }}"
+#   with_items: "{{ interface }}"
+#   when: inventory_hostname != groups.allnodes[0]
+  # ignore_errors: yes
+
+- name: ping and iperf3 output
   hosts: allnodes
+  serial: 1
   tasks:
     - name: iperf client
       vars:
@@ -30,11 +37,28 @@
         extended: yes
       register: netresult
 
-    # - name: del route
-    #   command: route del -host "{{hostvars[groups.allnodes[0]]['ansible_'+item].ipv4.address}}" metric 100 dev "{{ item }}"
-    #   with_items: "{{ interface }}"
-    #   when: inventory_hostname != groups.allnodes[0]
-      # ignore_errors: yes
+    - name: Echo ping res to yml
+      blockinfile:
+        create: yes
+        marker: "# {{ item.nettype }} {{ item.uuid }} "
+        path: "{{ netcheck_path }}/echoping.yml"
+        block: |
+          - nettype: {{ item.nettype }}
+            mtu: {{ hostvars[inventory_hostname]['ansible_' + item.nettype | filter_interface_name ].mtu }}
+            speed: {{ hostvars[inventory_hostname]['ansible_' + item.nettype | filter_interface_name ].speed }}
+            source_host: {{ hostname }}
+            source_interface: {{ item.nettype | filter_interface_name }}
+            source_interface_address: {{ item.nettype | filter_address }}
+            dest_host: {{ hostvars[item.dest_host].hostname }}
+            dest_interface: {{ item.nettype | filter_interface_name(item.dest_host) }}
+            dest_interface_address: {{ item.dest_ip }}
+            status: {{ item.status }}
+            ip: {{ item.dest_ip }}
+            sudu: {{ item.sudu }}
+            plr: {{ item.plr }}
+      with_items:
+        - "{{  hostvars[inventory_hostname].ping_params_reg }}"
+      delegate_to: "{{ groups.allnodes[0] }}"
 
     - name: Echo iperf3 res to yml
       blockinfile:
@@ -48,12 +72,7 @@
             client_hostname: {{ item.param_iperf3_res.client_hostname }}
             receive_speed: {{ item.param_iperf3_res.receive_speed }}
             send_speed: {{ item.param_iperf3_res.send_speed }}
-      with_items: 
+      with_items:
         - "{{ netresult.results }}"
-      delegate_to: localhost
+      delegate_to: "{{ groups.allnodes[0] }}"
       when: inventory_hostname != groups.allnodes[0]
-    # - name: _________________________________________________________________________________________
-    #   debug:
-    #     msg: "{{ item.param_iperf3_res[0] }}"
-    #   with_items: "{{ netresult.results }}"
-    #   when: inventory_hostname != groups.allnodes[0]
