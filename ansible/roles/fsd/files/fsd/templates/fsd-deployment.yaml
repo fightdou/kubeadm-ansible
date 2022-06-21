@@ -55,7 +55,7 @@ spec:
             - name: fsd-static
               mountPath: "{{ .Values.containerPath.fsd_static }}"
             - name: samba-dir
-              mountPath: "{{ .Values.fsd_env.cloud_disk_share_disk_path }}"
+              mountPath: "{{ .Values.fsd_env.cloud_disk_root_path }}"
           env:
             - name: ENV_FSD_SPRING_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
