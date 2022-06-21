@@ -4,6 +4,11 @@ metadata:
   name: mariadb
   namespace: {{ .Release.Namespace }}
 spec:
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
   selector:
     matchLabels:
       app.kubernetes.io/name: mariadb
@@ -88,6 +93,8 @@ spec:
         volumeMounts:
         - mountPath: /bitnami/mariadb
           name: data
+        - mountPath: /etc/localtime
+          name: localtime
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       restartPolicy: Always
@@ -99,6 +106,10 @@ spec:
       serviceAccountName: mariadb
       priorityClassName: {{ .Values.priorityClassName }}
       volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
         {{- if .Values.persistentVolume.enabled }}
         - name: data
           persistentVolumeClaim: 
