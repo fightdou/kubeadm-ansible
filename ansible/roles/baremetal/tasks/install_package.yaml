@@ -11,10 +11,8 @@
 
 - name: Update apt cache
   apt:
-    update_cache: yes
+    update_cache: True
   become: True
-  when:
-    - kubeadm_install_info is not success
 
 - name: Install pip3 package
   apt:
