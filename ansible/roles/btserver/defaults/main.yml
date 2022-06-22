@@ -1,2 +1,0 @@
----
-replicaCount: "{% if groups['btserver'] | length > 2 %}2{% else %}1{% endif %}"

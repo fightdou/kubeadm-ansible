@@ -5,13 +5,13 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   pullSecrets: "{{ docker_register_secrets_name }}"  
 
-replicaCount: "{{ replicaCount }}"
 priorityClassName: "{{ kube_priority_name }}"
 
 service:
   btserver: "{{ bt_server_port }}"
   btserver_track: "{{ bt_tracker_port }}"
 
+serviceAccountName: btserver
 btserver_share_path: "{{ btserver_share_path }}"
 hostNetwork: true
 containerPath: "{{ fsd_share_root_path }}/voi"
@@ -19,20 +19,7 @@ containerPath: "{{ fsd_share_root_path }}/voi"
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
 
-affinity:
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-              - key: app
-                operator: In
-                values:
-                  - "btserver"
-          topologyKey: "kubernetes.io/hostname"
-
-imagePullSecrets: []
+affinity: {}
 
 serviceAccount:
   create: true
