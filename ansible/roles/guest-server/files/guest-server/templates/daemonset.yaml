@@ -2,68 +2,62 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    app.kubernetes.io/name: guest-server
-    app.kubernetes.io/component: guest-server
-    app.kubernetes.io/release_group: guest-server
-  name: guest-server
+    app.kubernetes.io/name: guest-service
+    app.kubernetes.io/component: guest-service
+    app.kubernetes.io/release_group: guest-service
+  name: guest-service
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: guest-server
-      app.kubernetes.io/component: guest-server
-      app.kubernetes.io/release_group: guest-server
+      app.kubernetes.io/name: guest-service
+      app.kubernetes.io/component: guest-service
+      app.kubernetes.io/release_group: guest-service
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: guest-server
-        app.kubernetes.io/component: guest-server
-        app.kubernetes.io/release_group: guest-server
+        app.kubernetes.io/name: guest-service
+        app.kubernetes.io/component: guest-service
+        app.kubernetes.io/release_group: guest-service
     spec:
       containers:
-        - name: guest-server
+        - name: guest-service
           image: {{ .Values.image }}
           imagePullPolicy: {{ .Values.pullPolicy }}
           securityContext:
             privileged: true
             readOnlyRootFilesystem: false
           volumeMounts:
-            - name: guest-server-config
-              mountPath: /opt/microservice/kly/bin/config/
+            - name: configfile
+              subPath: guest_service.conf
+              mountPath: /etc/guest-service/guest_service.conf
             - name: var-lib-libvirt
               mountPath: /var/lib/libvirt
               mountPropagation: Bidirectional
-            - name: var-lib-guest-server
-              mountPath: /var/lib/guest-server
-              mountPropagation: Bidirectional  
             - name: var-run-libvirt
               mountPath: /var/run/libvirt
               mountPropagation: Bidirectional   
-            - name: var-log-klylog 
-              mountPath: /var/log/klylog/
+            - name: var-log 
+              mountPath: /var/log/guest-service/
               mountPropagation: Bidirectional 
           resources:
           {{- toYaml .Values.resources | nindent 12 }}   
       volumes:
-        - name: guest-server-config
+        - name: configfile
           configMap:
-            name: guest-server-config
+            name: guest-service-config
         - name: var-lib-libvirt
           hostPath:
             path: /var/lib/libvirt
             type: ""
-        - name: var-lib-guest-server
-          hostPath:
-             path: /var/lib/guest-server
-             type: ""   
         - name: var-run-libvirt
           hostPath:
              path: /var/run/libvirt
              type: ""
-        - name: var-log-klylog
+        - name: var-log
           hostPath:
-             path: /var/log/klylog/
-             type: ""
+             path: /var/log/guest-service/
+             type: DirectoryOrCreate
       priorityClassName: {{ .Values.priorityClassName }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
