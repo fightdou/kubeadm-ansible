@@ -39,8 +39,9 @@ networkConfig:
   flat_network_type: {% for flat in flat_network_interface %}{{ 'flat' + loop.index | string }}{% if not loop.last %},{% endif %}{% endfor %}
 
 mount_dir:
-  voi_vms_dir: {{ fsd_voi_dir }}/vms
-  voi_image_dir: {{ fsd_voi_dir }}
+  voi_share_dir: {{ fsd_voi_dir }}
+container_dir:
+  trochilus_share_dir: {{ trochilus_voi_base_path }}
 
 dependencies:
   db_sync:
