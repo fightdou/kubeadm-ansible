@@ -17,6 +17,11 @@ nodeSelector:
 nodeInfo: []
 priorityClassName: ""
 
+mount_dir:
+  voi_share_dir: ""
+container_dir:
+  trochilus_share_dir: ""
+
 networkConfig:
   support_vlan_network: false
   vlan_network_type: vlan1
@@ -53,10 +58,6 @@ mariadb:
   username: trochilus
   password: 123456
   database: trochilus
-
-mount_dir:
-  voi_vms_dir: ""
-  voi_image_dir: ""
 
 conf:
   agent_settings:
