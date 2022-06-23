@@ -1,0 +1,33 @@
+- name: check ceph conf file exists
+  stat:
+    path: /etc/ceph/ceph.conf
+  run_once: True
+  register: ceph_conf_file
+  failed_when: not ceph_conf_file.stat.exists
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Copy ceph conf file
+  copy:
+    src: "{{ ceph_conf_file.stat.path }}"
+    dest: "/etc/ceph/ceph.conf"
+    mode: "644"
+  become: true
+  when:
+    - inventory_hostname in groups["libvirt"]
+
+- name: check ceph admin keyring exists
+  stat:
+    path: /etc/ceph/ceph.client.admin.keyring
+  run_once: True
+  register: ceph_admin_keyring
+  failed_when: not ceph_admin_keyring.stat.exists
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Copy ceph conf file
+  copy:
+    src: "{{ ceph_admin_keyring.stat.path }}"
+    dest: "/etc/ceph/ceph.client.admin.keyring"
+    mode: "644"
+  become: true
+  when:
+    - inventory_hostname in groups["libvirt"]

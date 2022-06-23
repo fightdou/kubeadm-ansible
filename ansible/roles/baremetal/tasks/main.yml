@@ -1,6 +1,10 @@
 ---
 - import_tasks: install_package.yaml
 
+- import_tasks: mount_cephfs.yaml
+  when:
+    - enable_ceph | bool
+
 - import_tasks: set_voi_data_device.yaml
   when: only_deploy_voi | bool
   run_once: True

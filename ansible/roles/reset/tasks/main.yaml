@@ -9,6 +9,15 @@
   become: true
   when: enable_ceph | bool
 
+- name: Delete cephfs share dir file
+  shell: rm -rf {{ desktop_mount_dir }}/*
+
+- name: Umount cephfs share dir
+  mount:
+    path: "{{ desktop_mount_dir }}"
+    state: absent
+  ignore_errors: True
+
 - name: 清除清除系统缓存的定时任务
   cron:
     name: "clean linux cache"

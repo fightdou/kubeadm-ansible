@@ -13,6 +13,25 @@
   - inventory_hostname not in (groups['kube-master'] + groups['new-master'])
   - not kubelet_conf_stat.stat.exists
 
+- name: 创建 kubeconfig 目录
+  file: 
+    name: "{{ item }}"
+    state: directory
+  with_items:
+  - "{{ ansible_env.PWD }}/.kube"
+  - "{{ ansible_env.HOME }}/.kube"
+  when:
+    - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+
+- name: Copy kubeconfig file
+  copy:
+    src: "{{ ansible_env.PWD }}/.kube/config"
+    dest: "{{ ansible_env.PWD }}/.kube"
+    mode: "600"
+  become: true
+  when:
+    - inventory_hostname in (groups['kube-worker'] + groups['new-worker'])
+
 - name: 查看 k8s 节点 compute标签
   shell: kubectl get nodes --show-labels | grep {{ inventory_hostname }} | grep {{ compute_node_role_name }} | wc -l
   register: node_compute_role

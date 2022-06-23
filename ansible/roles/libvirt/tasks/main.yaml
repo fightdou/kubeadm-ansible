@@ -1,3 +1,6 @@
+- import_tasks: generate_ceph_config.yaml
+  when:
+    - enable_ceph | bool
 
 - import_tasks: libvirt-install.yaml
   run_once: True
