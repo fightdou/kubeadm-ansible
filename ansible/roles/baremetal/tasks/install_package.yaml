@@ -30,6 +30,7 @@
       - jq
       - ipvsadm
       - ipmitool
+      - ceph-fuse
 
 - name: remove apparmor
   apt:
