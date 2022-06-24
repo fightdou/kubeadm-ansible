@@ -106,3 +106,4 @@ service:
 hostnetwork: "{{ emqx_hostnetwork | bool }}"
 tolerations: []
 priorityClassName: "{{ emqx_priorityclassname }}"
+tolerationSeconds: {{ kube_toleration_seconds }}

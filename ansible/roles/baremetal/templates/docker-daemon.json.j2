@@ -5,5 +5,12 @@
   ],
   "insecure-registries": [
     "{{ docker_register_domain }}:{{ docker_register_port }}"
-  ]
+  ],
+  "max-concurrent-downloads": 10,
+  "log-driver": "json-file",
+  "log-level": "warn",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
 }

@@ -11,6 +11,7 @@ nodeSelector:
   control_role: enabled
 priorityClassName: ""
 hostNetwork: ""
+tolerationSeconds: 30
 
 service:
   fsd_webhook:

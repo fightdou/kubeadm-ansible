@@ -27,7 +27,7 @@ serviceAccount:
   name: ""
 
 podAnnotations: {}
-
+tolerationSeconds: {{ kube_toleration_seconds }}
 podSecurityContext: {}
   # fsGroup: 2000
 

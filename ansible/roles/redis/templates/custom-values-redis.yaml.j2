@@ -19,6 +19,7 @@ sysctlImage:
   pullPolicy: IfNotPresent
   mountHostSys: false
 
+tolerationSeconds: {{ kube_toleration_seconds }}
 hostNetwork: {{ redis_host_network }}
 priorityClassName: {{ kube_priority_name }}
 

@@ -13,7 +13,7 @@ labels: {}
 
 hostNetwork: false
 priorityClassName: ""
-
+tolerationSeconds: ""
 ## Pods Service Account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:

@@ -15,6 +15,7 @@ serviceAccountName: btserver
 btserver_share_path: "{{ btserver_share_path }}"
 hostNetwork: true
 containerPath: "{{ fsd_share_root_path }}/voi"
+tolerationSeconds: {{ kube_toleration_seconds }}
 
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}

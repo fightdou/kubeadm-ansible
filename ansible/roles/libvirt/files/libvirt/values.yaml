@@ -18,3 +18,4 @@ nodeSelector:
 priorityClassName: ""
 trochilus_dir: ""
 voi_dir: ""
+tolerationSeconds: 30
