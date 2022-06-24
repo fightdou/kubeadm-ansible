@@ -7,6 +7,11 @@
   set_fact:
     mon_hosts: "{% for host in groups['ceph-mons'] %}{{ hostvars[host]['cephf_ceph_local_ip'] }}:6789{% if not loop.last %},{% endif %}{% endfor %}"
 
+- name: Check cephfs whether mount
+  shell: "mount | grep {{ desktop_mount_dir }}"
+  register: cephfs_mount_result
+  ignore_errors: yes
+
 - name: Make cephfs mount dir
   become: true
   file:
@@ -21,6 +26,7 @@
   until: result is success
   retries: 10
   delay: 6
+  when: cephfs_mount_result is not success
 
 - name: echo cephfs mount to fstab
   blockinfile:

@@ -2,18 +2,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: guest-server-config
-  namespace: default
-
+  name: guest-service-config
+  namespace: {{ .Release.Namespace }}
 data:
-  kly.yaml: |
-    mqtt:
-      url: '{{ .Values.klyConfig.mqtt_svc_addr }}'
-
-    udp:
-      fwd:
-        start: 60000
-        size: 5000
-
-    prometheus:
-      url: '{{ .Values.klyConfig.prometheus_svc_addr }}'
+  guest_service.conf: |
+    [DEFAULT]
+    mqtt_server = {{ .Values.mqttVip }}
+    mqtt_port = {{ .Values.mqttPort }}
+    prometheus_url = {{ .Values.prometheus_url }}

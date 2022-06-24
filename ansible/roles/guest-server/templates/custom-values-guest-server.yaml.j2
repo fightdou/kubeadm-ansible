@@ -1,23 +1,15 @@
-image: {{ kube_image_repository }}/guest-server:{{ kube_image_tag }}
+image: {{ kube_image_repository }}/guest-service:{{ kube_image_tag }}
 pullPolicy: "IfNotPresent"
 pullSecrets: {{ docker_register_secrets_name }}
 
-# Allows you to add any config files in /opt/microservice/kly/bin/config
-# such as kls.yml
-klyConfig:
-    mqtt_svc_addr: tcp://{{ kube_apiserver_vip }}:{{ emqx_mqtt_port }}
-    prometheus_svc_addr: http://{{ kube_apiserver_vip }}:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
+mqttVip: {{ kube_apiserver_vip }}
+mqttPort: {{ emqx_mqtt_port }}
+prometheus_url: http://{{ kube_apiserver_vip }}:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
 
-serviceAccountName: guest-server
+serviceAccountName: guest-service
 priorityClassName: {{ kube_priority_name }}
 
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
 
-resources: {} 
-#  limits:
-#    cpu: 300m
-#    memory: 256Mi
-#  requests:
-#    cpu: 300m
-#    memory: 256Mi
+resources: {}

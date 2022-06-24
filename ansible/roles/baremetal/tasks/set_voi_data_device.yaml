@@ -1,5 +1,12 @@
 ---
-- when: ansible_facts.mounts | selectattr('mount', '==', voi_data_directory) | list | length == 0
+- name: Create file share dir
+  become: true
+  file:
+    path: "{{ desktop_mount_dir }}"
+    state: directory
+    mode: 0755
+
+- name: only deploy voi mount data device
   block: 
   - name: Create directory if not exists
     file:
@@ -11,7 +18,7 @@
 
   - name: format datanode disks
     filesystem: 
-      fstype: ext4 
+      fstype: ext4
       force: true
       dev: "{{ voi_data_device }}"
 
@@ -22,4 +29,6 @@
       fstype: ext4
       opts: "defaults,noatime,nobarrier"
       state: mounted
- 
+  when: 
+    - ansible_facts.mounts | selectattr('mount', '==', voi_data_directory) | list | length == 0 
+    - voi_data_device != ""

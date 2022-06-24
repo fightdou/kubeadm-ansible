@@ -37,6 +37,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+            - name: FSD_NGINX_PORT
+              value: "{{ .Values.service.fsd_nginx.port }}"
           command:
             - /bin/sh
             - -c
