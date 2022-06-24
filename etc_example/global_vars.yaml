@@ -153,6 +153,10 @@ ingress_metric_port: 10254
 #################
 ceph_rbd_secret_uuid: e2338e01-6f82-4236-885b-056847028c77
 ceph_rbd_admin_user: client.admin
+# 用来控制H264的压缩质量，qp_min和qp_max的值范围：0-51，但是qp_min要比qp_max小，值越大图像质量越差，带宽越低。值越小图像质量越好，带宽越高，流畅的度越差
+# 默认值：qp_min=15，qp_max=30，这个值需要根据CPU的能力来判断，例如Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz的CPU可以填写10-25，如果CPU能力比这个差，需要改成15-30，或者15-35
+libvirt_qp_min: 15
+libvirt_qp_max: 30
 
 ###################
 # Trochilus Options
