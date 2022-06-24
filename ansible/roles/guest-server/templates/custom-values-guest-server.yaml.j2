@@ -13,3 +13,4 @@ nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
 
 resources: {}
+tolerationSeconds: {{ kube_toleration_seconds }}

@@ -20,6 +20,14 @@ spec:
         app.kubernetes.io/component: libvirt
         app.kubernetes.io/release_group: libvirt
     spec:
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          effect: NoExecute
+          tolerationSeconds: {{ .Values.tolerationSeconds }}
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: {{ .Values.tolerationSeconds }}
       containers:
       - name: libvirt
         image: "{{ .Values.image.libvirt }}"

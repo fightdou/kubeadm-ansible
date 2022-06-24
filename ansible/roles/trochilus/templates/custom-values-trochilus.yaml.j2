@@ -9,6 +9,7 @@ image:
   pullPolicy: "Always"
 
 serviceAccountName: trochilus
+tolerationSeconds: {{ kube_toleration_seconds }}
 priorityClassName: {{ kube_priority_name }}
 nodeSelector:
   trochilus_agent:

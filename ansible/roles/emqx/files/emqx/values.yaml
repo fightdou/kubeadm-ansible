@@ -91,3 +91,4 @@ service:
   wss: 8084
 tolerations: []
 hostNetwork: true
+tolerationSeconds: ""

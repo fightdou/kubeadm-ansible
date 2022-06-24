@@ -48,6 +48,7 @@ kube_pod_subnet: 10.244.0.0/16
 kube_dns_domain: cluster.local
 flannel_backend: "host-gw"
 kube_priority_name: system-node-critical
+kube_toleration_seconds: 30
 # Pod根容器
 pod_infra_container_image: "{{ kube_image_repository }}/pause:3.6"
 kubeadm_token: ceky52.rec2keii98oke7sl
@@ -177,7 +178,6 @@ mariadb_root_password: 123456
 mariadb_trochilus_password: 123456
 mariadb_port: 3306
 mariadb_storage_size: 10Gi
-mariadb_toleration_seconds: 10
 mariadb_pvc_name: mariadb-pvc
 
 ####################
