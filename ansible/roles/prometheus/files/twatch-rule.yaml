@@ -45,7 +45,7 @@ groups:
       expr: sum(irate(node_network_transmit_errs_total{host!="",device=~"en.*"}[2m]))by(host,host_ip)
 
     - record: TWatch:Host::DiskUsageRate
-      expr: 100-topk(1,node_filesystem_avail_bytes{mountpoint="/"}*100/(node_filesystem_size_bytes{mountpoint="/"}-(node_filesystem_free_bytes{mountpoint="/"}-node_filesystem_avail_bytes{mountpoint="/"})))
+      expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} * 100
 
     - record: TWatch:Host::CPUAverageUsedUtilization
       expr: avg((sum(100 - collectd_cpu_percent{type="idle", host!=""}) by(host,host_ip) / sum(collectd_cpu_percent{host!=""}) by(host,host_ip)) * 100) by (host,host_ip)

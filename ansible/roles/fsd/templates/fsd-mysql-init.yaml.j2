@@ -11,7 +11,7 @@ spec:
           image: {{ kube_image_repository }}/fsd_init:{{ kube_image_tag }}
           env:
             - name: fsd_init_db_vip
-              value: "{{ mariadb_host_address }}"
+              value: "mariadb"
             - name: fsd_init_db_password
               value: "{{ mariadb_root_password }}"
           imagePullPolicy: IfNotPresent
