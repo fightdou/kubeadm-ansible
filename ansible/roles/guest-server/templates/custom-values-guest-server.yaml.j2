@@ -2,9 +2,9 @@ image: {{ kube_image_repository }}/guest-service:{{ kube_image_tag }}
 pullPolicy: "IfNotPresent"
 pullSecrets: {{ docker_register_secrets_name }}
 
-mqttVip: {{ kube_apiserver_vip }}
+mqttVip: {{ fsd_proxy_ip }}
 mqttPort: {{ emqx_mqtt_port }}
-prometheus_url: http://{{ kube_apiserver_vip }}:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
+prometheus_url: http://{{ fsd_proxy_ip }}:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
 
 serviceAccountName: guest-service
 priorityClassName: {{ kube_priority_name }}

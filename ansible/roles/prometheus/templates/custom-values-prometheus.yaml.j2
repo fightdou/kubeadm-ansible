@@ -11,7 +11,7 @@ image:
   
 replica: "{{ replica_num }}"
 priorityClassName: "{{ kube_priority_name }}"
-pushgatewayVIP: "{{ kube_apiserver_vip }}"
+pushgatewayVIP: "{{ fsd_proxy_ip }}"
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
 
