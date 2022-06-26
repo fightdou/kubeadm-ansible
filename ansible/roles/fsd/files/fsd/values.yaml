@@ -64,3 +64,9 @@ fsd_env:
 fsd_job_env:
   mariadb_username: root
   mariadb_password: 123456
+
+containerPath:
+  fsd_static: ""
+  upload: ""
+  voi: ""
+  nginx_path: ""

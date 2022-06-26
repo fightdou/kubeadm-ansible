@@ -73,6 +73,10 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
       volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+          type: File
       {{- if .Values.emqxLoadedPlugins }}
       - name: emqx-loaded-plugins
         configMap:
@@ -181,6 +185,8 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
+          - mountPath: /etc/localtime
+            name: localtime
           - name: emqx-data
             mountPath: "/opt/emqx/data"
           {{- if .Values.emqxAclConfig }}

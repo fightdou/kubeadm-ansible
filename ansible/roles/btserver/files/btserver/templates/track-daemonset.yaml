@@ -52,9 +52,15 @@ spec:
             successThreshold: 1
             timeoutSeconds: 10
           volumeMounts:
+          - mountPath: /etc/localtime
+            name: localtime
           - name: btserver
             mountPath: {{ .Values.containerPath }}
       volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+          type: File
       - name: btserver
         hostPath:
           path: {{ .Values.btserver_share_path }}

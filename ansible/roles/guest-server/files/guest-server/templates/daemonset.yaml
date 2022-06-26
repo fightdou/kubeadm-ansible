@@ -36,6 +36,8 @@ spec:
             privileged: true
             readOnlyRootFilesystem: false
           volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
             - name: configfile
               subPath: guest_service.conf
               mountPath: /etc/guest-service/guest_service.conf
@@ -51,6 +53,10 @@ spec:
           resources:
           {{- toYaml .Values.resources | nindent 12 }}   
       volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
         - name: configfile
           configMap:
             name: guest-service-config

@@ -142,6 +142,8 @@ spec:
               containerPort: {{ .Values.service.trochilus_api.port }}
               protocol: TCP
           volumeMounts:
+          - mountPath: /etc/localtime
+            name: localtime
           - mountPath: /tmp/trochilus.sh
             name: trochilus-etc
             subPath: trochilus.sh
@@ -171,6 +173,9 @@ spec:
           - mountPath: {{ .Values.container_dir.trochilus_share_dir }}
             mountPropagation: Bidirectional
             name: voi-share-path
+          - mountPath: {{ .Values.container_dir.trochilus_upload_dir }}
+            mountPropagation: Bidirectional
+            name: voi-upload-path
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -185,6 +190,10 @@ spec:
       serviceAccountName: {{ .Values.serviceAccountName }}
       priorityClassName: {{ .Values.priorityClassName }}
       volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
         - configMap:
             defaultMode: 420
             name: trochilus-etc
@@ -229,3 +238,7 @@ spec:
             path: {{ .Values.mount_dir.voi_share_dir }}
             type: DirectoryOrCreate
           name: voi-share-path
+        - hostPath:
+            path: {{ .Values.mount_dir.voi_upload_dir }}
+            type: DirectoryOrCreate
+          name: voi-upload-path

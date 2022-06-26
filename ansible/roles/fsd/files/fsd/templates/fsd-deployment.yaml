@@ -50,6 +50,8 @@ spec:
               protocol: TCP
               name: {{ .Values.service.fsd_tcp_file.name }}
           volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
             - name: fsd-log
               mountPath: /log
             - name: fsd-prometheus-rule
@@ -112,6 +114,10 @@ spec:
             - name: ENV_FSD_BIZ_CLOUDDISK_CLOUDDISKPASSWORD
               value: "{{ .Values.fsd_env.cloud_disk_password }}"
       volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
         - name: fsd-log
           hostPath:
             path: "{{ .Values.mount_dir.fsd_log }}"

@@ -212,7 +212,8 @@ fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
 fsd_host_network: true
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
-fsd_share_root_path: "/mnt"
+fsd_upload_dir: "{{ desktop_mount_dir }}/upload"
+fsd_share_root_path: "/var/lib/trochilus"
 vdi_desktop_num: 10000
 vdi_storage_num: 1000
 cloud_disk_num: 1000

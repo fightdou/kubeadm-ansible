@@ -50,6 +50,9 @@ spec:
               value: "{{ .Values.fsd_job_env.mariadb_username }}"
             - name: ENV_FSD_COMMON_JOB_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
+          volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
       {{- if .Values.hostNetwork }}
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
@@ -60,6 +63,11 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
 {{- with .Values.nodeSelector }}
       nodeSelector:
 {{- toYaml . | nindent 8 }}
