@@ -72,6 +72,8 @@ spec:
           hostPath:
              path: /var/log/guest-service/
              type: DirectoryOrCreate
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
       priorityClassName: {{ .Values.priorityClassName }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
