@@ -22,9 +22,6 @@
     - "5GDISK.qcow2"
     - "10GDISK.qcow2"
     - "50GDISK.qcow2"
-    - "100GDISK.qcow2"
-    - "200GDISK.qcow2"
-    - "500GDISK.qcow2"
 
 - name: only deploy voi mount data device
   block: 
