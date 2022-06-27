@@ -79,11 +79,17 @@ spec:
               containerPort: {{ .Values.service.fsd_nginx.port }}
               protocol: TCP
           volumeMounts:
+            - mountPath: /etc/localtime
+              name: localtime
             - name: fsd-static
               mountPath: /usr/local/dist/static
             - name: fsd-voi
-              mountPath: "{{ .Values.containerPath.voi }}"
+              mountPath: "{{ .Values.containerPath.nginx_path }}"
       volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
         - name: fsd-static
           hostPath:
             path: {{ .Values.mount_dir.fsd_static }}

@@ -47,6 +47,9 @@ spec:
             - name: tcp
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          volumeMounts:
+          - mountPath: /etc/localtime
+            name: localtime
           livenessProbe:
             tcpSocket:
               port: {{ .Values.service.port }}
@@ -74,6 +77,11 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       priorityClassName: {{ .Values.priorityClassName }}
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+          type: File
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

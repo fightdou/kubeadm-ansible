@@ -67,6 +67,8 @@ spec:
           runAsGroup: 0
           readOnlyRootFilesystem: false
         volumeMounts:
+          - mountPath: /etc/localtime
+            name: localtime
           - mountPath: /etc/libvirt/qemu.conf
             name: libvirt-etc
             readOnly: true
@@ -129,6 +131,10 @@ spec:
       volumes:
         - emptyDir: {}
           name: secret-dir
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
         - name: libvirt-etc
           configMap:
             defaultMode: 292

@@ -20,8 +20,10 @@ priorityClassName: ""
 
 mount_dir:
   voi_share_dir: ""
+  voi_upload_dir: ""
 container_dir:
   trochilus_share_dir: ""
+  trochilus_upload_dir: ""
 
 networkConfig:
   support_vlan_network: false

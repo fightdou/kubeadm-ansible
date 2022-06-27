@@ -209,6 +209,8 @@ spec:
         - name: redis
           containerPort: {{ .Values.redis.port }}
         volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
         - mountPath: /data
           name: data
       - name: sentinel
@@ -252,6 +254,8 @@ spec:
           - name: sentinel
             containerPort: {{ .Values.sentinel.port }}
         volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
         - mountPath: /data
           name: data
 {{- if .Values.exporter.enabled }}
@@ -293,6 +297,10 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       dnsPolicy: ClusterFirstWithHostNet
       volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime
+          type: File
       - name: config
         configMap:
           name: {{ template "redis-ha.fullname" . }}-configmap
