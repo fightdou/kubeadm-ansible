@@ -3,21 +3,17 @@ global
     log                     127.0.0.1 local0
 
 defaults
-    mode                    http
-    log                     global
-    option                  httplog
-    option                  dontlognull
-    option                  http-server-close
-    option                  redispatch
-    retries                 10
-    timeout http-request    1h
-    timeout queue           1h
-    timeout connect         60s
-    timeout client          1h
-    timeout server          1h
-    timeout http-keep-alive 60s
-    timeout check           60s
-    maxconn                 {{ 10000 * ansible_processor_vcpus|int }}
+    log global
+    option redispatch
+    retries 3
+    timeout http-request 10s
+    timeout queue 1m
+    timeout connect 10s
+    timeout client 1m
+    timeout server 1m
+    timeout check 10s
+    balance roundrobin
+    maxconn {{ 10000 * ansible_processor_vcpus|int }}           
 
 listen stats
     bind {{ inventory_hostname }}:{{ lb_haproxy_stats_bind_address }}
@@ -56,7 +52,7 @@ backend kube_api_backend
 listen emqx
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ emqx_mqtt_port }}
-    balance {{ lb_haproxy_balance_alg }}
+    balance source
     option tcplog
 {% for host in (groups['emqx']) %}
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ emqx_mqtt_port }} check inter 2000 rise 2 fall 5
@@ -78,7 +74,7 @@ listen websockify
 listen fsd-nginx
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ fsd_nginx_port }}
-    balance {{ lb_haproxy_balance_alg }}
+    balance source
     option tcplog
 {% for host in (groups['fsd']) %}
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ fsd_nginx_port }} check inter 2000 rise 2 fall 5
@@ -87,10 +83,12 @@ listen fsd-nginx
 
 {% if enable_btserver | bool %}
 listen btserver
-    mode tcp
+    mode http
+    http-request del-header X-Forwarded-Proto
+    option httplog
+    option forwardfor
+    http-request set-header X-Forwarded-Proto https if { ssl_fc }
     bind {{ fsd_proxy_ip }}:{{ btserver_listen_ports }}
-    balance {{ lb_haproxy_balance_alg }}
-    option tcplog
 {% for host in (groups['btserver']) %}
     server {{ host }} {{ 'api' | filter_address(host) }} check port {{ btserver_listen_ports }} inter 2000 rise 2 fall 5
 {% endfor %}
@@ -98,7 +96,7 @@ listen btserver
 listen btserverport
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ bt_server_port }}
-    balance {{ lb_haproxy_balance_alg }}
+    balance source
     option tcplog
 {% for host in (groups['btserver']) %}
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ bt_server_port }} check inter 2000 rise 2 fall 5
@@ -107,7 +105,7 @@ listen btserverport
 listen btservertrackerport
     mode tcp
     bind {{ fsd_proxy_ip }}:{{ bt_tracker_port }}
-    balance {{ lb_haproxy_balance_alg }}
+    balance source
     option tcplog
 {% for host in (groups['btserver']) %}
     server {{ host }} {{ 'api' | filter_address(host) }}:{{ bt_tracker_port }} check inter 2000 rise 2 fall 5
