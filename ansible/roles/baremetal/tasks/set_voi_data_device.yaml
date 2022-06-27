@@ -6,23 +6,6 @@
     state: directory
     mode: 0755
 
-- name: Create file share_image dir
-  become: true
-  file:
-    path: "{{ desktop_mount_dir }}/voi/share_image"
-    state: directory
-    mode: 0755
-
-- name: copy init share images file
-  become: true
-  copy:
-    src: "{{ item }}"
-    dest: "{{ desktop_mount_dir }}/voi/share_image"
-  loop:
-    - "5GDISK.qcow2"
-    - "10GDISK.qcow2"
-    - "50GDISK.qcow2"
-
 - name: only deploy voi mount data device
   block: 
   - name: Create directory if not exists
@@ -49,3 +32,20 @@
   when: 
     - ansible_facts.mounts | selectattr('mount', '==', voi_data_directory) | list | length == 0 
     - voi_data_device != ""
+
+- name: Create file share_image dir
+  become: true
+  file:
+    path: "{{ desktop_mount_dir }}/voi/share_image"
+    state: directory
+    mode: 0755
+
+- name: copy init share images file
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "{{ desktop_mount_dir }}/voi/share_image"
+  loop:
+    - "5GDISK.qcow2"
+    - "10GDISK.qcow2"
+    - "50GDISK.qcow2"
