@@ -12,3 +12,4 @@ spec:
       name: btserver
   selector:
     app.kubernetes.io/name: btserver
+  sessionAffinity: ClientIP
