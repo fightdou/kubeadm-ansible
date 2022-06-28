@@ -207,6 +207,7 @@ fsd_tcp_port: 9012
 fsd_tcp_file_port: 9013
 fsd_webhook_token: abc123
 fsd_nginx_port: 9000
+fsd_nginx_proxy_port: "{{ fsd_nginx_port }}"
 fsd_deploy_mode: all
 fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
