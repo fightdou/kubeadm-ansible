@@ -16,3 +16,4 @@ spec:
     port: trochilus-api
     trochilus: api
   type: ClusterIP
+  sessionAffinity: ClientIP

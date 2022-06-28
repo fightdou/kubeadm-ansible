@@ -24,9 +24,7 @@ spec:
         - name: btserver-track
           env:
             - name: ENV_BTSERVER_BIND_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
+              value: 0.0.0.0
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.btserver_track }}

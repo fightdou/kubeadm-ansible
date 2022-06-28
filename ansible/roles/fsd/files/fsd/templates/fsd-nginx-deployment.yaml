@@ -42,9 +42,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: FSD_NGINX_NODEIP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
+              value: "{{ .Values.fsd_env.proxy_ip }}"
             - name: FSD_NGINX_PORT
               value: "{{ .Values.service.fsd_nginx.port }}"
           command:
@@ -52,6 +50,7 @@ spec:
             - -c
             - |
               /home/init/init.sh
+              sed -i "s/$FSD_NGINX_NODEIP/0.0.0.0/" /etc/nginx/conf/*.conf
               nginx
               tail -f /dev/null
           livenessProbe:

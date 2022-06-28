@@ -12,3 +12,4 @@ spec:
       name: btserver-track
   selector:
     app.kubernetes.io/name: btserver-track
+  sessionAffinity: ClientIP

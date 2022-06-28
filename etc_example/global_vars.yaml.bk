@@ -261,7 +261,7 @@ enable_baremetal: true
 enable_load_balancer: true
 enable_kube_master: true
 enable_kube_worker: true
-enable_ingress: true
+enable_ingress: false
 enable_mariadb: true
 enable_redis: true
 enable_emqx: true
@@ -272,9 +272,9 @@ enable_prometheus: true
 enable_guest_server: true
 enable_fsd: true
 enable_btserver: true
-enable_elasticsearch: "{% if groups['elasticsearch'] | length > 2 %}true{% else %}false{% endif %}"
-enable_fluentd: "{% if groups['fluentd'] | length > 2 %}true{% else %}false{% endif %}"
-enable_kibana: "{% if groups['kibana'] | length > 2 %}true{% else %}false{% endif %}"
+enable_elasticsearch: false
+enable_fluentd: false
+enable_kibana: false
 enable_ceph: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 enable_checknet: false
 
