@@ -41,16 +41,21 @@ spec:
           image: {{ .Values.image.fsd_nginx }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: FSD_NGINX_NODEIP
-              value: "{{ .Values.fsd_env.proxy_ip }}"
-            - name: FSD_NGINX_PORT
+            - name: FSD_NGINX_NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: FSD_NGINX_NODE_PORT
               value: "{{ .Values.service.fsd_nginx.port }}"
+            - name: FSD_NGINX_PROXY_IP
+              value: "{{ .Values.fsd_env.proxy_ip }}"
+            - name: FSD_NGINX_PROXY_PORT
+              value: "{{ .Values.fsd_env.proxy_port }}"
           command:
             - /bin/sh
             - -c
             - |
               /home/init/init.sh
-              sed -i "s/$FSD_NGINX_NODEIP/0.0.0.0/" /etc/nginx/conf/*.conf
               nginx
               tail -f /dev/null
           livenessProbe:

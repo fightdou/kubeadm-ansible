@@ -51,6 +51,7 @@ fsd_env:
   netty_codec_mac: 60f81dad19ae
   deploy_mode: all
   proxy_ip: 172.18.28.222
+  proxy_port: 9000
   deploy_vip: 172.18.28.222
   vnc_port: 9003
   desktop_bt_port_start: "6880"

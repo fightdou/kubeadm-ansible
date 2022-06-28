@@ -52,6 +52,7 @@ fsd_env:
   netty_codec_mac: "{{ fsd_netty_codec_mac }}"
   deploy_mode: "{{ fsd_deploy_mode }}"
   proxy_ip: "{{ docker_register_address }}"
+  proxy_port: "{{ fsd_nginx_proxy_port }}"
   deploy_vip: "{{ docker_register_address }}"
   vnc_port: "{{ websockify_port }}"
   desktop_bt_port_start: "{{ bt_download_port_start }}"
