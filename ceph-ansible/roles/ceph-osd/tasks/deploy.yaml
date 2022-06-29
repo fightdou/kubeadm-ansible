@@ -139,6 +139,9 @@
     - ceph_volume_data | default([]) | length > 0
     - not bcache | bool
 
+- name: include type_osd_crush_rules.yaml
+  include_tasks: type_osd_crush_rules.yaml
+
 - name: osd add
   block:
     - name: ceph_volume lvm zap
@@ -213,9 +216,6 @@
   command: "ceph config set global osd_pool_default_pg_autoscale_mode {{ pg_autoscale_mode }}"
   delegate_to: "{{ groups['ceph-osds'][0] }}"
   run_once: true
-
-- name: include type_osd_crush_rules.yaml
-  include_tasks: type_osd_crush_rules.yaml
 
 - name: include trochilus_config.yml
   include_tasks: trochilus_config.yml
