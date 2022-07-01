@@ -1,8 +1,8 @@
 #!/bin/bash
 a=1
-mount_state="mountpoint -q /mnt"
+mount_state="mountpoint -q {{ desktop_mount_dir }}"
 if $mount_state;then
-    echo "/mnt已挂载"
+    echo "{{ desktop_mount_dir }}已挂载"
     exit 1
 fi
 while true
