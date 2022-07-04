@@ -117,7 +117,7 @@ spec:
         {{- else }}
         - name: data
           hostPath:
-            path: /var/lib/mariadb
+            path: {{ .Values.mariadb_host_path }}
             type: DirectoryOrCreate
         {{- end }}
 {{- if .Values.nodeSelector }}

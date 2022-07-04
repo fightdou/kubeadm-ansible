@@ -179,6 +179,7 @@ mariadb_trochilus_password: 123456
 mariadb_port: 3306
 mariadb_storage_size: 10Gi
 mariadb_pvc_name: mariadb-pvc
+mariadb_host_path: /var/lib/mariadb
 
 ####################
 # Prometheus Options

@@ -9,6 +9,10 @@
   become: true
   when: enable_ceph | bool
 
+- name: Delete mariadb host path
+  shell: rm -rf {{ mariadb_host_path }}/*
+  when: only_deploy_voi | bool
+
 - name: Delete cephfs share dir file
   shell: rm -rf {{ desktop_mount_dir }}/*
 
