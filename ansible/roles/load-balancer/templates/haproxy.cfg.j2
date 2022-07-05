@@ -1,5 +1,5 @@
 global
-    maxconn                 {{ 10000 * ansible_processor_vcpus|int }}
+    maxconn                 10000
     log                     127.0.0.1 local0
 
 defaults
@@ -13,7 +13,7 @@ defaults
     timeout server 1m
     timeout check 10s
     balance roundrobin
-    maxconn {{ 10000 * ansible_processor_vcpus|int }}           
+    maxconn 10000
 
 listen stats
     bind {{ inventory_hostname }}:{{ lb_haproxy_stats_bind_address }}
