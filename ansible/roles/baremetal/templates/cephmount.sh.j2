@@ -2,7 +2,7 @@
 a=1
 mount_state="mountpoint -q {{ desktop_mount_dir }}"
 if $mount_state;then
-    echo "{{ desktop_mount_dir }}已挂载"
+    echo "{{ desktop_mount_dir }} 已挂载" >> /var/log/cephmount.log
     exit 1
 fi
 while true
@@ -11,16 +11,18 @@ do
     if [ "$ceph_active" -ne 0 ]
     then
         ceph-fuse -m {{ mon_hosts }}  {{ desktop_mount_dir }}
-        if [ $? == "0" ]
+        sleep 2
+        mount_state=`mount | grep {{ desktop_mount_dir }} | wc -l`
+        if [ "$mount_state" -ne 0 ]
         then
-            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功"
+            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功" >> /var/log/cephmount.log
             exit 0
         else
-            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:失败"
+            echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:失败" >> /var/log/cephmount.log
             exit 1
         fi
     else
-        echo "$(date +"%Y-%m-%d %T")==>第$a次ceph fs 检测未active"
+        echo "$(date +"%Y-%m-%d %T")==>第$a次ceph fs 检测未active" >> /var/log/cephmount.log
         let a=a+1
         sleep 10
     fi

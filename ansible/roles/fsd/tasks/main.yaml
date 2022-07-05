@@ -21,3 +21,18 @@
 - import_tasks: install_fsd.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Copy fsd-console-web.service to systemctl
+  become: true
+  template:
+    src: "fsd-console-web.service.j2"
+    dest: "/etc/systemd/system/fsd-console-web.service"
+    mode: "0644"
+
+- name: Reload systemctl and disable fsd-console-web service
+  become: true
+  systemd:
+    name: fsd-console-web
+    daemon_reload: true
+    enabled: false
+    state: stopped
