@@ -61,6 +61,14 @@
     - bcache | bool
     - bcache_map_list is defined
 
+- name: register bcache cache
+  become: true
+  shell: "echo {{ item.cache }} > /sys/fs/bcache/register_quiet"
+  with_items: "{{ bcache_map_list }}"
+  when:
+    - bcache | bool
+    - bcache_map_list is defined
+
 - name: bcache backing disk create
   bcache_tools:
     bcache_map_list: "{{ need_map_disk.stdout }}"
