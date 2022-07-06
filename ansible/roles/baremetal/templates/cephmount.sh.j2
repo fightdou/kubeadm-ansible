@@ -11,7 +11,7 @@ do
     if [ "$ceph_active" -ne 0 ]
     then
         ceph-fuse -m {{ mon_hosts }}  {{ desktop_mount_dir }}
-        sleep 2
+        sleep 5
         mount_state=`mount | grep {{ desktop_mount_dir }} | wc -l`
         if [ "$mount_state" -ne 0 ]
         then
