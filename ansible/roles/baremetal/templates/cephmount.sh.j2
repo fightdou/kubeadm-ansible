@@ -10,12 +10,13 @@ do
     ceph_active=`ceph fs status | grep active | wc -l`
     if [ "$ceph_active" -ne 0 ]
     then
-        ceph-fuse -m {{ mon_hosts }}  {{ desktop_mount_dir }}
         sleep 5
+        ceph-fuse -m {{ mon_hosts }} {{ desktop_mount_dir }} -o nonempty
         mount_state=`mount | grep {{ desktop_mount_dir }} | wc -l`
         if [ "$mount_state" -ne 0 ]
         then
             echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功" >> /var/log/cephmount.log
+            sleep 10
             exit 0
         fi
     else

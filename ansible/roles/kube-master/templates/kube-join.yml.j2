@@ -71,7 +71,7 @@ systemReserved:
   memory: 2048Mi
   ephemeral-storage: 10G
 evictionPressureTransitionPeriod: 5m0s
-failSwapOn: true
+failSwapOn: false
 fileCheckFrequency: 40s
 hairpinMode: hairpin-veth
 healthzBindAddress: 127.0.0.1
@@ -126,4 +126,8 @@ healthzBindAddress: 0.0.0.0:10256
 hostnameOverride: "{{ inventory_hostname }}"
 metricsBindAddress: 0.0.0.0:10249
 mode: "{{ kube_proxy_mode }}"
+ipvs:
+  tcpTimeout: 1800s
+  tcpFinTimeout: 120s
+  udpTimeout: 300s
 {% endif %}

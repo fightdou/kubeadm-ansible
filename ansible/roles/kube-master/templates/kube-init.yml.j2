@@ -72,7 +72,7 @@ systemReserved:
   memory: 2048Mi
   ephemeral-storage: 10G
 evictionPressureTransitionPeriod: 5m0s
-failSwapOn: true
+failSwapOn: false
 fileCheckFrequency: 40s
 hairpinMode: hairpin-veth
 healthzBindAddress: 127.0.0.1
@@ -123,6 +123,10 @@ conntrack:
   min: 131072
   tcpCloseWaitTimeout: 1h0m0s
   tcpEstablishedTimeout: 24h0m0s
+ipvs:
+  tcpTimeout: 1800s
+  tcpFinTimeout: 120s
+  udpTimeout: 300s
 healthzBindAddress: 0.0.0.0:10256
 hostnameOverride: "{{ inventory_hostname }}"
 metricsBindAddress: 0.0.0.0:10249
