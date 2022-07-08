@@ -76,7 +76,7 @@ spec:
             - -c
             - |
               bash /tmp/trochilus.sh
-              trochilus-api --config-file /etc/trochilus/trochilus.conf
+              trochilus-api --config-file /etc/trochilus/trochilus.conf --log-file /var/log/trochilus/trochilus-api.log
           env:
             {{- range $_, $node_name := .Values.nodeInfo }}
             {{- range $hostname, $node_info := $node_name }}
