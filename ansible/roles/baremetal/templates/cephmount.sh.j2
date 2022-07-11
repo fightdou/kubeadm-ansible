@@ -11,9 +11,10 @@ do
     if [ "$ceph_active" -ne 0 ]
     then
         sleep 5
-        ceph-fuse -m {{ mon_hosts }} {{ desktop_mount_dir }} -o nonempty
-        mount_state=`mount | grep {{ desktop_mount_dir }} | wc -l`
-        if [ "$mount_state" -ne 0 ]
+        ceph-fuse -m {{ mon_hosts }} {{ desktop_mount_dir }}
+        mountpoint -q {{ desktop_mount_dir }}
+        echo "$(date +"%Y-%m-%d %T") ==> 查看 {{ desktop_mount_dir }} 是否是一个挂载点,结果 $?" >> /var/log/cephmount.log
+        if [ $? -eq 0 ]
         then
             echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功" >> /var/log/cephmount.log
             sleep 10
