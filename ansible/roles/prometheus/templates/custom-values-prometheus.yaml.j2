@@ -3,6 +3,7 @@ image:
   pushgateway: {{ kube_image_repository }}/pushgateway:{{ kube_image_tag }}
   alertmanager: {{ kube_image_repository }}/alertmanager:{{ kube_image_tag }}
   node_exporter: {{ kube_image_repository }}/node-exporter:{{ kube_image_tag }}
+  event_exporter: {{ kube_image_repository }}/event-exporter:{{ kube_image_tag }}
   collectd_exporter: {{ kube_image_repository }}/collectd-exporter:{{ kube_image_tag }}
   host_exporter: {{ kube_image_repository }}/host-exporter:{{ kube_image_tag }}
   pushgateway_cleaner: {{ kube_image_repository }}/prometheus-pushgateway-cleaner:{{ kube_image_tag }}
@@ -58,3 +59,5 @@ service:
     udp_port: {{ prometheus_collectd_udp_port }}
   host_exporter:
     port: {{ prometheus_host_exporter_port }}
+  event_exporter:
+    port: {{ prometheus_event_exporter_port }}

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: event-exporter
+  name: event-exporter
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: event-exporter
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: '{{ .Values.service.event_exporter.port }}'
+        prometheus.io/scrape: 'true'
+      labels:
+        app: event-exporter
+    spec:
+      containers:
+        - name: event-exporter
+          image: {{ .Values.image.event_exporter }}
+          imagePullPolicy: IfNotPresent
+          args:
+            - --eventType=Warning
+            - --eventType=Normal
+          ports:
+            - containerPort: {{ .Values.service.event_exporter.port }}
+              name: http
+              protocol: TCP
+          resources:
+            limits:
+              memory: 100Mi
+            requests:
+              memory: 50Mi
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets }}
+      {{- end }}
+      serviceAccount: {{ .Values.serviceAccountName}}
+      serviceAccountName: {{ .Values.serviceAccountName}}
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}

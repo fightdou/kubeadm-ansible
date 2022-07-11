@@ -149,8 +149,11 @@ spec:
         tier: node
         app: flannel
     spec:
+      {%- if not enable_docker_register_domain_deploy %}
       imagePullSecrets:
         - name: "{{ docker_register_secrets_name }}"
+      {% endif %}
+
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

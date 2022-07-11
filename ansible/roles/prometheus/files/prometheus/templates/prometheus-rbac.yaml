@@ -20,6 +20,7 @@ rules:
       - endpoints
       - pods
       - ingresses
+      - events
     verbs:
       - get
       - list

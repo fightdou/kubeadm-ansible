@@ -11,7 +11,9 @@
 
 - name: Delete mariadb host path
   shell: rm -rf {{ mariadb_host_path }}/*
-  when: only_deploy_voi | bool
+  when: 
+    - only_deploy_voi | bool
+    - groups["mariadb"] | length == 1
 
 - name: Delete cephfs share dir file
   shell: rm -rf {{ desktop_mount_dir }}/*

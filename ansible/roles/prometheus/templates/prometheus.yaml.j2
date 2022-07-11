@@ -62,3 +62,11 @@ scrape_configs:
           host: '{{ hostvars[host]['ansible_hostname'] }}'
           host_ip: '{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}'
 {% endfor %}
+
+  - job_name: 'event-exporter'
+    metrics_path: /metrics
+    scrape_interval: 120s
+    scrape_timeout: 20s
+    static_configs:
+    - targets:
+      - event-exporter:{{ prometheus_event_exporter_port }}

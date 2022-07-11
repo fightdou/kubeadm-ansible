@@ -55,3 +55,5 @@ service:
     udp_port: 25826
   host_exporter:
     port: 9104
+  event_exporter:
+    port: 9102

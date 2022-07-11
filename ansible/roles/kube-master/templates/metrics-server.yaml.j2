@@ -129,8 +129,11 @@ spec:
       labels:
         k8s-app: metrics-server
     spec:
+      {%- if not enable_docker_register_domain_deploy %}
       imagePullSecrets:
         - name: "{{ docker_register_secrets_name }}"
+      {% endif %}
+
       containers:
       - args:
         - --cert-dir=/tmp
@@ -172,8 +175,6 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: tmp-dir
-      imagePullSecrets:
-          - name: {{ docker_register_secrets_name }}
       nodeSelector:
         kubernetes.io/os: linux
       priorityClassName: system-cluster-critical

@@ -73,7 +73,7 @@ helm_wait_timeout: 600s
 enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% endif %}"
 harbor_username: admin
 harbor_password: Harbor12345
-docker_register_secrets_name: docker-register-secrets
+docker_register_secrets_name: "{% if enable_docker_register_domain_deploy %}{% else %}docker-register-secrets{% endif %}" 
 
 #################
 # Haproxy options
@@ -195,6 +195,7 @@ prometheus_node_exporter_port: 9100
 prometheus_collectd_exporter_port: 9103
 prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
+prometheus_event_exporter_port: 9102
 pushgateway_clean_time: "*/1 * * * *"
 
 ##############
