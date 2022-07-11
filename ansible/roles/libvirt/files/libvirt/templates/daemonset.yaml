@@ -114,7 +114,7 @@ spec:
           - mountPath: /etc/libvirt/secrets/{{ .Values.secret.rbd_secret_uuid }}.base64
             name: libvirt-etc
             readOnly: true
-            subPath: {{ .Values.secret.rbd_secret_uuid }}.base64    
+            subPath: {{ .Values.secret.rbd_secret_uuid }}.base64
           {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostIPC: true
