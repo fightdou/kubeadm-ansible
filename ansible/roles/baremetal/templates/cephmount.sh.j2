@@ -18,7 +18,7 @@ do
         then
             echo "$(date +"%Y-%m-%d %T")==>第$a次尝试挂载:成功" >> /var/log/cephmount.log
             sleep 10
-            exit 0
+            break
         fi
     else
         echo "$(date +"%Y-%m-%d %T")==>第$a次ceph fs 检测未active" >> /var/log/cephmount.log
