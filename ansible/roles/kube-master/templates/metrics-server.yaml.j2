@@ -1,3 +1,4 @@
+#jinja2: trim_blocks: False
 # ref: https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.1/components.yaml
 
 apiVersion: v1
@@ -133,7 +134,6 @@ spec:
       imagePullSecrets:
         - name: "{{ docker_register_secrets_name }}"
       {% endif %}
-
       containers:
       - args:
         - --cert-dir=/tmp
