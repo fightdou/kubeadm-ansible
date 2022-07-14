@@ -73,6 +73,10 @@ spec:
               value: "{{ .Values.fsd_env.redis_password }}"
             - name: ENV_FSD_BIZ_DEPLOY_SVC_REDIS
               value: "{{ .Values.fsd_env.redis_server_address }}"
+            - name: SPRING_REDIS_SENTINEL_MASTER
+              value: "{{ .Values.fsd_env.redis_master_name }}"
+            - name: SPRING_REDIS_SENTINEL_NODES
+              value: "{{- printf "%s:%s" .Values.fsd_env.redis_server_address .Values.fsd_env.redis_sentinel_port }}"
             - name: ENV_FSD_BIZ_DEPLOY_SVC_MYSQL
               value: "{{ .Values.fsd_env.mariadb_server_address }}"
             - name: ENV_FSD_BIZ_DEPLOY_SVC_EMQX

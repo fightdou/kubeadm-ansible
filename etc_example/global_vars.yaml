@@ -285,6 +285,7 @@ enable_checknet: false
 # Redis Options
 ################
 redis_storage_size: 10Gi
+redis_master_name: mymaster
 redis_master_password: zhuolang@Troila@123
 redis_server_port: 6379
 redis_sentinel_port: 26379

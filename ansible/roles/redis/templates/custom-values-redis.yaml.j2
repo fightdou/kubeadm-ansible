@@ -25,7 +25,7 @@ priorityClassName: {{ kube_priority_name }}
 
 redis:
   port: "{{ redis_server_port }}"
-  masterGroupName: mymaster
+  masterGroupName: {{ redis_master_name }}
   config: {}
   resources: {}
     #  requests:

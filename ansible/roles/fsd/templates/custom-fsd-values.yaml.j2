@@ -41,6 +41,8 @@ mount_dir:
   samba_dir: "{{ fsd_cloud_disk_root_path }}"
 
 fsd_env:
+  redis_master_name: "{{ redis_master_name }}"
+  redis_sentinel_port: "{{ redis_sentinel_port }}"
   redis_password: "{{ redis_master_password }}"
   redis_server_address: redis
   mariadb_server_address: mariadb

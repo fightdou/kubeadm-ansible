@@ -40,7 +40,8 @@ mount_dir:
 
 fsd_env:
   redis_password: zhuolang@Troila@123
-  redis_master_name: mycluster
+  redis_master_name: mymaster
+  redis_sentinel_port: 26379
   redis_server_address: redis.default.svc.cluster.local
   mariadb_server_address: mariadb.default.svc.cluster.local
   emqx_server_address: emqx.default.svc.cluster.local
