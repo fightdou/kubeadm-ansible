@@ -1,5 +1,6 @@
 image:
   mariadb: {{ kube_image_repository }}/mariadb:{{ kube_image_tag }}
+  mysqldump: {{ kube_image_repository }}/mariadb:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
 mariadb_password: {{ mariadb_root_password }}
 persistentVolume:
@@ -15,3 +16,12 @@ ingress:
   enabled: false
   ingressClassName: {{ ingress_class_name }}
 priorityClassName: {{ kube_priority_name }}
+mariadb_backup_path: /var/lib/mariadb-backup
+affinity:
+  key: {{ control_node_role_name }}
+  value: {{ node_role_value }}
+mysqldump:
+  cron: {{ mariadb_backup_time }}
+  history:
+    success: 3
+    failed: 1

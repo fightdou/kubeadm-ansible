@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mysqldump-backup
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  schedule: {{ .Values.mysqldump.cron | quote }}
+  successfulJobsHistoryLimit: {{ .Values.mysqldump.history.success }}
+  failedJobsHistoryLimit: {{ .Values.mysqldump.history.failed }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          affinity:
+            nodeAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - preference:
+                  matchExpressions:
+                  - key: {{ .Values.affinity.key }}
+                    operator: In
+                    values:
+                    - {{ .Values.affinity.value }}
+                weight: 100
+          containers:
+            - name: mysqldump
+              securityContext:
+                privileged: true
+                runAsUser: 0
+              env:
+              - name: MARIADB_ROOT_PASSWORD
+                value: "{{ .Values.mariadb_password }}"
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  mysqldump -uroot -p"${MARIADB_ROOT_PASSWORD}" -h mariadb --all-databases >/backup/database-backup-`date +%Y-%m-%d-%H-%M`.sql
+                  find /backup/* -mtime +10 -exec rm {} \;
+              image: {{ .Values.image.mysqldump }}
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+                - mountPath: /backup
+                  name: data
+                - mountPath: /etc/localtime
+                  name: localtime
+          volumes:
+            - name: localtime
+              hostPath:
+                path: /etc/localtime
+                type: File
+            - name: data
+              hostPath:
+                path: {{ .Values.mariadb_backup_path }}
+                type: DirectoryOrCreate
+          restartPolicy: Never
+          {{- if .Values.image.pullSecrets }}
+          imagePullSecrets:
+            - name: {{ .Values.image.pullSecrets }}
+          {{- end }}
+          serviceAccount: {{ .Values.serviceAccountName}}
+          serviceAccountName: {{ .Values.serviceAccountName}}
+{{- if .Values.nodeSelector }}
+          nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 12 -}}
+{{- end -}}

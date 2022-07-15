@@ -1,5 +1,6 @@
 image:
   mariadb: bitnami/mariadb:10.5.15-debian-10-r52
+  mysqldump: bitnami/mariadb:10.5.15-debian-10-r52
   pullSecrets: ""
 mariadb_password: 123456
 persistentVolume:
@@ -19,3 +20,12 @@ ingress:
   ingressClassName: nginx
 priorityClassName: ""
 mariadb_host_path: /var/lib/mariadb
+mariadb_backup_path: /var/lib/mariadb-backup
+affinity:
+  key: control_role
+  value: enabled
+mysqldump:
+  cron: "* 1 * * *"
+  history:
+    success: 3
+    failed: 1
