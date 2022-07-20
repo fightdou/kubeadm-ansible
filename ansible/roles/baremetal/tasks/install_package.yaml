@@ -1,4 +1,11 @@
 ---
+- name: Update apt cache
+  shell: apt update -y
+  register: apt_result
+  until: apt_result.rc == 0
+  retries: 12
+  delay: 5
+
 - name: 查看 docker 是否安装
   shell: docker info
   register: docker_install_info
@@ -9,10 +16,14 @@
   register: kubeadm_install_info
   ignore_errors: yes
 
-- name: Update apt cache
+- name: remove apparmor
   apt:
-    update_cache: True
-  become: True
+    state: absent
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - apparmor
+      - ufw
 
 - name: Install pip3 package
   apt:
@@ -31,15 +42,6 @@
       - ipvsadm
       - ipmitool
       - ceph-fuse
-
-- name: remove apparmor
-  apt:
-    state: absent
-    name: "{{ packages }}"
-  vars:
-    packages:
-      - apparmor
-      - ufw
 
 - name: Install kube ansible package
   pip:
