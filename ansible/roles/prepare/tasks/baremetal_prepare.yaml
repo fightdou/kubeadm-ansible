@@ -106,9 +106,10 @@
     path: /etc/apt/sources.list.d/original.list
     state: absent
   ignore_errors: true
-  become: True
 
 - name: Update apt cache
-  apt:
-    update_cache: True
-  become: True
+  shell: apt update -y
+  register: apt_result
+  until: apt_result.rc == 0
+  retries: 12
+  delay: 5 

@@ -1,4 +1,11 @@
 ---
+- name: Update apt cache
+  shell: apt update -y
+  register: apt_result
+  until: apt_result.rc == 0
+  retries: 12
+  delay: 5
+
 - name: Disable ufw
   become: True
   service:
@@ -13,11 +20,6 @@
   when:
     - inventory_hostname in groups['ceph-osds']
     - bcache | bool
-
-- name: Update apt cache
-  apt:
-    update_cache: True
-  become: True
 
 # ceph package
 - name: Install common deb packages
