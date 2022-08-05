@@ -18,6 +18,7 @@ data:
     ipmi_vendor = {{ .Values.conf.agent_settings.ipmi_vendor }}
     host_username = {{ .Values.conf.agent_settings.host_username }}
     host_password = {{ .Values.conf.agent_settings.host_password }}
+    agent_lock_file = /run/trochilus-agent-lock
     system =
     version =
     role =
