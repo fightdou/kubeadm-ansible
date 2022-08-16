@@ -161,6 +161,9 @@ spec:
             - mountPath: {{ .Values.container_dir.trochilus_upload_dir }}
               mountPropagation: Bidirectional
               name: voi-upload-path
+            - mountPath: /opt/trochilus
+              mountPropagation: Bidirectional
+              name: trochilus-lock-file
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -233,3 +236,7 @@ spec:
             path: {{ .Values.mount_dir.voi_upload_dir }}
             type: DirectoryOrCreate
           name: voi-upload-path
+        - hostPath:
+            path: /opt/trochilus
+            type: DirectoryOrCreate
+          name: trochilus-lock-file
