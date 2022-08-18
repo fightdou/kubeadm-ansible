@@ -37,7 +37,7 @@ kube_apiserver_port: 8443
 # docker 镜像 namespace
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
 # docker 镜像 tag
-kube_image_tag: 1.0.2
+kube_image_tag: 1.0.3
 kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
@@ -57,7 +57,7 @@ control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
-docker_image_path : /opt/offline/kunlunyun-1.0.2.tar.gz
+docker_image_path : /opt/offline/kunlunyun-1.0.3.tar.gz
 docker_dpkg_path: /opt/offline/deb-packages
 
 ##############
