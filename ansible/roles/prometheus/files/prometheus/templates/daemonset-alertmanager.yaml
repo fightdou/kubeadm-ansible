@@ -73,7 +73,7 @@ spec:
         - mountPath: /etc/alertmanager/alertmanager.yml
           name: alertmanager-etc
       priorityClassName: {{ .Values.priorityClassName }}
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}

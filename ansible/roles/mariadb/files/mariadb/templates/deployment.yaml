@@ -75,6 +75,7 @@ spec:
               if [[ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]]; then
                   password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
               fi
+              mysql -uroot -p"${password_aux}" -e"set GLOBAL max_connections ={{ .Values.mariadb_connection }}"
               mysqladmin status -uroot -p"${password_aux}"
           failureThreshold: 10
           initialDelaySeconds: 30
@@ -96,7 +97,7 @@ spec:
         - mountPath: /etc/localtime
           name: localtime
       dnsPolicy: ClusterFirstWithHostNet
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

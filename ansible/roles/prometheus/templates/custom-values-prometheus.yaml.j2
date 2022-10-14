@@ -34,6 +34,7 @@ pushgateway_cleaner_job:
     success: 3
     failed: 1
 
+hostNetwork: {{ prometheus_hostnetwork }}
 ingress: 
   enabled: false
   ingressClassName: {{ ingress_class_name }}

@@ -61,7 +61,7 @@ data:
     voi_vm_base_path = {{ .Values.conf.voi_settings.voi_vm_base_path }}
     vm_name_template = voi-%s
     [webhook_settings]
-    target_host = ${NODE_ID}
+    target_host = {{ .Values.conf.webhook_settings.target_host }}
     target_port = {{ .Values.conf.webhook_settings.target_port }}
     target_path = {{ .Values.conf.webhook_settings.target_path }}
     method = {{ .Values.conf.webhook_settings.method }}

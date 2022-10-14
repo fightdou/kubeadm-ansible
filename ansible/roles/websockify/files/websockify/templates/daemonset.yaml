@@ -69,7 +69,7 @@ spec:
       serviceAccountName: {{ include "websockify.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       dnsPolicy: ClusterFirstWithHostNet
       priorityClassName: {{ .Values.priorityClassName }}
       volumes:
