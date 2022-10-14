@@ -71,7 +71,7 @@ spec:
       {{- end }}
       priorityClassName: {{ .Values.priorityClassName }}
       dnsPolicy: ClusterFirstWithHostNet
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       serviceAccount: {{ .Values.serviceAccountName}}
       serviceAccountName: {{ .Values.serviceAccountName}}
       {{- if .Values.nodeSelector }}

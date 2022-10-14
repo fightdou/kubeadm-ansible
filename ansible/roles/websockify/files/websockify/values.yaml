@@ -16,6 +16,7 @@ nameOverride: ""
 fullnameOverride: ""
 tokenSource: http://fsd-nginx:9000/api/v1
 tolerationSeconds: 30
+hostNetwork: true
 
 serviceAccount:
   # Specifies whether a service account should be created

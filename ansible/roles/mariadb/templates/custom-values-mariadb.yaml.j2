@@ -3,6 +3,7 @@ image:
   mysqldump: {{ kube_image_repository }}/mariadb:{{ kube_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
 mariadb_password: {{ mariadb_root_password }}
+mariadb_connection: {{ mariadb_max_connection }}
 persistentVolume:
   enabled: {{ enable_pvc }}
   storageclass: {{ cephfs_storage_class_name }}
@@ -25,3 +26,4 @@ mysqldump:
   history:
     success: 3
     failed: 1
+hostNetwork: {{ mariadb_hostnetwork }}

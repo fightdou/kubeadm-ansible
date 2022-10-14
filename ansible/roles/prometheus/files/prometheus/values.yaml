@@ -19,6 +19,7 @@ alert_rule_dir: ""
 alertmanager_dir: ""
 
 serviceAccountName: prometheus
+hostNetwork: true
 
 pushgateway_cleaner_job:
   cron: "1 * * * *"

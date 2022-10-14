@@ -19,3 +19,4 @@ priorityClassName: ""
 trochilus_dir: ""
 voi_dir: ""
 tolerationSeconds: 30
+hostNetwork: true

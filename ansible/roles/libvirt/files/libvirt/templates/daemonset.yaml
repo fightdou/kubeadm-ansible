@@ -118,7 +118,7 @@ spec:
           {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostIPC: true
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       hostPID: true
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}

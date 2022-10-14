@@ -17,6 +17,7 @@ nodeSelector:
 nodeInfo: []
 tolerationSeconds: 30
 priorityClassName: ""
+hostNetwork: true
 
 mount_dir:
   voi_share_dir: ""

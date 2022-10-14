@@ -41,7 +41,7 @@ spec:
           readOnly: true
       priorityClassName: {{ .Values.priorityClassName }}
       hostPID: true
-      hostNetwork: true
+      hostNetwork: {{ .Values.hostNetwork }}
       restartPolicy: Always
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
