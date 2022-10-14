@@ -37,7 +37,7 @@ kube_apiserver_port: 8443
 # docker 镜像 namespace
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
 # docker 镜像 tag
-kube_image_tag: 1.0.3
+kube_image_tag: 1.0.4
 kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
@@ -46,6 +46,7 @@ wait_plugins_ready: false
 docker_storage_dir: "/var/lib/docker"
 kube_pod_subnet: 10.244.0.0/16
 kube_dns_domain: cluster.local
+kube_hostnetwork: true
 flannel_backend: "host-gw"
 kube_priority_name: system-node-critical
 kube_toleration_seconds: 30
@@ -57,7 +58,7 @@ control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
-docker_image_path : /opt/offline/kunlunyun-1.0.3.tar.gz
+docker_image_path : /opt/offline/kunlunyun-1.0.4.tar.gz
 docker_dpkg_path: /opt/offline/deb-packages
 
 ##############
@@ -158,7 +159,7 @@ ceph_rbd_admin_user: client.admin
 # 默认值：qp_min=15，qp_max=30，这个值需要根据CPU的能力来判断，例如Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz的CPU可以填写10-25，如果CPU能力比这个差，需要改成15-30，或者15-35
 libvirt_qp_min: 15
 libvirt_qp_max: 30
-libvirt_hostnetwork: true
+libvirt_hostnetwork: "{{ kube_hostnetwork }}"
 
 ###################
 # Trochilus Options
@@ -169,7 +170,7 @@ trochilus_libvirt_driver: kvm
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 trochilus_api_ingress: false
-trochilus_hostnetwork: true
+trochilus_hostnetwork: "{{ kube_hostnetwork }}"
 trochilus_voi_path: "{{ fsd_voi_dir }}"
 trochilus_voi_base_path: "/var/lib/trochilus/voi"
 
@@ -180,7 +181,7 @@ mariadb_root_password: 123456
 mariadb_trochilus_password: 123456
 mariadb_port: 3306
 mariadb_max_connection: 30000
-mariadb_hostnetwork: true
+mariadb_hostnetwork: "{{ kube_hostnetwork }}"
 mariadb_storage_size: 10Gi
 mariadb_pvc_name: mariadb-pvc
 mariadb_host_path: /var/lib/mariadb
@@ -203,7 +204,7 @@ prometheus_collectd_udp_port: 25826
 prometheus_host_exporter_port: 9104
 prometheus_event_exporter_port: 9102
 pushgateway_clean_time: "*/1 * * * *"
-prometheus_hostnetwork: true
+prometheus_hostnetwork: "{{ kube_hostnetwork }}"
 
 ##############
 # Fsd Options
@@ -220,7 +221,7 @@ fsd_nginx_proxy_port: "{{ fsd_nginx_port }}"
 fsd_deploy_mode: all
 fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
-fsd_host_network: true
+fsd_host_network: "{{ kube_hostnetwork }}"
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
 fsd_upload_dir: "{{ desktop_mount_dir }}/upload"
 fsd_share_root_path: "/var/lib/trochilus"
@@ -257,7 +258,7 @@ emqx_persistence_accessMode: ReadWriteOnce
 emqx_persistence_size: 20Mi
 emqx_persistence_storageClass: "{{ rbd_storage_class_name }}"
 emqx_priorityclassname: "{{ kube_priority_name }}"
-emqx_hostnetwork: true
+emqx_hostnetwork: "{{ kube_hostnetwork }}"
 emqx_mqtt_port: 1883
 emqx_mgmt_port: 8081
 emqx_mqttssl_port: 8883
@@ -296,13 +297,13 @@ redis_master_name: mymaster
 redis_master_password: zhuolang@Troila@123
 redis_server_port: 6379
 redis_sentinel_port: 26379
-redis_host_network: true
+redis_host_network: "{{ kube_hostnetwork }}"
 
 ####################
 # websockify Options
 ####################
 websockify_port: 9003
-websockify_hostnetwork: true
+websockify_hostnetwork: "{{ kube_hostnetwork }}"
 
 #######################
 # btserver
@@ -313,7 +314,7 @@ bt_tracker_port: 9020
 bt_download_port_start: 6880
 bt_download_port_end: 6889
 btserver_listen_ports: "{{ bt_download_port_start }}-{{ bt_download_port_end }}"
-btserver_hostnetwork: true
+btserver_hostnetwork: "{{ kube_hostnetwork }}"
 
 ##############
 # VOI Options
