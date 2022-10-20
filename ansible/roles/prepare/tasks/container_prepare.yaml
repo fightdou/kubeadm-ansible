@@ -11,13 +11,21 @@
 - name: 查看 docker 是否安装
   shell: docker info
   register: docker_install_info
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: dpkg install docker
   shell: "dpkg -i {{ docker_dpkg_path }}/*.deb"
   when:
     - docker_install_info is not success
-  ignore_errors: yes
+    - ansible_distribution == "Ubuntu"
+  ignore_errors: true
+
+- name: rpm install docker
+  shell: "rpm -ivh {{ docker_dpkg_path }}/*.rpm"
+  when:
+    - docker_install_info is not success
+    - ansible_distribution == 'openEuler'
+  ignore_errors: true
 
 - name: 确认 Docker 配置是否有修改
   template:
@@ -66,7 +74,7 @@
     source: local
   with_items: "{{ images_name.stdout_lines }}"
 
-- name: Run offline-deb-repo 容器
+- name: Run Ubuntu offline-deb-repo 容器
   docker_container: 
     image: "{{ kube_image_repository }}/offline-deb-repo:{{ kube_image_tag }}"
     name: offline-deb-repo    
@@ -75,3 +83,17 @@
     restart_policy: always
     ports:
       - "{{ offline_deb_repo_port }}:80"
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Run openEuler offline-rpm-repo 容器
+  docker_container: 
+    image: "{{ kube_image_repository }}/openeuler-offline-rpm-repo:{{ kube_image_tag }}"
+    name: openeuler-offline-rpm-repo
+    state: started
+    restart: yes
+    restart_policy: always
+    ports:
+      - "{{ offline_deb_repo_port }}:80"
+  when:
+    - ansible_distribution == "openEuler"

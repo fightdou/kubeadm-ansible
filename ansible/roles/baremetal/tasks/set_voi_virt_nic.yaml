@@ -12,5 +12,4 @@
       enabled: yes
       state: restarted
       name: virt-nic-start
-    ignore_errors: yes
-
+    ignore_errors: true

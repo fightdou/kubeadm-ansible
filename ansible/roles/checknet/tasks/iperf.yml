@@ -1,5 +1,5 @@
 ---
-- name: install iperf
+- name: Ubuntu install iperf
   apt:
     state: present
     name: "{{ packages }}"
@@ -8,6 +8,18 @@
       - iperf3
   when:
       - inventory_hostname in groups['allnodes']
+      - ansible_distribution == "Ubuntu"
+
+- name: openEuler install iperf
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - iperf3
+  when:
+      - inventory_hostname in groups['openEuler']
+      - ansible_distribution == "Ubuntu"
 
 - name: iperf server start
   vars:
