@@ -1,8 +1,18 @@
-- name: get offline info
+- name: Ubuntu get offline info
   docker_container_info:
     name: offline-deb-repo
   register: offline_info
   delegate_to: "{{ groups['baremetal'][0] }}"
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler get offline info
+  docker_container_info:
+    name: openeuler-offline-rpm-repo
+  register: offline_info
+  delegate_to: "{{ groups['baremetal'][0] }}"
+  when:
+    - ansible_distribution == "openEuler"
 
 - name: get registry info
   docker_container_info:

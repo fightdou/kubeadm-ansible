@@ -1,5 +1,5 @@
 ---
-- name: Install samba tools
+- name: Ubuntu Install samba tools
   become: True
   apt:
     name: "{{ packages }}"
@@ -8,6 +8,20 @@
     packages:
       - "samba"
       - "samba-common"
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler Install samba tools
+  become: True
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "samba"
+      - "samba-common"
+  when:
+    - ansible_distribution == "openEuler"
 
 - name: 创建日志目录
   file: 

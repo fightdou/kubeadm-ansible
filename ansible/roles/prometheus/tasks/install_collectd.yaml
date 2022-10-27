@@ -1,4 +1,4 @@
-- name: Install Collectd deb packages
+- name: Ubuntu Install Collectd deb packages
   apt:
     state: present
     name: "{{ packages }}"
@@ -9,6 +9,36 @@
       - collectd-core
       - collectd-dev
       - libvirt0
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler Install Collectd deb packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - collectd
+      - collectd-disk
+      - collectd-virt
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Check collectd dir exists
+  stat:
+    path: /etc/collectd
+  register: collectd_dir
+  when: 
+    - ansible_distribution == "openEuler"
+
+- name: Create collectd dir
+  file:
+    name: /etc/collectd
+    state: directory
+    mode: 0755
+  when: 
+    - ansible_distribution == "openEuler"
+    - not collectd_dir.stat.exists
 
 - name: Copy collectd.conf
   template:
@@ -16,6 +46,17 @@
     dest: /etc/collectd/collectd.conf
     mode: 0644
     backup: yes
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Copy collectd.conf
+  template:
+    src: collectd.conf.j2
+    dest: /etc/collectd.conf
+    mode: 0644
+    backup: yes
+  when:
+    - ansible_distribution == "openEuler"
 
 - name: Copy checkLibvirtForCollectd.sh
   copy:
