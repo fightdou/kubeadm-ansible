@@ -10,7 +10,7 @@
 - name: Check cephfs whether mount
   shell: "mount | grep {{ desktop_mount_dir }}"
   register: cephfs_mount_result
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Make cephfs mount dir
   become: true

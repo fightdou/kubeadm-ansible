@@ -47,10 +47,6 @@ spec:
                   fieldPath: status.hostIP
             - name: FSD_NGINX_NODE_PORT
               value: "{{ .Values.service.fsd_nginx.port }}"
-            - name: FSD_NGINX_PROXY_IP
-              value: "{{ .Values.fsd_env.proxy_ip }}"
-            - name: FSD_NGINX_PROXY_PORT
-              value: "{{ .Values.fsd_env.proxy_port }}"
           command:
             - /bin/sh
             - -c

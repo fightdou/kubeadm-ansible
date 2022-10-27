@@ -5,16 +5,18 @@
   until: apt_result.rc == 0
   retries: 12
   delay: 5
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: 查看 docker 是否安装
   shell: docker info
   register: docker_install_info
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: 查看 kubeadm 是否安装
   shell: kubeadm version
   register: kubeadm_install_info
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: remove apparmor
   apt:
@@ -24,8 +26,10 @@
     packages:
       - apparmor
       - ufw
+  when:
+    - ansible_distribution == "Ubuntu"
 
-- name: Install pip3 package
+- name: Ubuntu Install some package
   apt:
     state: present
     name: "{{ packages }}"
@@ -42,6 +46,37 @@
       - ipvsadm
       - ipmitool
       - ceph-fuse
+      - arping
+      - traceroute
+      - net-tools
+      - iputils-ping
+      - telnet
+      - ethtool
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Openeuler Install some package
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python3-pip
+      - git
+      - rsync
+      - iptables
+      - ntp
+      - jq
+      - ipvsadm
+      - ipmitool
+      - ceph-fuse
+      - traceroute
+      - net-tools
+      - iputils
+      - telnet
+      - ethtool
+  when:
+    - ansible_distribution == "openEuler"
 
 - name: Install kube ansible package
   pip:
@@ -52,7 +87,7 @@
       - openshift
       - docker
 
-- name: 安装docker
+- name: Ubuntu 安装 docker
   apt:
     name: 
     - docker-ce
@@ -61,6 +96,20 @@
     state: present
   when:
     - docker_install_info is not success
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler 安装 docker
+  yum:
+    name: "{{ packages}}"
+    state: present
+  vars:
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+  when:
+    - docker_install_info is not success
+    - ansible_distribution == "openEuler"
 
 - name: 确认 Docker 配置是否有修改
   template:
@@ -88,7 +137,7 @@
     state: started
     enabled: yes
 
-- name: 安装 kubeadm kubelet kubectl
+- name: Ubuntu 安装 kubeadm kubelet kubectl
   apt: 
     name:
     - "kubectl=1.23.5-00"
@@ -97,12 +146,38 @@
     state: present
   when:
     - kubeadm_install_info is not success
+    - ansible_distribution == "Ubuntu"
 
-- name: 安装 etcdctl 工具
+- name: openEuler 安装 kubeadm kubelet kubectl
+  yum: 
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - "kubelet-1.23.5-0"
+      - "kubeadm-1.23.5-0"
+      - "kubectl-1.23.5-0"
+  when:
+    - kubeadm_install_info is not success
+    - ansible_distribution == "openEuler"
+
+- name: Ubuntu 安装 etcdctl 工具
   apt:
     name:
     - etcd-client
     state: present
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler 安装 etcd 工具
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - etcd
+  when:
+    - ansible_distribution == "openEuler"
 
 - name: 配置 kubectl 命令行自动补全
   shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl

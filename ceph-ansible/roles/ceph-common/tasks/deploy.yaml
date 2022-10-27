@@ -5,6 +5,8 @@
   until: apt_result.rc == 0
   retries: 12
   delay: 5
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: Disable ufw
   become: True
@@ -12,7 +14,9 @@
     name: "ufw"
     enabled: false
     state: stopped
-  ignore_errors: yes
+  ignore_errors: true
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: modprobe bcache
   shell: "modprobe bcache"
@@ -60,6 +64,8 @@
       - ceph
       - radosgw
       - ceph-fuse
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: Install mon deb packages
   apt:
@@ -71,6 +77,8 @@
       - ceph-mon
   when:
     - inventory_hostname in groups['ceph-mons']
+    - ansible_distribution == "Ubuntu"
+
 
 - name: Install osd deb packages
   apt:
@@ -82,6 +90,7 @@
       - ceph-osd
   when:
     - inventory_hostname in groups['ceph-osds']
+    - ansible_distribution == "Ubuntu"
 
 - name: Install bcache-tools depend on deb packages
   apt:
@@ -94,6 +103,7 @@
   when:
     - inventory_hostname in groups['ceph-osds']
     - bcache | bool
+    - ansible_distribution == "Ubuntu"
 
 - name: Install bcache-tools deb packages
   apt:
@@ -106,6 +116,7 @@
   when:
     - inventory_hostname in groups['ceph-osds']
     - bcache | bool
+    - ansible_distribution == "Ubuntu"
 
 - name: Install mgr deb packages
   apt:
@@ -117,6 +128,7 @@
       - ceph-mgr
   when:
     - inventory_hostname in groups['ceph-mgrs']
+    - ansible_distribution == "Ubuntu"
 
 - name: Install radosgw deb packages
   apt:
@@ -129,6 +141,153 @@
   when:
     - inventory_hostname in groups['ceph-radosgws']
     - deploy_radosgw | bool
+    - ansible_distribution == "Ubuntu"
+
+- name: openEuler disable selinux
+  selinux:
+    policy: targeted
+    state: disabled
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: openEuler check if firewalld is installed
+  command: rpm -q firewalld
+  register: firewalld_check
+  changed_when: false
+  failed_when: firewalld_check.rc > 1
+  args:
+    warn: false
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: openEuler disable firewalld
+  become: True
+  service:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  with_items:
+    - firewalld
+  when:
+    - firewalld_check.rc == 0
+    - ansible_distribution == "openEuler"
+
+# ceph package
+- name: openEuler install common rpm packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - "{% if ansible_python.version.major == 3 %}python3-netaddr{% else %}python-netaddr{% endif %}"
+      - libibverbs-utils
+      - libbabeltrace
+      - fuse-libs
+      - leveldb
+      - gperftools-libs
+      - "{% if ansible_python.version.major == 3 %}python3-prettytable{% else %}python-prettytable{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-requests{% else %}python-requests{% endif %}"
+      - selinux-policy
+      - cryptsetup
+      - psmisc
+      - "{% if ansible_python.version.major == 3 %}python3-setuptools{% else %}python-setuptools{% endif %}"
+      - gdisk
+      - "{% if ansible_python.version.major == 3 %}python3-flask{% else %}python-flask{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-pyOpenSSL{% else %}pyOpenSSL{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-cherrypy{% else %}python-cherrypy{% endif %}"
+      - "{% if ansible_python.version.major == 3 %}python3-pecan{% else %}python-pecan{% endif %}"
+      - mailcap
+      - librados2
+      - "{% if ansible_python.version.major == 3 %}python3-rados{% else %}python-rados{% endif %}"
+      - librbd1
+      - "{% if ansible_python.version.major == 3 %}python3-rbd{% else %}python-rbd{% endif %}"
+      - libcephfs2
+      - "{% if ansible_python.version.major == 3 %}python3-cephfs{% else %}python-cephfs{% endif %}"
+      - librgw2
+      - libradosstriper1
+      - libradosstriper-devel
+      - "{% if ansible_python.version.major == 3 %}python3-rgw{% else %}python-rgw{% endif %}"
+      - ceph-common
+      - ceph-selinux
+      - ceph-base
+      - ceph-mds
+      - ceph
+      - ceph-radosgw
+  when: 
+    - ansible_distribution == "openEuler"
+
+- name: openEuler install mon rpm packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - ceph-mon
+  when:
+    - inventory_hostname in groups['ceph-mons']
+    - ansible_distribution == "openEuler"
+
+- name: openEuler install osd rpm packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - ceph-osd
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - ansible_distribution == "openEuler"
+
+- name: openEuler install bcache-tools depend on rpm packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - libblkid-devel
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+    - ansible_distribution == "openEuler"
+
+- name: openEuler install bcache-tools rpm packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - bcache-tools
+  when:
+    - inventory_hostname in groups['ceph-osds']
+    - bcache | bool
+    - ansible_distribution == "openEuler"
+
+- name: openEuler install mgr rpm packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - ceph-mgr
+  when:
+    - inventory_hostname in groups['ceph-mgrs']
+    - ansible_distribution == "openEuler"
+
+- name: Cat dir /usr/lib/ceph is exists
+  stat:
+    path: /usr/lib/ceph
+  register: ceph_dir
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Copy ceph script to /usr/lib/ceph dir
+  copy:
+    src: /usr/libexec/ceph/
+    dest: /usr/lib/ceph/
+    mode: "0755"
+  when:
+    - ansible_distribution == "openEuler"
+    - not ceph_dir.stat.exists
 
 - name: Generate ceph-mon@.service config file
   template:

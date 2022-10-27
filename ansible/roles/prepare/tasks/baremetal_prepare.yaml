@@ -31,7 +31,7 @@
         {% if 'ansible_' + api_interface in hostvars[host] %}
         {% set hostnames = [hostvars[host]['ansible_nodename'], hostvars[host]['ansible_hostname']] %}
         {% if enable_docker_register_domain_deploy and host == groups['baremetal'][0] %}
-        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }}
+        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }} {{ kubernetes_domain_name }}
         {% else %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}
         {% endif %}
@@ -44,7 +44,9 @@
   ufw:
     state: disabled
     policy: allow
-  ignore_errors: yes
+  ignore_errors: true
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: Disable system swap partition table
   shell: "swapoff -a && sysctl -w vm.swappiness=0"
@@ -76,18 +78,6 @@
   shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"
   ignore_errors: true
 
-- name: 添加集群节点 hostname 信息到 hosts 文件中
-  blockinfile:
-    path: /etc/hosts
-    block: |-
-      {{ kube_apiserver_vip }} {{ kubernetes_domain_name }}
-    state: present
-    create: yes
-    backup: yes
-    marker: "# Ansible inventory hosts {mark}"
-  when:
-    - enable_docker_register_domain_deploy | bool
-
 - name: 创建 systemd 配置目录
   file: 
     name: /etc/systemd/system.conf.d 
@@ -98,18 +88,60 @@
     src: 30-k8s-ulimits.conf.j2
     dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
 
-- name: 添加离线源
-  shell: echo "deb [trusted=yes] http://{{ docker_register_domain }}:{{offline_deb_repo_port}} focal/" | sudo tee /etc/apt/sources.list > /dev/null
+- name: ubuntu 添加离线源
+  shell: echo "deb [trusted=yes] http://{{ docker_register_domain }}:{{ offline_deb_repo_port }} focal/" | sudo tee /etc/apt/sources.list > /dev/null
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: Delete apt file original.list
   file:
     path: /etc/apt/sources.list.d/original.list
     state: absent
   ignore_errors: true
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: Update apt cache
   shell: apt update -y
   register: apt_result
   until: apt_result.rc == 0
   retries: 12
-  delay: 5 
+  delay: 5
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: 创建 yum 备份目录
+  file:
+    path: "/home/yumback"
+    state: directory
+    mode: 0755
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: 查看yum 配置文件是否存在
+  stat:
+    path: /etc/yum.repos.d/openEuler.repo
+  register: repo_exists
+
+- name: 备份 yum 源
+  shell: mv /etc/yum.repos.d/* /home/yumback
+  when:
+    - ansible_distribution == "openEuler"
+    - repo_exists.stat.exists
+
+- name: 添加 yum 源
+  template:
+    src: local.repo.j2
+    dest: /etc/yum.repos.d/local.repo
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: 安装 python3-libselinux 包
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - python3-libselinux
+  when:
+    - ansible_distribution == "openEuler"

@@ -1,3 +1,5 @@
+---
+
 - name: Restart samba service
   service:
     name: "{{ item }}"
@@ -7,3 +9,17 @@
   with_items:
     - "nmbd"
     - "smbd"
+  when: 
+    - ansible_distribution == "Ubuntu"
+
+- name: Restart samba service
+  service:
+    name: "{{ item }}"
+    state: "restarted"
+    enabled: yes
+  become: True
+  with_items:
+    - "nmb"
+    - "smb"
+  when: 
+    - ansible_distribution == "openEuler"

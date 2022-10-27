@@ -28,8 +28,8 @@
 
 - name: 创建 harbor register secrets
   shell: |
-    kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ docker_register_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
-    kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ docker_register_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
+    kubectl create secret docker-registry {{ docker_register_secrets_name }} --namespace=kube-system --docker-server={{ harbor_address }} --docker-username={{ harbor_username }} --docker-password={{ harbor_password }}
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
   ignore_errors: yes
@@ -78,6 +78,51 @@
 
 - name: Deploy nodelocaldns in yaml file
   shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/nodelocaldns.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+# 配置 metallb
+- name: 渲染 metallb 配置文件
+  template:
+    src: metallb-system.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/metallb-system.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy metallb in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/metallb-system.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 查看 metallb-controller 是否运行
+  shell: kubectl get deployment controller -n kube-system -o json | jq .status.readyReplicas
+  register: metallb_status
+  until: metallb_status.stdout == "1"
+  ignore_errors: yes
+  retries: 5
+  delay: 30
+
+- name: 渲染 BGPAdvertisement 配置文件
+  template:
+    src: BGPAdvertisement.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/BGPAdvertisement.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy BGPAdvertisement in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/BGPAdvertisement.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 渲染 metallb ipaddress 配置文件
+  template:
+    src: ipaddress_pool.yaml.j2 
+    dest: /etc/kubernetes/plugins/network-plugin/ipaddress_pool.yaml
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Deploy ipaddress_pool in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/ipaddress_pool.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
@@ -157,4 +202,3 @@
         /usr/local/bin/etcdtools cleanup
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
-

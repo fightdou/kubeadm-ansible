@@ -93,10 +93,6 @@ spec:
               value: "{{ .Values.fsd_env.netty_codec_mac }}"
             - name: ENV_FSD_BIZ_DEPLOY_MODE
               value: "{{ .Values.fsd_env.deploy_mode }}"
-            - name: ENV_FSD_BIZ_DEPLOY_PROXYIP
-              value: "{{ .Values.fsd_env.proxy_ip }}"
-            - name: ENV_FSD_BIZ_DEPLOY_VIP
-              value: "{{ .Values.fsd_env.deploy_vip }}"
             - name: ENV_FSD_BIZ_VIRTUAL_VNCPORT
               value: "{{ .Values.fsd_env.vnc_port }}"
             - name: ENV_FSD_BIZ_DEPLOY_NODEIP

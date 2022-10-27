@@ -1,7 +1,7 @@
 firewalld_disabled: true
 timezone: Asia/Shanghai
 # 开启 k8s 域名部署
-use_domain_name_deploy: false
+use_domain_name_deploy: true
 # docker 离线源是否支持域名, docker images 前缀名称默认为 kunlunyun:5002, 这种方式需要在 /etc/hosts 文件中配置 hosts 解析，因此需设置为 true
 enable_docker_register_domain_deploy: true
 # docker registry 离线源地址
@@ -33,7 +33,7 @@ kube_apiserver_vip: 172.18.28.193
 # k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
-kube_apiserver_port: 8443
+kube_apiserver_port: 6443
 # docker 镜像 namespace
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
 # docker 镜像 tag
@@ -269,7 +269,7 @@ emqx_wss_port: 8084
 # role开关
 #################
 enable_baremetal: true
-enable_load_balancer: true
+enable_load_balancer: false
 enable_kube_master: true
 enable_kube_worker: true
 enable_ingress: false

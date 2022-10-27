@@ -4,12 +4,38 @@
     state: stopped
     enabled: yes
 
+- name: 创建 /etc/kubernetes 目录
+  file: 
+    name: "/etc/kubernetes"
+    state: directory
+
 - name: 创建 kubeadm init 配置文件
   template:
     src: kube-init.yml.j2
     dest: "/etc/kubernetes/kubeadm-init.yml"
     owner: root
     mode: 0644
+
+- name: openeuler 查看 /run/systemd/resolve/resolv.conf 目录是否存在
+  stat: 
+    path: /run/systemd/resolve/resolv.conf
+  register: resolv_file
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: 创建 /run/systemd/resolve/ 目录
+  file:
+    name: /run/systemd/resolve/
+    state: directory
+  when:
+    - ansible_distribution == "openEuler"
+    - not resolv_file.stat.exists
+
+- name: create resolv.conf 文件
+  shell: echo "nameserver 114.114.114.114" > /run/systemd/resolve/resolv.conf
+  when:
+    - ansible_distribution == "openEuler"
+    - not resolv_file.stat.exists
 
 - name: 初始化第一个 master 节点
   shell: kubeadm init --config=/etc/kubernetes/kubeadm-init.yml --upload-certs
