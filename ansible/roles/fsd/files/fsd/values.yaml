@@ -34,9 +34,8 @@ mount_dir:
   fsd_log: /var/log/fsd
   prometheus_rule: /mnt/prometheus/rules
   alertmanager_conf: /mnt/prometheus/alertmanager
-  voi_dir: /mnt/voi
-  upload_dir: /mnt/upload
-  fsd_static: /mnt/fsd/static
+  share_dir: "/data/fsd"
+  fsd_static: "/data/fsd/static"
 
 fsd_env:
   redis_password: zhuolang@Troila@123
@@ -68,7 +67,5 @@ fsd_job_env:
   mariadb_password: 123456
 
 containerPath:
-  fsd_static: ""
-  upload: ""
-  voi: ""
+  sharedir: ""
   nginx_path: ""

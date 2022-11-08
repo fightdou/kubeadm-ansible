@@ -52,6 +52,7 @@
       - iputils-ping
       - telnet
       - ethtool
+      - tcpdump
   when:
     - ansible_distribution == "Ubuntu"
 
@@ -75,6 +76,7 @@
       - iputils
       - telnet
       - ethtool
+      - tcpdump
   when:
     - ansible_distribution == "openEuler"
 
@@ -110,6 +112,13 @@
   when:
     - docker_install_info is not success
     - ansible_distribution == "openEuler"
+
+- name: 创建 /etc/docker 目录
+  become: true
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
 
 - name: 确认 Docker 配置是否有修改
   template:

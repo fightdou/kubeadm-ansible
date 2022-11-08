@@ -35,10 +35,8 @@ mount_dir:
   fsd_log: "{{ fsd_log }}"
   prometheus_rule: "{{ prometheus_alert_rule_dir }}"
   alertmanager_conf: "{{ prometheus_alertmanager_dir }}"
-  voi_dir: "{{ fsd_voi_dir }}"
-  upload_dir: "{{ fsd_voi_upload_dir }}"
-  fsd_static: "{{ fsd_static_dir }}"
-  samba_dir: "{{ fsd_cloud_disk_root_path }}"
+  share_dir: "{{ desktop_mount_dir }}"
+  fsd_static: "{{ desktop_mount_dir }}/static"
 
 fsd_env:
   redis_master_name: "{{ redis_master_name }}"
@@ -70,7 +68,5 @@ fsd_job_env:
   mariadb_password: "{{ mariadb_root_password }}"
 
 containerPath:
-  fsd_static: "{{ fsd_share_root_path }}/fsd/static"
-  upload: "{{ fsd_share_root_path }}/upload"
-  voi: "{{ fsd_share_root_path }}/voi"
-  nginx_path: "/mnt/voi"
+  sharedir: "{{ fsd_share_root_path }}"
+  nginx_path: "/mnt/"

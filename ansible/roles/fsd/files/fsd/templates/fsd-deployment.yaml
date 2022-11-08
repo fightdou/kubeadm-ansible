@@ -58,14 +58,8 @@ spec:
               mountPath: /home/static/prometheus/rules
             - name: fsd-prometheus-alert
               mountPath: /home/static/prometheus/alert/alertmanager.yml
-            - name: fsd-voi
-              mountPath: "{{ .Values.containerPath.voi }}"
-            - name: fsd-upload
-              mountPath: "{{ .Values.containerPath.upload }}"
-            - name: fsd-static
-              mountPath: "{{ .Values.containerPath.fsd_static }}"
-            - name: samba-dir
-              mountPath: "{{ .Values.fsd_env.cloud_disk_root_path }}"
+            - name: fsd-share-dir
+              mountPath: "{{ .Values.containerPath.sharedir }}"
           env:
             - name: ENV_FSD_SPRING_MYSQL_PASSWORD
               value: "{{ .Values.fsd_job_env.mariadb_password }}"
@@ -130,21 +124,9 @@ spec:
           hostPath:
             path: "{{ .Values.mount_dir.alertmanager_conf }}"
             type: FileOrCreate
-        - name: fsd-voi
+        - name: fsd-share-dir
           hostPath:
-            path: "{{ .Values.mount_dir.voi_dir }}"
-            type: DirectoryOrCreate
-        - name: fsd-upload
-          hostPath:
-            path: "{{ .Values.mount_dir.upload_dir }}"
-            type: DirectoryOrCreate
-        - name: fsd-static
-          hostPath:
-            path: "{{ .Values.mount_dir.fsd_static }}"
-            type: DirectoryOrCreate
-        - name: samba-dir
-          hostPath:
-            path: "{{ .Values.mount_dir.samba_dir }}"
+            path: "{{ .Values.mount_dir.share_dir }}"
             type: DirectoryOrCreate
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

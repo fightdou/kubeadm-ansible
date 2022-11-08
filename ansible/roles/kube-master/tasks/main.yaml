@@ -1,7 +1,34 @@
+---
+- name: 创建 /etc/kubernetes 目录
+  file: 
+    name: "/etc/kubernetes"
+    state: directory
+
 - name: 读取 kubelet.conf 文件 stat 信息
   stat: 
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
+
+- name: openeuler 查看 /run/systemd/resolve/resolv.conf 目录是否存在
+  stat: 
+    path: /run/systemd/resolve/resolv.conf
+  register: resolv_file
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: 创建 /run/systemd/resolve/ 目录
+  file:
+    name: /run/systemd/resolve/
+    state: directory
+  when:
+    - ansible_distribution == "openEuler"
+    - not resolv_file.stat.exists
+
+- name: create resolv.conf 文件
+  shell: echo "nameserver 114.114.114.114" > /run/systemd/resolve/resolv.conf
+  when:
+    - ansible_distribution == "openEuler"
+    - not resolv_file.stat.exists
 
 - name: 拉取 master 节点需要拉取的镜像列表
   shell: kubeadm config images pull --image-repository={{ kube_image_repository }} --kubernetes-version={{ kubernetes_version }}
@@ -99,8 +126,10 @@
   register: metallb_status
   until: metallb_status.stdout == "1"
   ignore_errors: yes
-  retries: 5
+  retries: 10
   delay: 30
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 渲染 BGPAdvertisement 配置文件
   template:
