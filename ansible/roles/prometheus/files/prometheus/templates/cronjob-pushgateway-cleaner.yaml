@@ -27,7 +27,8 @@ spec:
             image: {{ .Values.image.pushgateway_cleaner }}
             imagePullPolicy: IfNotPresent
             args:
-              - --metric-url=http://{{ .Values.pushgatewayVIP }}:{{ .Values.service.pushgateway.port }}/metrics
+              - -address=http://pushgateawy:{{ .Values.service.pushgateway.port }}
+              - -ttl=1h
             resources:
               limits:
                 cpu: "1"

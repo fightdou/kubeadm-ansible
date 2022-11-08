@@ -23,6 +23,10 @@
     state: absent
   ignore_errors: True
 
+- name: kill ceph-fuse process
+  shell: kill -9 $(pidof ceph-fuse)
+  ignore_errors: True
+
 - name: 清除清除系统缓存的定时任务
   cron:
     name: "clean linux cache"

@@ -1,1 +1,1 @@
-apiServerEndpoint: "{% if use_domain_name_deploy | bool %}{{ kubernetes_domain_name }}{% else %}{{ kube_apiserver_vip }}{% endif %}"
+apiServerEndpoint: "{{ kubernetes_domain_name }}"

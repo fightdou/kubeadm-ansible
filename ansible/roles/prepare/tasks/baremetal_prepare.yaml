@@ -31,7 +31,7 @@
         {% if 'ansible_' + api_interface in hostvars[host] %}
         {% set hostnames = [hostvars[host]['ansible_nodename'], hostvars[host]['ansible_hostname']] %}
         {% if enable_docker_register_domain_deploy and host == groups['baremetal'][0] %}
-        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }}
+        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }} {{ kubernetes_domain_name }}
         {% else %}
         {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}
         {% endif %}
@@ -78,18 +78,6 @@
   shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"
   ignore_errors: true
 
-- name: 添加集群节点 hostname 信息到 hosts 文件中
-  blockinfile:
-    path: /etc/hosts
-    block: |-
-      {{ kube_apiserver_vip }} {{ kubernetes_domain_name }}
-    state: present
-    create: yes
-    backup: yes
-    marker: "# Ansible inventory hosts {mark}"
-  when:
-    - enable_docker_register_domain_deploy | bool
-
 - name: 创建 systemd 配置目录
   file: 
     name: /etc/systemd/system.conf.d 
@@ -101,7 +89,7 @@
     dest: /etc/systemd/system.conf.d/30-k8s-ulimits.conf
 
 - name: ubuntu 添加离线源
-  shell: echo "deb [trusted=yes] http://{{ docker_register_domain }}:{{offline_deb_repo_port}} focal/" | sudo tee /etc/apt/sources.list > /dev/null
+  shell: echo "deb [trusted=yes] http://{{ docker_register_domain }}:{{ offline_deb_repo_port }} focal/" | sudo tee /etc/apt/sources.list > /dev/null
   when:
     - ansible_distribution == "Ubuntu"
 

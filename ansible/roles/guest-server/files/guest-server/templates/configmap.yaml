@@ -7,6 +7,6 @@ metadata:
 data:
   guest_service.conf: |
     [DEFAULT]
-    mqtt_server = {{ .Values.mqttVip }}
-    mqtt_port = {{ .Values.mqttPort }}
-    prometheus_url = {{ .Values.prometheus_url }}
+    mqtt_server = {{ .Values.emqx_svc_name }}
+    mqtt_port = {{ .Values.emqx_port }}
+    prometheus_url = {{ .Values.pushgateway_svc_name }}

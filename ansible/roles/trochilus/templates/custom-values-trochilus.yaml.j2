@@ -102,7 +102,7 @@ conf:
     voi_vm_base_path: {{ trochilus_voi_base_path }}/vms
     vm_name_template: voi-%s
   webhook_settings:
-    target_host: "{{ kube_apiserver_vip }}"
+    target_host: {{ kube_apiserver_vip }}
     target_port: {{ fsd_webhook_port }}
     target_path: /api/v1/webhook/
     method: post

@@ -8,23 +8,11 @@ metadata:
     helm.sh/chart: {{ include "emqx.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  {{- if .Values.service.annotations }}
   annotations:
-{{ toYaml .Values.service.annotations | indent 4 }}
-  {{- end }}
+    metallb.universe.tf/address-pool: address-pool
+    metallb.universe.tf/allow-shared-ip: address-pool
 spec:
-  type: {{ .Values.service.type }}
-  {{- if eq .Values.service.type "LoadBalancer" }}
-  {{- if .Values.service.loadBalancerIP }}
-  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
-  {{- end }}
-  {{- if .Values.service.loadBalancerSourceRanges }}
-  loadBalancerSourceRanges: {{- toYaml .Values.service.loadBalancerSourceRanges | nindent 4 }}
-  {{- end }}
-  {{- if .Values.service.externalIPs }}
-  externalIPs: {{- toYaml .Values.service.externalIPs | nindent 4 }}
-  {{- end }}
-  {{- end }}
+  type: LoadBalancer
   ports:
   - name: mqtt
     port: {{ .Values.service.mqtt | default 1883 }}
@@ -119,9 +107,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   type: ClusterIP
-  sessionAffinity: None
-  clusterIP: None
-  publishNotReadyAddresses: true
   ports:
   - name: mqtt
     port: {{ .Values.service.mqtt | default 1883 }}

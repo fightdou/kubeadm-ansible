@@ -3,8 +3,8 @@ image: "172.18.31.155/kubernetes/guest-service:latest"
 pullPolicy: "IfNotPresent"
 pullSecrets: "docker_register_secrets_name"
 tolerationSeconds: 30
-mqttVip: ""
-mqttPort: 1883
-prometheus_url: ""
+emqx_svc_name: emqx
+emqx_port: 1883
+pushgateway_svc_name: ""
 serviceAccountName: guest-service
 priorityClassName: ""

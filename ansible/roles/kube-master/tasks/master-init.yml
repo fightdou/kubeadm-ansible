@@ -4,6 +4,11 @@
     state: stopped
     enabled: yes
 
+- name: 创建 /etc/kubernetes 目录
+  file: 
+    name: "/etc/kubernetes"
+    state: directory
+
 - name: 创建 kubeadm init 配置文件
   template:
     src: kube-init.yml.j2

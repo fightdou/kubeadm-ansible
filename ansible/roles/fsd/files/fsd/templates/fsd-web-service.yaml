@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fsd-nginx
+  annotations:
+    metallb.universe.tf/address-pool: address-pool
+    metallb.universe.tf/allow-shared-ip: address-pool
 spec:
   ports:
     - port: {{ .Values.service.fsd_nginx.port }}
@@ -9,4 +12,4 @@ spec:
       name: {{ .Values.service.fsd_nginx.name }}
   selector:
     fsd: web
-  type: ClusterIP
+  type: LoadBalancer

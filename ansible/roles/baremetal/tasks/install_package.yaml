@@ -46,6 +46,12 @@
       - ipvsadm
       - ipmitool
       - ceph-fuse
+      - arping
+      - traceroute
+      - net-tools
+      - iputils-ping
+      - telnet
+      - ethtool
   when:
     - ansible_distribution == "Ubuntu"
 
@@ -64,6 +70,11 @@
       - ipvsadm
       - ipmitool
       - ceph-fuse
+      - traceroute
+      - net-tools
+      - iputils
+      - telnet
+      - ethtool
   when:
     - ansible_distribution == "openEuler"
 

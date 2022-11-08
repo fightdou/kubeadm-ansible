@@ -1,3 +1,3 @@
-apiServerEndpoint: "{% if use_domain_name_deploy | bool %}{{ kubernetes_domain_name }}{% else %}{{ kube_apiserver_vip }}{% endif %}"
+apiServerEndpoint: "{{ kubernetes_domain_name }}"
 LOCAL_DNS_CACHE: "169.254.20.10"
 CLUSTER_DNS_SVC_IP: "10.96.0.10"
