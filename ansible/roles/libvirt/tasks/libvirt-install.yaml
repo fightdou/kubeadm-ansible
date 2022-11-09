@@ -1,3 +1,4 @@
+---
 - name: 创建 libvirt values 目录
   file:
     name: /etc/kubernetes/plugins/libvirt

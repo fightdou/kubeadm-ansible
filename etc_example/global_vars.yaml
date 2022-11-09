@@ -163,6 +163,8 @@ ceph_rbd_admin_user: client.admin
 libvirt_qp_min: 15
 libvirt_qp_max: 30
 libvirt_hostnetwork: "{{ kube_hostnetwork }}"
+enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
+hugepages_reserved_rate: 0.2
 
 ###################
 # Trochilus Options

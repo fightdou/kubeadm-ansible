@@ -19,6 +19,8 @@ ipmi_vendor: HUAWEI
 ipmi_username: root
 # ipmi 连接密码
 ipmi_password: Troila12#$
+# tdesktop APP 软件包路径
+tdesktop_path_name: /opt/offline/Tdesktop.exe
 
 ####################
 # baremetal
@@ -29,7 +31,7 @@ ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 # Kubernetes options
 ####################
 # k8s 集群 VIP 配置
-kube_apiserver_vip: 172.18.28.193
+kube_apiserver_vip: 10.2.36.229
 # k8s 集群域名
 kubernetes_domain_name: kunlun.cluster.local
 # k8s 集群 VIP 端口
@@ -74,6 +76,7 @@ helm_wait_timeout: 600s
 enable_docker_auth: "{% if enable_docker_register_domain_deploy %}false{% else %}true{% endif %}"
 harbor_username: admin
 harbor_password: Harbor12345
+harbor_address: 172.18.28.6
 docker_register_secrets_name: "{% if enable_docker_register_domain_deploy %}{% else %}docker-register-secrets{% endif %}"
 
 #################
@@ -160,6 +163,8 @@ ceph_rbd_admin_user: client.admin
 libvirt_qp_min: 15
 libvirt_qp_max: 30
 libvirt_hostnetwork: "{{ kube_hostnetwork }}"
+enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
+hugepages_reserved_rate: 0.2
 
 ###################
 # Trochilus Options
