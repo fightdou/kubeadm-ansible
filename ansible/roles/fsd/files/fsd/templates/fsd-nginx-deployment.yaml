@@ -96,7 +96,7 @@ spec:
             type: DirectoryOrCreate
         - name: fsd-voi
           hostPath:
-            path: {{ .Values.mount_dir.voi_dir }}
+            path: {{ .Values.mount_dir.share_dir }}
             type: DirectoryOrCreate
       securityContext: {}
       {{- if .Values.image.pullSecrets }}

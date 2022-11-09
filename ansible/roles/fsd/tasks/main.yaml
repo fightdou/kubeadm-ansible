@@ -36,3 +36,20 @@
     daemon_reload: true
     enabled: false
     state: stopped
+
+- name: Create Tdesktop app dir
+  file:
+    path: "/data/fsd/static/vdiUpgradePackage/"
+    state: "directory"
+    mode: "0777"
+    recurse: yes
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: Copy Tdesktop.exe to share path
+  copy:
+    src: "{{ tdesktop_path_name }}"
+    dest: "/data/fsd/static/vdiUpgradePackage/"
+    mode: "0644"
+  run_once: True
+  delegate_to: "{{ groups['kube-master'][0] }}"
