@@ -1,8 +1,8 @@
 image:
-  fsd: {{ kube_image_repository }}/fsd:{{ kube_image_tag }}
-  fsd_job: {{ kube_image_repository }}/fsd_job:{{ kube_image_tag }}
-  fsd_init: {{ kube_image_repository }}/fsd_init:{{ kube_image_tag }}
-  fsd_nginx: {{ kube_image_repository }}/fsd_nginx:{{ kube_image_tag }}
+  fsd: {{ kube_image_repository }}/fsd:{{ fsd_image_tag }}
+  fsd_job: {{ kube_image_repository }}/fsd_job:{{ fsd_image_tag }}
+  fsd_init: {{ kube_image_repository }}/fsd_init:{{ fsd_image_tag }}
+  fsd_nginx: {{ kube_image_repository }}/fsd_nginx:{{ fsd_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
   pullPolicy: "Always"
 

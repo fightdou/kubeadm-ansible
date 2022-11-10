@@ -170,12 +170,9 @@ spec:
           - mountPath: /var/log/trochilus
             mountPropagation: Bidirectional
             name: log-dir
-          - mountPath: {{ .Values.container_dir.trochilus_share_dir }}
+          - mountPath: {{ .Values.container_mount_dir }}
             mountPropagation: Bidirectional
-            name: voi-share-path
-          - mountPath: {{ .Values.container_dir.trochilus_upload_dir }}
-            mountPropagation: Bidirectional
-            name: voi-upload-path
+            name: share-dir-path
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -235,10 +232,6 @@ spec:
             type: ""
           name: log-dir
         - hostPath:
-            path: {{ .Values.mount_dir.voi_share_dir }}
+            path: {{ .Values.mount_share_dir }}
             type: DirectoryOrCreate
-          name: voi-share-path
-        - hostPath:
-            path: {{ .Values.mount_dir.voi_upload_dir }}
-            type: DirectoryOrCreate
-          name: voi-upload-path
+          name: share-dir-path
