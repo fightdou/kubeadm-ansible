@@ -1,6 +1,6 @@
 ---
 # defaults file for emqx
-k8s_virt_ip: "{{ kube_apiserver_vip }}"
+k8s_virt_ip: "{{ kubernetes_domain_name }}"
 k8s_virt_port: "{{ kube_apiserver_port }}"
 emqx_image_tag: "{{ kube_image_tag }}"
 emqx_image_repository: "{{ kube_image_repository }}/emqx"
