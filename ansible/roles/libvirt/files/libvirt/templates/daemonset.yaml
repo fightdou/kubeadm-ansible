@@ -89,10 +89,8 @@ spec:
             name: libvirt-etc
             readOnly: true
             subPath: libvirtd.conf
-          - mountPath: /etc/vdi/vdi_conf.ini
-            name: libvirt-etc
-            readOnly: true
-            subPath: vdi_conf.ini
+          - mountPath: /etc/vdi/
+            name: vdi-conf
           - mountPath: /etc/libvirt/qemu
             name: etc-libvirt-qemu
           - mountPath: /lib/modules
@@ -188,6 +186,10 @@ spec:
             path: {{ .Values.share_dir }}
             type: "DirectoryOrCreate"
           name: share-dir
+        - hostPath:
+            path: /etc/vdi/
+            type: ""
+          name: vdi-conf
         {{- if .Values.enable_ceph }}
         - hostPath:
             path: /etc/ceph
