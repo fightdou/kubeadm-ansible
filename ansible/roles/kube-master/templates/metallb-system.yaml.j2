@@ -1306,7 +1306,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app: metallb
-  name: controller
+  name: metallb-controller
   namespace: kube-system
 ---
 apiVersion: v1
@@ -1322,7 +1322,7 @@ kind: Role
 metadata:
   labels:
     app: metallb
-  name: controller
+  name: metallb-controller
   namespace: kube-system
 rules:
 - apiGroups:
@@ -1348,7 +1348,7 @@ rules:
 - apiGroups:
   - apps
   resourceNames:
-  - controller
+  - metallb-controller
   resources:
   - deployments
   verbs:
@@ -1519,7 +1519,7 @@ rules:
 - apiGroups:
   - policy
   resourceNames:
-  - controller
+  - metallb-controller
   resources:
   - podsecuritypolicies
   verbs:
@@ -1619,15 +1619,15 @@ kind: RoleBinding
 metadata:
   labels:
     app: metallb
-  name: controller
+  name: metallb-controller
   namespace: kube-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: controller
+  name: metallb-controller
 subjects:
 - kind: ServiceAccount
-  name: controller
+  name: metallb-controller
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1658,7 +1658,7 @@ roleRef:
   name: metallb-system:controller
 subjects:
 - kind: ServiceAccount
-  name: controller
+  name: metallb-controller
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1700,7 +1700,7 @@ metadata:
   labels:
     app: metallb
     component: controller
-  name: controller
+  name: metallb-controller
   namespace: kube-system
 spec:
   revisionHistoryLimit: 3
@@ -1725,7 +1725,7 @@ spec:
         - name: METALLB_ML_SECRET_NAME
           value: memberlist
         - name: METALLB_DEPLOYMENT
-          value: controller
+          value: metallb-controller
         image: {{ kube_image_repository }}/metallb-controller:{{ kube_image_tag }}
         livenessProbe:
           failureThreshold: 3
@@ -1736,7 +1736,7 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 1
-        name: controller
+        name: metallb-controller
         ports:
         - containerPort: 7472
           name: monitoring
@@ -1768,7 +1768,7 @@ spec:
         fsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-      serviceAccountName: controller
+      serviceAccountName: metallb-controller
       terminationGracePeriodSeconds: 0
       volumes:
       - name: cert

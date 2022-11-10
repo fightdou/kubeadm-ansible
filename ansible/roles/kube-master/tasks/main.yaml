@@ -122,7 +122,7 @@
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 查看 metallb-controller 是否运行
-  shell: kubectl get deployment controller -n kube-system -o json | jq .status.readyReplicas
+  shell: kubectl get deployment metallb-controller -n kube-system -o json | jq .status.readyReplicas
   register: metallb_status
   until: metallb_status.stdout == "1"
   ignore_errors: yes

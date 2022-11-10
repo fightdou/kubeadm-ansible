@@ -1,6 +1,6 @@
 image:
-  btserver: "{{ kube_image_repository }}/btserver:{{ kube_image_tag }}"
-  btserver_track: "{{ kube_image_repository }}/btserver_track:{{ kube_image_tag }}"
+  btserver: "{{ kube_image_repository }}/btserver:{{ btserver_image_tag }}"
+  btserver_track: "{{ kube_image_repository }}/btserver_track:{{ btserver_image_tag }}"
   pullPolicy: "IfNotPresent"
   # Overrides the image tag whose default is the chart appVersion.
   pullSecrets: "{{ docker_register_secrets_name }}"  

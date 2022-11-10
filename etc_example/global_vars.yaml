@@ -165,6 +165,7 @@ libvirt_qp_max: 30
 libvirt_hostnetwork: "{{ kube_hostnetwork }}"
 enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 hugepages_reserved_rate: 0.2
+libvirt_image_tag: 1.0.4
 
 ###################
 # Trochilus Options
@@ -178,6 +179,10 @@ trochilus_api_ingress: false
 trochilus_hostnetwork: "{{ kube_hostnetwork }}"
 trochilus_voi_path: "{{ fsd_voi_dir }}"
 trochilus_voi_base_path: "/var/lib/trochilus/voi"
+trochilus_base_path: "/var/lib/trochilus"
+trochilus_image_tag: 1.0.4
+# 如果vdi盒子和管理网不在同一个网段，就填管理网网关ip。如果vdi盒子和管理网在同一个网段，就啥也不填
+trochilus_detected_mgmt_net_ip: ""
 
 #################
 # Mariadb Options
@@ -192,6 +197,7 @@ mariadb_pvc_name: mariadb-pvc
 mariadb_host_path: /var/lib/mariadb
 mariadb_backup_path: /var/lib/mariadb-backup
 mariadb_backup_time: "0 0 * * * "
+mariadb_image_tag: 1.0.4
 
 ####################
 # Prometheus Options
@@ -210,6 +216,7 @@ prometheus_host_exporter_port: 9104
 prometheus_event_exporter_port: 9102
 pushgateway_clean_time: "*/1 * * * *"
 prometheus_hostnetwork: "{{ kube_hostnetwork }}"
+prometheus_image_tag: 1.0.4
 
 ##############
 # Fsd Options
@@ -229,7 +236,8 @@ fsd_cloud_disk_password: Troila12
 fsd_host_network: "{{ kube_hostnetwork }}"
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
 fsd_upload_dir: "{{ desktop_mount_dir }}/upload"
-fsd_share_root_path: "/var/lib/trochilus"
+fsd_share_root_path: "{{ desktop_mount_dir }}"
+fsd_image_tag: 1.0.4
 vdi_desktop_num: 10000
 vdi_storage_num: 1000
 cloud_disk_num: 1000
@@ -269,6 +277,7 @@ emqx_mgmt_port: 8081
 emqx_mqttssl_port: 8883
 emqx_ws_port: 8083
 emqx_wss_port: 8084
+emqx_image_tag: 1.0.4
 
 #################
 # role开关
@@ -303,12 +312,14 @@ redis_master_password: zhuolang@Troila@123
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: "{{ kube_hostnetwork }}"
+redis_image_tag: 1.0.4
 
 ####################
 # websockify Options
 ####################
 websockify_port: 9003
 websockify_hostnetwork: "{{ kube_hostnetwork }}"
+websockify_image_tag: 1.0.4
 
 #######################
 # btserver
@@ -320,6 +331,7 @@ bt_download_port_start: 6880
 bt_download_port_end: 6889
 btserver_listen_ports: "{{ bt_download_port_start }}-{{ bt_download_port_end }}"
 btserver_hostnetwork: "{{ kube_hostnetwork }}"
+btserver_image_tag: 1.0.4
 
 ##############
 # VOI Options

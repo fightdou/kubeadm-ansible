@@ -60,6 +60,11 @@ data:
     voi_image_base_path = {{ .Values.conf.voi_settings.voi_image_base_path }}
     voi_vm_base_path = {{ .Values.conf.voi_settings.voi_vm_base_path }}
     vm_name_template = voi-%s
+    [ha_settings]
+    detected_mgmt_net_ip = {{ .Values.conf.ha_settings.detected_mgmt_net_ip }}
+    [system_settings]
+    metallb_namespace = {{ .Values.conf.system_settings.metallb_namespace }}
+    cgroup_path = {{ .Values.conf.system_settings.cgroup_path }}
     [webhook_settings]
     target_host = {{ .Values.conf.webhook_settings.target_host }}
     target_port = {{ .Values.conf.webhook_settings.target_port }}

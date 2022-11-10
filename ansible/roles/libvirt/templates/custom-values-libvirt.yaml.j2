@@ -1,5 +1,5 @@
 image:
-  libvirt: {{ kube_image_repository }}/libvirt:{{ kube_image_tag }}
+  libvirt: {{ kube_image_repository }}/libvirt:{{ libvirt_image_tag }}
   pullSecrets: {{ docker_register_secrets_name }}
   pullPolicy: "Always"
 libvirt_tls: false
@@ -16,8 +16,8 @@ serviceAccountName: libvirt
 nodeSelector:
   {{ compute_node_role_name }}: {{ node_role_value }}
 priorityClassName: {{ kube_priority_name }}
-trochilus_dir: "{{ trochilus_voi_base_path }}"
-voi_dir: "{{ fsd_voi_dir }}"
+trochilus_dir: "{{ trochilus_base_path }}"
+share_dir: "{{ desktop_mount_dir }}"
 enable_ceph: {{ enable_ceph }}
 libvirt_qp_min: {{ libvirt_qp_min }}
 libvirt_qp_max: {{ libvirt_qp_max }}

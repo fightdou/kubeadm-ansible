@@ -77,6 +77,7 @@
       - telnet
       - ethtool
       - tcpdump
+      - bash-completion
   when:
     - ansible_distribution == "openEuler"
 
@@ -188,8 +189,15 @@
   when:
     - ansible_distribution == "openEuler"
 
-- name: 配置 kubectl 命令行自动补全
+- name: Ubuntu 配置 kubectl 命令行自动补全
   shell: kubectl completion bash > /usr/share/bash-completion/completions/kubectl
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: Openeuler 配置 kubectl 命令行自动补全
+  shell: echo "source <(kubectl completion bash)" >> ~/.bashrc
+  when:
+    - ansible_distribution == "Ubuntu"
 
 - name: Docker Login
   docker_login:

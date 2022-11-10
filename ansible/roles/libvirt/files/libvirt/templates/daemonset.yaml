@@ -112,7 +112,7 @@ spec:
             readOnly: true
           - mountPath: {{ .Values.trochilus_dir }}
             mountPropagation: Bidirectional
-            name: voi-vm-dir
+            name: share-dir
           {{- if .Values.enable_ceph }}
           - mountPath: /etc/libvirt/secrets
             name: secret-dir
@@ -185,9 +185,9 @@ spec:
             type: ""
           name: etc-libvirt-qemu
         - hostPath:
-            path: {{ .Values.voi_dir }}
+            path: {{ .Values.share_dir }}
             type: "DirectoryOrCreate"
-          name: voi-vm-dir
+          name: share-dir
         {{- if .Values.enable_ceph }}
         - hostPath:
             path: /etc/ceph
