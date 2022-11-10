@@ -1,4 +1,17 @@
 ---
+- name: 创建 vdi 目录
+  file:
+    path: /etc/vdi/
+    state: directory
+    mode: 0755
+
+- name: Copy vdi.ini 文件
+  template:
+    src: vdi_conf.ini.j2
+    dest: /etc/vdi/vdi_conf.ini
+    owner: root
+    mode: 0644
+
 - name: 创建 libvirt values 目录
   file:
     name: /etc/kubernetes/plugins/libvirt
