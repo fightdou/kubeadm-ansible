@@ -238,7 +238,7 @@ reserved_host_cpus: 2
 reserved_host_memory_mb: 16384
 # 每个osd需要留2G内存
 ceph_reserved_host_memory_mb: 6
-cpu_allocation_ratio: 8
+cpu_allocation_ratio: 4
 
 #######################
 # elasticsearch Options
