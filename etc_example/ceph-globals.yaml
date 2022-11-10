@@ -26,11 +26,11 @@ osd_pool_default_pgp_num: 16
 ## 默认关闭所有debug 配置项
 ceph_config_debug_default: "0/0"
 
-images_pool_pg_num: 256
+images_pool_pg_num: 128
 images_pool_pgp_num: "{{ images_pool_pg_num }}"
-volumes_poll_pg_num: 256
+volumes_poll_pg_num: 128
 volumes_poll_pgp_num: "{{ volumes_poll_pg_num }}"
-cephfs_pool_default_pg_num: 256
+cephfs_pool_default_pg_num: 32
 cephfs_pool_default_pgp_num: "{{ cephfs_pool_default_pg_num }}"
 
 ###########

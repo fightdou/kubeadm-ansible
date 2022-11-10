@@ -66,9 +66,21 @@ spec:
           runAsUser: 0
           runAsGroup: 0
           readOnlyRootFilesystem: false
+        {{- if .Values.enableHugepages }}
+        resources:
+          limits:
+            hugepages-2Mi: {{ .Values.hugepages_2M_total }}Gi
+            memory: 2Gi
+          requests:
+            memory: 2Gi
+        {{- end }}
         volumeMounts:
           - mountPath: /etc/localtime
             name: localtime
+          {{- if .Values.enableHugepages }}
+          - mountPath: /hugepages-2Mi
+            name: hugepage-2mi
+          {{- end }}
           - mountPath: /etc/libvirt/qemu.conf
             name: libvirt-etc
             readOnly: true
@@ -131,6 +143,11 @@ spec:
       volumes:
         - emptyDir: {}
           name: secret-dir
+        {{- if .Values.enableHugepages }}
+        - name: hugepage-2mi
+          emptyDir:
+            medium: HugePages-2Mi
+        {{- end }}
         - name: localtime
           hostPath:
             path: /etc/localtime
