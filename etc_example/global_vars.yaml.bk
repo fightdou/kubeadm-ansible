@@ -19,8 +19,8 @@ ipmi_vendor: HUAWEI
 ipmi_username: root
 # ipmi 连接密码
 ipmi_password: Troila12#$
-# tdesktop APP 软件包路径
-tdesktop_path_name: /opt/offline/Tdesktop.exe
+# TDesktop APP 软件包路径
+tdesktop_path_name: /opt/offline/TDesktop.exe
 
 ####################
 # baremetal
