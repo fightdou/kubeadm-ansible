@@ -78,6 +78,7 @@
       - ethtool
       - tcpdump
       - bash-completion
+      - bridge-utils
   when:
     - ansible_distribution == "openEuler"
 
