@@ -50,8 +50,6 @@
     - "{{ ansible_env.HOME | default('/root') }}/.kube"
     - /etc/kubernetes
     - /etc/cni/net.d
-    - /etc/sysctl.d/95-k8s-sysctl.conf
-    - /etc/systemd/system.conf.d/30-k8s-ulimits.conf
     - /run/flannel
     - /var/lib/etcd
     - /var/lib/kubelet
