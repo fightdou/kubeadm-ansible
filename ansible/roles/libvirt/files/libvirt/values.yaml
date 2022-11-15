@@ -20,3 +20,6 @@ trochilus_dir: ""
 voi_dir: ""
 tolerationSeconds: 30
 hostNetwork: true
+trochilus_agent_port: 9002
+hugepages_2M_total: ""
+enableHugepages: false

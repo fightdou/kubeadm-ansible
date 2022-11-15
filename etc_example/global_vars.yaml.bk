@@ -183,6 +183,8 @@ trochilus_base_path: "/var/lib/trochilus"
 trochilus_image_tag: 1.0.4
 # 如果vdi盒子和管理网不在同一个网段，就填管理网网关ip。如果vdi盒子和管理网在同一个网段，就啥也不填
 trochilus_detected_mgmt_net_ip: ""
+trochilus_enable_reserved_core: false
+trochilus_reserved_cores_num: 2
 
 #################
 # Mariadb Options

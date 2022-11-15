@@ -13,6 +13,8 @@ data:
     [agent_settings]
     bind_host = ${NODE_ID}
     bind_port = {{ .Values.service.trochilus_agent.port }}
+    reserved_cores_num = {{ .Values.conf.agent_settings.reserved_cores_num }}
+    enable_reserved_core = {{ .Values.conf.agent_settings.enable_reserved_core }}
     ipmi_username = {{ .Values.conf.agent_settings.ipmi_username }}
     ipmi_password = {{ .Values.conf.agent_settings.ipmi_password }}
     ipmi_vendor = {{ .Values.conf.agent_settings.ipmi_vendor }}

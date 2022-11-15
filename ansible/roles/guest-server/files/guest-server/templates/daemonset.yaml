@@ -34,13 +34,15 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
           securityContext:
             privileged: true
+            runAsUser: 0
+            runAsGroup: 0
             readOnlyRootFilesystem: false
+          securityContext:
           volumeMounts:
             - mountPath: /etc/localtime
               name: localtime
             - name: configfile
-              subPath: guest_service.conf
-              mountPath: /etc/guest-service/guest_service.conf
+              mountPath: /etc/guest-service/
             - name: var-lib-libvirt
               mountPath: /var/lib/libvirt
               mountPropagation: Bidirectional
@@ -60,8 +62,9 @@ spec:
             path: /etc/localtime
             type: File
         - name: configfile
-          configMap:
-            name: guest-service-config
+          hostPath:
+            path: /etc/guest-service/
+            type: ""
         - name: var-lib-libvirt
           hostPath:
             path: /var/lib/libvirt

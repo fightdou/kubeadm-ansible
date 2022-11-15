@@ -70,6 +70,8 @@ conf:
     ipmi_vendor: HUAWEI
     host_username: root
     host_password: 123456
+    reserved_cores_num: 2
+    enable_reserved_core: false
   api_settings:
     enabled_volume_backends: rbd1
   image_settings:

@@ -6,8 +6,8 @@
     mode: 0755
 
 - name: Copy vdi.ini 文件
-  template:
-    src: vdi_conf.ini.j2
+  copy:
+    src: vdi_conf.ini
     dest: /etc/vdi/vdi_conf.ini
     owner: root
     mode: 0644

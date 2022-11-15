@@ -1,0 +1,4 @@
+[DEFAULT]
+mqtt_server = emqx
+mqtt_port = {{ emqx_mqtt_port }}
+prometheus_url = http://pushgateway:{{ prometheus_pushgateway_port }}/metrics/job/pushgateway/instance/
