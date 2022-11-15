@@ -50,11 +50,12 @@ spec:
           successThreshold: 1
           timeoutSeconds: 30
         readinessProbe:
-          httpGet:
-            path: /
-            port: {{ .Values.trochilus_agent_port }}
-            scheme: HTTP
-          failureThreshold: 3
+          exec:
+            command:
+              - bash
+              - -c
+              - /usr/bin/virsh list
+          failureThreshold: 5
           initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
