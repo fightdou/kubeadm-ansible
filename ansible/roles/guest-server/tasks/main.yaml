@@ -1,3 +1,13 @@
+- name: 创建 guest-server 目录
+  file:
+    name: /etc/guest-service/
+    state: directory
+
+- name: copy 配置文件
+  template:
+    src: guest_service.conf.j2
+    dest: /etc/guest-service/guest_service.conf
+
 - import_tasks: guest-server-install.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"

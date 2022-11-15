@@ -2,6 +2,19 @@
   when:
     - enable_ceph | bool
 
+- name: 创建 vdi 目录
+  file:
+    path: /etc/vdi/
+    state: directory
+    mode: 0755
+
+- name: Copy vdi.ini 文件
+  copy:
+    src: vdi_conf.ini
+    dest: /etc/vdi/vdi_conf.ini
+    owner: root
+    mode: 0644
+
 - import_tasks: libvirt-install.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
