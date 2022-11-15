@@ -44,7 +44,7 @@ spec:
             path: /
             port: {{ .Values.trochilus_agent_port }}
             scheme: HTTP
-          failureThreshold: 3
+          failureThreshold: 5
           initialDelaySeconds: 30
           periodSeconds: 30
           successThreshold: 1
