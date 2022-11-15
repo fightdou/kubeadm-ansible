@@ -37,7 +37,6 @@ spec:
             runAsUser: 0
             runAsGroup: 0
             readOnlyRootFilesystem: false
-          securityContext:
           volumeMounts:
             - mountPath: /etc/localtime
               name: localtime
@@ -49,7 +48,7 @@ spec:
             - name: var-run-libvirt
               mountPath: /var/run/libvirt
               mountPropagation: Bidirectional   
-            - name: var-log 
+            - name: var-log
               mountPath: /var/log/guest-service/
               mountPropagation: Bidirectional
             - mountPath: /etc/vdi/
