@@ -215,6 +215,7 @@
     - ansible_distribution == "openEuler"
 
 - name: 设置开机启动 iptables 命令
+  become: true
   copy:
     src: iptables-accept.service
     dest: /usr/lib/systemd/system/
