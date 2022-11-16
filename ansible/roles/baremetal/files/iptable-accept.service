@@ -1,0 +1,11 @@
+[Unit]
+Description=Exec Iptables command
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=iptables -P FORWARD ACCEPT
+
+[Install]
+WantedBy=multi-user.target

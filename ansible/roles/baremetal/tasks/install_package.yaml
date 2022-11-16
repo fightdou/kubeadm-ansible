@@ -208,3 +208,24 @@
     password: "{{ harbor_password }}"
   when:
     - enable_docker_auth | bool
+
+- name: openEuler 设置防火墙规则
+  shell: iptables -P FORWARD ACCEPT
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: 设置开机启动 iptables 命令
+  copy:
+    src: iptables-accept.service
+    dest: /usr/lib/systemd/system/
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: Reload systemctl and enable iptables-accept service
+  become: true
+  systemd:
+    name: iptables-accept
+    daemon_reload: true
+    enabled: true
+  when:
+    - ansible_distribution == "openEuler"
