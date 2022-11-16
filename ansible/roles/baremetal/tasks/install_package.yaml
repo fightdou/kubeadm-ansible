@@ -198,7 +198,7 @@
 - name: Openeuler 配置 kubectl 命令行自动补全
   shell: echo "source <(kubectl completion bash)" >> ~/.bashrc
   when:
-    - ansible_distribution == "Ubuntu"
+    - ansible_distribution == "openEuler"
 
 - name: Docker Login
   docker_login:
