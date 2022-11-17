@@ -4,7 +4,7 @@
   service:
     name: "{{ item }}"
     state: "restarted"
-    enabled: yes
+    enabled: true
   become: True
   with_items:
     - "nmbd"
@@ -16,7 +16,7 @@
   service:
     name: "{{ item }}"
     state: "restarted"
-    enabled: yes
+    enabled: true
   become: True
   with_items:
     - "nmb"

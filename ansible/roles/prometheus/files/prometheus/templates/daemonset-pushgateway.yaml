@@ -15,9 +15,14 @@ spec:
       containers:
       - name: pushgateway
         args:
-          - --web.listen-address={{ .Values.pushgatewayVIP }}:{{ .Values.service.pushgateway.port }}
+          - --web.listen-address=$(NODE_ID):{{ .Values.service.pushgateway.port }}
         image: {{ .Values.image.pushgateway }}
         imagePullPolicy: IfNotPresent
+        env:
+        - name: NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         ports:
         - containerPort: {{ .Values.service.pushgateway.port }}
           name: http
