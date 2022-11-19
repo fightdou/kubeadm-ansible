@@ -37,6 +37,8 @@ networkConfig:
     
 clusterDomainSuffix: cluster.local
 replica: 2
+rbd_backends: rbd1
+lvm_backends: lvm1
 
 dependencies:
   db_sync:
@@ -86,6 +88,11 @@ conf:
     rbd_keyring_conf: /etc/ceph/ceph.client.admin.keyring
     rados_connect_timeout: -1
     volume_driver: trochilus.agent.storage.volume.drivers.rbd.RBDVolumeDriver
+  lvm1:
+    volume_driver: trochilus.agent.storage.volume.drivers.lvm.LVMVolumeDriver
+    volume_group: vg_name
+    thin_pool_lv: data_pool
+    lv_type: thin
   vm_settings:
     virt_type: qemu
     default_root_disk_backend: rbd1

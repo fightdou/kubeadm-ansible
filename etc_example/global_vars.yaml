@@ -139,7 +139,7 @@ cephfs_storage_class_name: cephfs-general
 install_lvm_csi: false
 lvm_service_port: 9500
 lvm_storage_class_name: general
-lvm_volgroup_name: lvmvg
+lvm_volgroup_name: vg_name
 create_lvm_storage_class: true
 # eg: /dev/vdb or /dev/vdb1
 lvm_pv_device: /dev/vdb
@@ -304,6 +304,7 @@ enable_fluentd: false
 enable_kibana: false
 enable_ceph: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 enable_checknet: false
+enable_lvm: false
 
 ################
 # Redis Options

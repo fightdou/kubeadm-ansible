@@ -23,8 +23,16 @@
     state: absent
   ignore_errors: True
 
-- name: kill ceph-fuse process
-  shell: kill -9 $(pidof ceph-fuse)
+- name: 清理 vg 卷
+  shell: vgremove -y {{ lvm_volgroup_name }}
+  when:
+    - enable_lvm | bool
+  ignore_errors: True
+
+- name: 清理 pv 卷
+  shell: pvremove -y {{ lvm_pv_device }}
+  when:
+    - enable_lvm | bool
   ignore_errors: True
 
 - name: 清除清除系统缓存的定时任务
