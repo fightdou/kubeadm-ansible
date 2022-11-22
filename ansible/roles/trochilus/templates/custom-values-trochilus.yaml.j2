@@ -42,6 +42,8 @@ networkConfig:
 
 mount_share_dir: {{ desktop_mount_dir }}
 container_mount_dir: {{ trochilus_base_path }}
+rbd_backends: rbd1
+lvm_backends: lvm1
 
 dependencies:
   db_sync:
@@ -75,12 +77,12 @@ conf:
     ipmi_vendor: {{ ipmi_vendor }}
     host_username: {{ system_username }}
     host_password: {{ system_password }}
-    trochilus_reserved_cores_num: {{ trochilus_trochilus_reserved_cores_num }}
+    trochilus_reserved_cores_num: {{ trochilus_reserved_cores_num }}
     enable_reserved_core: {{ trochilus_enable_reserved_core }}
   api_settings:
-    enabled_volume_backends: rbd1
+    enabled_volume_backends: {% if enable_ceph %}rbd1{% elif enable_lvm %}lvm1{% endif %}
   image_settings:
-    enabled_image_store: rbd
+    enabled_image_store: {% if enable_ceph %}rbd{% else %}filesystem{% endif %}
     rbd_store_config_file: /etc/ceph/ceph.conf
     rbd_store_user: admin
     rbd_store_pool: {{ osd_pools.images_pools.pool_name }}
@@ -91,9 +93,14 @@ conf:
     rbd_keyring_conf: /etc/ceph/ceph.client.admin.keyring
     rados_connect_timeout: -1
     volume_driver: trochilus.agent.storage.volume.drivers.rbd.RBDVolumeDriver
+  lvm1:
+    volume_driver: trochilus.agent.storage.volume.drivers.lvm.LVMVolumeDriver
+    volume_group: {{ lvm_volgroup_name }}
+    thin_pool_lv: data_pool
+    lv_type: thin
   vm_settings:
     virt_type: {{ trochilus_libvirt_driver }}
-    default_root_disk_backend: rbd1
+    default_root_disk_backend: {% if enable_ceph %}rbd1{% elif enable_lvm %}lvm1{% endif %}
     rbd_secret_uuid: {{ ceph_rbd_secret_uuid }}
   voi_settings:
     voi_image_base_path: {{ trochilus_voi_base_path }}/images

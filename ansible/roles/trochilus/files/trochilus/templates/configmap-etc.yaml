@@ -31,6 +31,25 @@ data:
     supported_instance_metadatas = k1, k2
     [database]
     connection = mysql+pymysql://{{ .Values.mariadb.database }}:{{ .Values.mariadb.password }}@mariadb:3306/{{ .Values.mariadb.database }}
+    {{- if eq .Values.conf.api_settings.enabled_volume_backends .Values.lvm_backends }}
+    [lvm1]
+    volume_driver = {{ .Values.conf.lvm1.volume_driver }}
+    volume_group = {{ .Values.conf.lvm1.volume_group }}
+    thin_pool_lv = {{ .Values.conf.lvm1.thin_pool_lv }}
+    lv_type = {{ .Values.conf.lvm1.lv_type }}
+    [image_settings]
+    enabled_image_store = filesystem
+    filesystem_store_chunk_size = 65536
+    filesystem_store_datadir = /var/lib/trochilus/images
+    {{- end }}
+    {{- if eq .Values.conf.api_settings.enabled_volume_backends .Values.rbd_backends }}
+    [rbd1]
+    rbd_ceph_conf = /etc/ceph/ceph.conf
+    rbd_pool = {{ .Values.conf.rbd1.rbd_pool }}
+    rbd_user = {{ .Values.conf.rbd1.rbd_user }}
+    rbd_keyring_conf = /etc/ceph/ceph.client.admin.keyring
+    rados_connect_timeout = -1
+    volume_driver = {{ .Values.conf.rbd1.volume_driver }}
     [image_settings]
     enabled_image_store = {{ .Values.conf.image_settings.enabled_image_store }}
     rbd_store_config_file = /etc/ceph/ceph.conf
@@ -39,13 +58,7 @@ data:
     rbd_store_chunk_size = 8
     rbd_store_conn_timeout = 0
     rbd_store_thin_provisioning = true
-    [{{ .Values.conf.api_settings.enabled_volume_backends }}]
-    rbd_ceph_conf = /etc/ceph/ceph.conf
-    rbd_pool = {{ .Values.conf.rbd1.rbd_pool }}
-    rbd_user = {{ .Values.conf.rbd1.rbd_user }}
-    rbd_keyring_conf = /etc/ceph/ceph.client.admin.keyring
-    rados_connect_timeout = -1
-    volume_driver = {{ .Values.conf.rbd1.volume_driver }}
+    {{- end }}
     [network_settings]
     support_flat_physicals = {{ .Values.networkConfig.flat_network_type }}
     physical_vlan_ranges = {{ .Values.networkConfig.vlan_network_type }}

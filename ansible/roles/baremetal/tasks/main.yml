@@ -26,6 +26,31 @@
     - enable_hugepages | bool
 
 - name: 分配大页内存
+  become: true
   shell: echo {{ hugepages_total }} > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
   when:
     - enable_hugepages | bool
+
+- name: 创建 pv
+  become: true
+  shell: "{{ item }} || true"
+  with_items:
+  - "pvcreate {{ lvm_pv_device }}"
+  when:
+    - enable_lvm | bool
+
+- name: 创建 vg
+  become: true
+  shell: "{{ item }} || true"
+  with_items:
+  - "vgcreate {{ lvm_volgroup_name }} {{ lvm_pv_device }}"
+  when: 
+    - enable_lvm | bool
+
+- name: 创建 thin pool
+  become: true
+  shell: "{{ item }} || true"
+  with_items:
+  - "lvcreate -l +100%free --thinpool data_pool {{ lvm_volgroup_name }}"
+  when: 
+    - enable_lvm | bool

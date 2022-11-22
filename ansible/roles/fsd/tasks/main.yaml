@@ -53,3 +53,8 @@
     mode: "0644"
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: openEuler 执行 sync 命令
+  shell: sync
+  when: 
+    - ansible_distribution == "openEuler"
