@@ -141,8 +141,6 @@ lvm_service_port: 9500
 lvm_storage_class_name: general
 lvm_volgroup_name: vg_name
 create_lvm_storage_class: true
-# eg: /dev/vdb or /dev/vdb1
-lvm_pv_device: /dev/vdb
 
 #################
 # Ingress Options
@@ -162,6 +160,7 @@ ceph_rbd_admin_user: client.admin
 # 默认值：qp_min=15，qp_max=30，这个值需要根据CPU的能力来判断，例如Intel(R) Xeon(R) CPU E5-2640 v4 @ 2.40GHz的CPU可以填写10-25，如果CPU能力比这个差，需要改成15-30，或者15-35
 libvirt_qp_min: 15
 libvirt_qp_max: 30
+hugepages_size: 2M
 libvirt_hostnetwork: "{{ kube_hostnetwork }}"
 enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 hugepages_reserved_rate: 0.2

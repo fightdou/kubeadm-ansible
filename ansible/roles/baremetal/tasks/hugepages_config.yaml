@@ -1,0 +1,47 @@
+- name: 获取可分配的大页数量
+  set_fact:
+    hugepages_total: "{{ (ansible_memtotal_mb  * (1 - hugepages_reserved_rate) // 2) | int }}"
+  when:
+    - enable_hugepages | bool
+
+- name: 分配大页内存
+  become: true
+  shell: echo {{ hugepages_total }} > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+  when:
+    - enable_hugepages | bool
+
+- name: openEuler Replace GRUB_CMDLINE_LINUX in /etc/default/grub
+  lineinfile:
+    dest: /etc/default/grub
+    regexp: "^GRUB_CMDLINE_LINUX=.*"
+    line: "GRUB_CMDLINE_LINUX=\"rd.lvm.lv=openeuler/root crashkernel=512M default_hugepagesz={{ hugepages_size }} hugepages={{ hugepages_total }}\""
+    state: present
+  become: True
+  when:
+    - ansible_distribution == "openEuler"
+    - enable_hugepages | bool
+
+- name: Ubuntu Replace GRUB_CMDLINE_LINUX in /etc/default/grub
+  lineinfile:
+    dest: /etc/default/grub
+    regexp: "^GRUB_CMDLINE_LINUX=.*"
+    line: "GRUB_CMDLINE_LINUX=\"default_hugepagesz={{ hugepages_size }} hugepages={{ hugepages_total }}\""
+    state: present
+  become: True
+  when:
+    - ansible_distribution == "Ubuntu"
+    - enable_hugepages | bool
+
+- name: openEuler 修改 grub 配置文件配置内存大页重启生效
+  become: true
+  shell: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when:
+    - ansible_distribution == "openEuler"
+    - enable_hugepages | bool
+
+- name: Ubuntu 修改 grub 配置文件配置内存大页重启生效
+  become: true
+  shell: update-grub
+  when:
+    - ansible_distribution == "Ubuntu"
+    - enable_hugepages | bool

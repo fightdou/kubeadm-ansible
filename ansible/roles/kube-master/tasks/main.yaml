@@ -9,23 +9,15 @@
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
 
-- name: openeuler 查看 /run/systemd/resolve/resolv.conf 目录是否存在
+- name: openeuler 查看 {{ kube_resolv_file }} 目录是否存在
   stat: 
-    path: /run/systemd/resolve/resolv.conf
+    path: "{{ kube_resolv_file }}"
   register: resolv_file
   when:
     - ansible_distribution == "openEuler"
 
-- name: 创建 /run/systemd/resolve/ 目录
-  file:
-    name: /run/systemd/resolve/
-    state: directory
-  when:
-    - ansible_distribution == "openEuler"
-    - not resolv_file.stat.exists
-
 - name: create resolv.conf 文件
-  shell: echo "nameserver 114.114.114.114" > /run/systemd/resolve/resolv.conf
+  shell: echo "nameserver 114.114.114.114" > /etc/resolv.conf
   when:
     - ansible_distribution == "openEuler"
     - not resolv_file.stat.exists
@@ -125,7 +117,7 @@
   shell: kubectl get deployment metallb-controller -n kube-system -o json | jq .status.readyReplicas
   register: metallb_status
   until: metallb_status.stdout == "1"
-  ignore_errors: yes
+  ignore_errors: true
   retries: 10
   delay: 30
   run_once: True
@@ -160,7 +152,7 @@
   register: helm_version
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
-  ignore_errors: yes
+  ignore_errors: True
 
 - block:
   - name: 安装 helm
@@ -193,7 +185,7 @@
   # run_once: True
   # delegate_to: "{{ groups['kube-master'][0] }}"
   when: inventory_hostname in groups['all_using_limit_control_True']
-  ignore_errors: yes
+  ignore_errors: True
 
 - name: 创建定时任务,每天晚上2点清除系统缓存
   cron:

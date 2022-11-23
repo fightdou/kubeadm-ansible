@@ -43,6 +43,7 @@ kube_image_tag: 1.0.4
 kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
+kube_resolv_file: /etc/resolv.conf
 kubelet_root_dir: "/var/lib/kubelet"
 wait_plugins_ready: false
 docker_storage_dir: "/var/lib/docker"
@@ -141,8 +142,6 @@ lvm_service_port: 9500
 lvm_storage_class_name: general
 lvm_volgroup_name: vg_name
 create_lvm_storage_class: true
-# eg: /dev/vdb or /dev/vdb1
-lvm_pv_device: /dev/vdb
 
 #################
 # Ingress Options
@@ -163,6 +162,7 @@ ceph_rbd_admin_user: client.admin
 libvirt_qp_min: 15
 libvirt_qp_max: 30
 libvirt_hostnetwork: "{{ kube_hostnetwork }}"
+hugepages_size: 2M
 enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 hugepages_reserved_rate: 0.2
 libvirt_image_tag: 1.0.4

@@ -1,9 +1,17 @@
 ---
 - import_tasks: install_package.yaml
 
+- import_tasks: create_vg_volume.yaml
+  when:
+    - enable_lvm | bool
+
 - import_tasks: mount_cephfs.yaml
   when:
     - enable_ceph | bool
+
+- import_tasks: hugepages_config.yaml
+  when:
+    - enable_hugepages | bool
 
 - import_tasks: set_voi_data_device.yaml
   when: only_deploy_voi | bool
@@ -12,45 +20,3 @@
 - import_tasks: set_voi_virt_nic.yaml
   when: only_deploy_voi | bool
   run_once: True
-
-- name: 获取可分配的大页数量
-  set_fact:
-    hugepages_total: "{{ (ansible_memtotal_mb  * (1 - hugepages_reserved_rate) // 2) | int }}"
-  when:
-    - enable_hugepages | bool
-
-- name: 获取可分配的大页数量
-  debug:
-    msg: "{{ hugepages_total }}"
-  when:
-    - enable_hugepages | bool
-
-- name: 分配大页内存
-  become: true
-  shell: echo {{ hugepages_total }} > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
-  when:
-    - enable_hugepages | bool
-
-- name: 创建 pv
-  become: true
-  shell: "{{ item }} || true"
-  with_items:
-  - "pvcreate {{ lvm_pv_device }}"
-  when:
-    - enable_lvm | bool
-
-- name: 创建 vg
-  become: true
-  shell: "{{ item }} || true"
-  with_items:
-  - "vgcreate {{ lvm_volgroup_name }} {{ lvm_pv_device }}"
-  when: 
-    - enable_lvm | bool
-
-- name: 创建 thin pool
-  become: true
-  shell: "{{ item }} || true"
-  with_items:
-  - "lvcreate -l +100%free --thinpool data_pool {{ lvm_volgroup_name }}"
-  when: 
-    - enable_lvm | bool

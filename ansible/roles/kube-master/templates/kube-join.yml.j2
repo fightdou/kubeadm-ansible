@@ -97,7 +97,7 @@ protectKernelDefaults: false
 readOnlyPort: 0
 registryBurst: 10
 registryPullQPS: 5
-resolvConf: /run/systemd/resolve/resolv.conf
+resolvConf: {{ kube_resolve_file }}
 rotateCertificates: true
 runtimeRequestTimeout: 2m0s
 serializeImagePulls: true
