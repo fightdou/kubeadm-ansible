@@ -14,7 +14,7 @@
   lineinfile:
     dest: /etc/default/grub
     regexp: "^GRUB_CMDLINE_LINUX=.*"
-    line: "GRUB_CMDLINE_LINUX=\"rd.lvm.lv=openeuler/root crashkernel=512M default_hugepagesz={{ hugepages_size }} hugepages={{ hugepages_total }}\""
+    line: "GRUB_CMDLINE_LINUX=\"rd.lvm.lv=openeuler/root crashkernel=512M default_hugepagesz={{ hugepages_size }} hugepages={{ hugepages_total }} kvm.nx_huge_pages=off\""
     state: present
   become: True
   when:
@@ -25,7 +25,7 @@
   lineinfile:
     dest: /etc/default/grub
     regexp: "^GRUB_CMDLINE_LINUX=.*"
-    line: "GRUB_CMDLINE_LINUX=\"default_hugepagesz={{ hugepages_size }} hugepages={{ hugepages_total }}\""
+    line: "GRUB_CMDLINE_LINUX=\"default_hugepagesz={{ hugepages_size }} hugepages={{ hugepages_total }} kvm.nx_huge_pages=off\""
     state: present
   become: True
   when:

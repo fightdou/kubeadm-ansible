@@ -169,8 +169,8 @@
   with_items:
     - firewalld
   when:
-    - firewalld_check.rc == 0
     - ansible_distribution == "openEuler"
+    - firewalld_check.rc == 0
 
 # ceph package
 - name: openEuler install common rpm packages

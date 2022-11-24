@@ -26,6 +26,11 @@ tdesktop_path_name: /opt/offline/TDesktop.exe
 # baremetal
 ####################
 ping_interface: ['api', 'ceph_public', 'ceph_cluster']
+create_swap_file: true
+swap_file_path: /swapfile
+swap_file_block_size: 2M
+swap_file_true: 10240
+vm_swappiness: 10
 
 ####################
 # Kubernetes options
@@ -43,7 +48,7 @@ kube_image_tag: 1.0.4
 kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
-kube_resolv_file: /etc/resolv.conf
+kube_resolve_file: /etc/resolv.conf
 kubelet_root_dir: "/var/lib/kubelet"
 wait_plugins_ready: false
 docker_storage_dir: "/var/lib/docker"
@@ -171,15 +176,14 @@ libvirt_image_tag: 1.0.4
 # Trochilus Options
 ###################
 trochilus_support_flat_network: true
-trochilus_support_vlan_network: false
+trochilus_support_vlan_network: true
 trochilus_libvirt_driver: kvm
 trochilus_api_listen_port: 9001
 trochilus_agent_listen_port: 9002
 trochilus_api_ingress: false
 trochilus_hostnetwork: "{{ kube_hostnetwork }}"
-trochilus_voi_path: "{{ fsd_voi_dir }}"
-trochilus_voi_base_path: "/var/lib/trochilus/voi"
-trochilus_base_path: "/var/lib/trochilus"
+trochilus_base_path: "{{ desktop_mount_dir }}"
+trochilus_voi_base_path: "{{ desktop_mount_dir }}/voi"
 trochilus_image_tag: 1.0.4
 # 如果vdi盒子和管理网不在同一个网段，就填管理网网关ip。如果vdi盒子和管理网在同一个网段，就啥也不填
 trochilus_detected_mgmt_net_ip: ""
@@ -327,7 +331,6 @@ websockify_image_tag: 1.0.4
 #######################
 # btserver
 #######################
-btserver_share_path: "{{ fsd_voi_dir }}"
 bt_server_port: 9019
 bt_tracker_port: 9020
 bt_download_port_start: 6880

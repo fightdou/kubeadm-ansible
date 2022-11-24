@@ -12,9 +12,9 @@ service:
   btserver_track: "{{ bt_tracker_port }}"
 
 serviceAccountName: btserver
-btserver_share_path: "{{ btserver_share_path }}"
+btserver_share_path: "{{ fsd_voi_dir }}"
 hostNetwork: {{ btserver_hostnetwork }}
-containerPath: "{{ fsd_share_root_path }}/voi"
+containerPath: "{{ fsd_voi_dir }}"
 tolerationSeconds: {{ kube_toleration_seconds }}
 
 nodeSelector:

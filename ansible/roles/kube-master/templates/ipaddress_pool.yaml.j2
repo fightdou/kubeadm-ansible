@@ -4,5 +4,7 @@ metadata:
   name: address-pool
   namespace: kube-system
 spec:
+  interfaces:
+  - {{ api_interface }}
   addresses:
   - {{ kube_apiserver_vip }}/32

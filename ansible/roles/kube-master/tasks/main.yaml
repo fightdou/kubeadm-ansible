@@ -9,9 +9,9 @@
     path: /etc/kubernetes/kubelet.conf
   register: kubelet_conf_stat
 
-- name: openeuler 查看 {{ kube_resolv_file }} 目录是否存在
+- name: openeuler 查看 {{ kube_resolve_file }} 目录是否存在
   stat: 
-    path: "{{ kube_resolv_file }}"
+    path: "{{ kube_resolve_file }}"
   register: resolv_file
   when:
     - ansible_distribution == "openEuler"
@@ -125,13 +125,13 @@
 
 - name: 渲染 BGPAdvertisement 配置文件
   template:
-    src: BGPAdvertisement.yaml.j2
-    dest: /etc/kubernetes/plugins/network-plugin/BGPAdvertisement.yaml
+    src: IPAdvertisement.yaml.j2
+    dest: /etc/kubernetes/plugins/network-plugin/IPAdvertisement.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
-- name: Deploy BGPAdvertisement in yaml file
-  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/BGPAdvertisement.yaml
+- name: Deploy IPAdvertisement in yaml file
+  shell: kubectl apply -f /etc/kubernetes/plugins/network-plugin/IPAdvertisement.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 

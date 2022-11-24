@@ -39,7 +39,7 @@
 
 - name: Create Tdesktop app dir
   file:
-    path: "/data/fsd/static/vdiUpgradePackage/"
+    path: "{{ desktop_mount_dir }}/static/vdiUpgradePackage/"
     state: "directory"
     mode: "0777"
     recurse: yes
@@ -49,7 +49,7 @@
 - name: Copy Tdesktop.exe to share path
   copy:
     src: "{{ tdesktop_path_name }}"
-    dest: "/data/fsd/static/vdiUpgradePackage/"
+    dest: "{{ desktop_mount_dir }}/static/vdiUpgradePackage/"
     mode: "0644"
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"

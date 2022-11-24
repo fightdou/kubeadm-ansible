@@ -48,17 +48,6 @@
   when:
     - ansible_distribution == "Ubuntu"
 
-- name: Disable system swap partition table
-  shell: "swapoff -a && sysctl -w vm.swappiness=0"
-  ignore_errors: true
-
-- name: Delete fstab swap config
-  lineinfile:
-    path: /etc/fstab
-    regexp: 'swap'
-    state: absent
-    backup: yes
-
 - name: 加载br_netfilter模块
   modprobe:
     name: br_netfilter
@@ -69,11 +58,13 @@
     name: ip_conntrack
     state: present
 
+- name: 设置 bridge-nf-call-iptables 参数
+  shell: echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
+
 - name: 设置系统参数
   template: 
     src: 95-k8s-sysctl.conf.j2 
     dest: /etc/sysctl.d/95-k8s-sysctl.conf
-
 
 - name: 生效系统参数
   shell: "sysctl -p /etc/sysctl.d/95-k8s-sysctl.conf"

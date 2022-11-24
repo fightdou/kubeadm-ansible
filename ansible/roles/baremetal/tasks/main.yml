@@ -5,6 +5,10 @@
   when:
     - enable_lvm | bool
 
+- import_tasks: create_swap_file.yaml
+  when:
+    - create_swap_file | bool
+
 - import_tasks: mount_cephfs.yaml
   when:
     - enable_ceph | bool

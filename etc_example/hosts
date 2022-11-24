@@ -5,7 +5,7 @@
 # ceph 有ssd时: bcache_map_list=[{'cache':'/dev/nvme0n1','data':'/dev/sda /dev/sdb /dev/sdc'},{'cache':'/dev/nvme1n1','data':'/dev/sdb /dev/sdc /dev/sdd'}]
 # 如果后端存储为lvm：配置为 lvm_pv_device="['/dev/sdb', '/dev/sdc']"
 [allnodes]
-10.2.36.98 ansible_ssh_user="root" ansible_ssh_pass="Troila12#$" hostname=control1 api_interface=enp2s0f0 ceph_public_interface=enp2s0f0 ceph_cluster_interface=enp2s0f0 flat_network_interface="['enp2s0f1']" vlan_network_interface="{'enp2s0f1':['1:100','1001:2000']}" ceph_volume_data="['/dev/sda', '/dev/sdb', '/dev/sdc']" lvm_pv_device="['/dev/sdb', '/dev/sdc']" nic_info="['enp2s0f0:10.2.36.98:1011', 'enp2s0f1::0100']"
+10.2.36.98 ansible_ssh_user="root" ansible_ssh_pass="Troila12#$" hostname=control1 api_interface=enp2s0f0 ceph_public_interface=enp2s0f0 ceph_cluster_interface=enp2s0f0 flat_network_interface="['enp2s0f1']" vlan_network_interface="{'enp2s0f1':['1:1000','1001:2000']}" ceph_volume_data="['/dev/sda', '/dev/sdb', '/dev/sdc']" lvm_pv_device="['/dev/sdb', '/dev/sdc']" nic_info="['enp2s0f0::1011', 'enp2s0f1::0100']"
 
 [control]
 10.2.36.98
