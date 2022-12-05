@@ -4,5 +4,7 @@ metadata:
   name: external
   namespace: kube-system
 spec:
+  interfaces:
+  - {{ api_interface }}
   ipAddressPools:
   - address-pool
