@@ -12,7 +12,7 @@ priorityClassName: ""
 service:
   port: "9019"
   port_track: "9020"
-btserver_share_path: "/mnt/voi"
+btserver_share_path: "/var/lib/trochilus/voi"
 hostNetwork: true
 nodeSelector: {}
 imagePullSecrets: []

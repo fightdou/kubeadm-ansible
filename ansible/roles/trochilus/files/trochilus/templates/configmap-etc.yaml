@@ -60,6 +60,7 @@ data:
     rbd_store_thin_provisioning = true
     {{- end }}
     [network_settings]
+    disable_linux_bridge_stp = true
     support_flat_physicals = {{ .Values.networkConfig.flat_network_type }}
     physical_vlan_ranges = {{ .Values.networkConfig.vlan_network_type }}
     physical_interface_mappings =

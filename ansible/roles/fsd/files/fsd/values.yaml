@@ -34,8 +34,8 @@ mount_dir:
   fsd_log: /var/log/fsd
   prometheus_rule: /mnt/prometheus/rules
   alertmanager_conf: /mnt/prometheus/alertmanager
-  share_dir: "/data/fsd"
-  fsd_static: "/data/fsd/static"
+  share_dir: "/var/lib/trochilus"
+  fsd_static: "/var/lib/trochilus/static"
 
 fsd_env:
   redis_password: zhuolang@Troila@123

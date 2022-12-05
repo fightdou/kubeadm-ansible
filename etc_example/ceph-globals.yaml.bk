@@ -119,7 +119,7 @@ mgr_dashboard_ssl_port: 8443
 ###########
 # mds #
 ###########
-desktop_mount_dir: "/data/fsd"
+desktop_mount_dir: "/var/lib/trochilus"
 desktop_mount_shell_dir: "/etc/ceph/cephmount"
 cephmount_service_dir: "/usr/lib/systemd/system/"
 
