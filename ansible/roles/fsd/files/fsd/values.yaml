@@ -47,7 +47,7 @@ fsd_env:
   thanos_server_address: thanos-query.default.svc.cluster.local
   fsd_job_server_address: fsd-job.default.svc.cluster.local
   trochilus_server_address: trochilus-api.default.svc.cluster.local
-  btserver_server_address: btserver.default.svc.cluster.local
+  btserver_server_address: 127.0.0.1
   netty_codec_mac: 60f81dad19ae
   deploy_mode: all
   proxy_ip: 172.18.28.222

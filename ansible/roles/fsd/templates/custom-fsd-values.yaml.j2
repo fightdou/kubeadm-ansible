@@ -48,7 +48,7 @@ fsd_env:
   thanos_server_address: thanos-query
   fsd_job_server_address: fsd-job
   trochilus_server_address: trochilus-api
-  btserver_server_address: "{{ kube_apiserver_vip }}"
+  btserver_server_address: 127.0.0.1
   netty_codec_mac: "{{ fsd_netty_codec_mac }}"
   deploy_mode: "{{ fsd_deploy_mode }}"
   proxy_ip: "{{ fsd_proxy_ip }}"
