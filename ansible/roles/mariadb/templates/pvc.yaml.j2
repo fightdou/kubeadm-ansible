@@ -1,0 +1,14 @@
+{% if enable_pvc %}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ mariadb_pvc_name }}
+  namespace: {{ helm_install_namespace }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ mariadb_storage_size }}
+  storageClassName: {{ cephfs_storage_class_name }}
+{% endif %}
