@@ -3,6 +3,20 @@
     name: /etc/kubernetes/plugins/mariadb
     state: directory
 
+- name: 生成 mariadb pvc 文件
+  template:
+    src: pvc.yaml.j2
+    dest: /etc/kubernetes/plugins/mariadb/pvc.yaml
+    owner: root
+    mode: 0644
+  when:
+    - enable_pvc | bool
+
+- name: 创建 mariadb pvc
+  shell: kubectl apply -f /etc/kubernetes/plugins/mariadb/pvc.yaml
+  when:
+    - enable_pvc | bool
+
 - name: 复制 mariadb charts 目录
   copy:
     src: "{{ item }}"
