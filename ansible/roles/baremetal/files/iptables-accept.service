@@ -5,7 +5,7 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=iptables -P FORWARD ACCEPT
+ExecStart=/bin/bash /etc/kubernetes/reboot-script.sh
 
 [Install]
 WantedBy=multi-user.target

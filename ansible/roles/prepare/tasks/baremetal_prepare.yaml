@@ -58,9 +58,6 @@
     name: ip_conntrack
     state: present
 
-- name: 设置 bridge-nf-call-iptables 参数
-  shell: echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
-
 - name: 设置系统参数
   template: 
     src: 95-k8s-sysctl.conf.j2 

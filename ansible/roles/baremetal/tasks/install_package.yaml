@@ -214,6 +214,19 @@
   when:
     - ansible_distribution == "openEuler"
 
+- name: 设置 bridge-nf-call-iptables 参数
+  shell: echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
+  when:
+    - ansible_distribution == "openEuler"
+
+- name: 复制开机执行脚本 reboot-script.sh
+  copy:
+    src: reboot-script.sh
+    dest: /etc/kubernetes/reboot-script.sh
+    mode: 755
+  when:
+    - ansible_distribution == "openEuler"
+
 - name: 设置开机启动 iptables 命令
   become: true
   copy:
