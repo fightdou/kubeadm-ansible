@@ -22,9 +22,6 @@ spec:
           tolerationSeconds: {{ .Values.tolerationSeconds }}
       containers:
         - name: btserver
-          env:
-            - name: ENV_BTSERVER_BIND_IP
-              value: 0.0.0.0
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ .Values.image.btserver }}
@@ -54,11 +51,21 @@ spec:
             name: localtime
           - name: btserver
             mountPath: {{ .Values.containerPath }}
+          - mountPath: /opt/torrent_server_bin/torrent.ini
+            name: btserver-etc
+            subPath: torrent.ini
+          - mountPath: /opt/torrent_server_bin/opentracker.conf
+            name: btserver-etc
+            subPath: opentracker.conf
       volumes:
       - name: localtime
         hostPath:
           path: /etc/localtime
           type: File
+      - configMap:
+          defaultMode: 420
+          name: btserver-etc
+        name: btserver-etc
       - name: btserver
         hostPath:
           path: {{ .Values.btserver_share_path }}

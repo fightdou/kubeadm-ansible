@@ -10,12 +10,15 @@ priorityClassName: "{{ kube_priority_name }}"
 service:
   btserver: "{{ bt_server_port }}"
   btserver_track: "{{ bt_tracker_port }}"
+  btserver_start: "{{ bt_download_port_start }}"
+  btserver_end: "{{ bt_download_port_end }}"
 
 serviceAccountName: btserver
 btserver_share_path: "{{ fsd_voi_dir }}"
 hostNetwork: {{ btserver_hostnetwork }}
 containerPath: "{{ fsd_voi_dir }}"
 tolerationSeconds: {{ kube_toleration_seconds }}
+proxy_ip: {{ fsd_proxy_ip }}
 
 nodeSelector:
   {{ control_node_role_name }}: {{ node_role_value }}
