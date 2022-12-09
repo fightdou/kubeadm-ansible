@@ -10,8 +10,10 @@ image:
 replicaCount: 2
 priorityClassName: ""
 service:
-  port: "9019"
-  port_track: "9020"
+  btserver: "9019"
+  btserver_track: "9020"
+  btserver_start: "6880"
+  btserver_end: "6889"
 btserver_share_path: "/var/lib/trochilus/voi"
 hostNetwork: true
 nodeSelector: {}
