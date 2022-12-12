@@ -44,7 +44,7 @@ kube_apiserver_port: 6443
 # docker 镜像 namespace
 kube_image_repository: "{{ docker_register_domain }}:{{ docker_register_port }}/kubernetes"
 # docker 镜像 tag
-kube_image_tag: 1.0.4
+kube_image_tag: 2.0.0
 kubernetes_version: 1.23.5
 kubelet_cgroup_driver: systemd
 kube_proxy_mode: ipvs
@@ -66,7 +66,7 @@ control_node_role_name: control_role
 compute_node_role_name: compute_role
 storage_node_role_name: storage_role
 node_role_value: enabled
-docker_image_path : /opt/offline/kunlunyun-1.0.4.tar.gz
+docker_image_path : /opt/offline/kunlunyun-2.0.0.tar.gz
 docker_dpkg_path: /opt/offline/deb-packages
 
 ##############
@@ -170,7 +170,7 @@ libvirt_hostnetwork: "{{ kube_hostnetwork }}"
 hugepages_size: 2M
 enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 hugepages_reserved_rate: 0.2
-libvirt_image_tag: 1.0.4
+libvirt_image_tag: 2.0.0
 
 ###################
 # Trochilus Options
@@ -184,7 +184,7 @@ trochilus_api_ingress: false
 trochilus_hostnetwork: "{{ kube_hostnetwork }}"
 trochilus_base_path: "{{ desktop_mount_dir }}"
 trochilus_voi_base_path: "{{ desktop_mount_dir }}/voi"
-trochilus_image_tag: 1.0.4
+trochilus_image_tag: 2.0.0
 # 如果vdi盒子和管理网不在同一个网段，就填管理网网关ip。如果vdi盒子和管理网在同一个网段，就啥也不填
 trochilus_detected_mgmt_net_ip: ""
 trochilus_enable_reserved_core: false
@@ -203,7 +203,7 @@ mariadb_pvc_name: mariadb-pvc
 mariadb_host_path: /var/lib/mariadb
 mariadb_backup_path: /var/lib/mariadb-backup
 mariadb_backup_time: "0 0 * * * "
-mariadb_image_tag: 1.0.4
+mariadb_image_tag: 2.0.0
 
 ####################
 # Prometheus Options
@@ -222,7 +222,7 @@ prometheus_host_exporter_port: 9104
 prometheus_event_exporter_port: 9102
 pushgateway_clean_time: "*/1 * * * *"
 prometheus_hostnetwork: "{{ kube_hostnetwork }}"
-prometheus_image_tag: 1.0.4
+prometheus_image_tag: 2.0.0
 
 ##############
 # Fsd Options
@@ -243,7 +243,7 @@ fsd_host_network: "{{ kube_hostnetwork }}"
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
 fsd_upload_dir: "{{ desktop_mount_dir }}/upload"
 fsd_share_root_path: "{{ desktop_mount_dir }}"
-fsd_image_tag: 1.0.4
+fsd_image_tag: 2.0.0
 vdi_desktop_num: 10000
 vdi_storage_num: 1000
 cloud_disk_num: 1000
@@ -283,7 +283,7 @@ emqx_mgmt_port: 8081
 emqx_mqttssl_port: 8883
 emqx_ws_port: 8083
 emqx_wss_port: 8084
-emqx_image_tag: 1.0.4
+emqx_image_tag: 2.0.0
 
 #################
 # role开关
@@ -319,14 +319,14 @@ redis_master_password: zhuolang@Troila@123
 redis_server_port: 6379
 redis_sentinel_port: 26379
 redis_host_network: "{{ kube_hostnetwork }}"
-redis_image_tag: 1.0.4
+redis_image_tag: 2.0.0
 
 ####################
 # websockify Options
 ####################
 websockify_port: 9003
 websockify_hostnetwork: "{{ kube_hostnetwork }}"
-websockify_image_tag: 1.0.4
+websockify_image_tag: 2.0.0
 
 #######################
 # btserver
@@ -337,7 +337,7 @@ bt_download_port_start: 6880
 bt_download_port_end: 6889
 btserver_listen_ports: "{{ bt_download_port_start }}-{{ bt_download_port_end }}"
 btserver_hostnetwork: "{{ kube_hostnetwork }}"
-btserver_image_tag: 1.0.4
+btserver_image_tag: 2.0.0
 
 ##############
 # VOI Options
