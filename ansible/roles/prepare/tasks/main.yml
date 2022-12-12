@@ -1,3 +1,14 @@
+- name: 查看 docker 是否安装
+  shell: docker info
+  register: docker_install_info
+  ignore_errors: true
+
+- import_tasks: install_docker.yaml
+  run_once: True
+  delegate_to: "{{ groups['baremetal'][0] }}"
+  when:
+    - docker_install_info is not success
+
 - name: Ubuntu get offline info
   docker_container_info:
     name: offline-deb-repo
