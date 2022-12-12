@@ -118,7 +118,6 @@ clientConnection:
   qps: 5
 clusterCIDR: {{ kube_pod_subnet }}
 configSyncPeriod: 15m0s
-strictARP: true
 conntrack:
   maxPerCore: 32768
   min: 131072
@@ -128,6 +127,7 @@ ipvs:
   tcpTimeout: 1800s
   tcpFinTimeout: 120s
   udpTimeout: 300s
+  strictARP: true
 healthzBindAddress: 0.0.0.0:10256
 hostnameOverride: "{{ inventory_hostname }}"
 metricsBindAddress: 0.0.0.0:10249
