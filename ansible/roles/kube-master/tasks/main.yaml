@@ -1,9 +1,4 @@
 ---
-- name: 创建 /etc/kubernetes 目录
-  file: 
-    name: "/etc/kubernetes"
-    state: directory
-
 - name: 读取 kubelet.conf 文件 stat 信息
   stat: 
     path: /etc/kubernetes/kubelet.conf
