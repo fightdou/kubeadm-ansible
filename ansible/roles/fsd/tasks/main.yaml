@@ -43,16 +43,15 @@
     state: "directory"
     mode: "0777"
     recurse: yes
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+  when:
+    - not only_deploy_voi | bool
 
 - name: Copy Tdesktop.exe to share path
+  become: true
   copy:
     src: "{{ tdesktop_path_name }}"
     dest: "{{ desktop_mount_dir }}/static/vdiUpgradePackage/"
     mode: "0644"
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
   when:
     - not only_deploy_voi | bool
 

@@ -87,15 +87,6 @@
   when:
     - ansible_distribution == "openEuler"
 
-- name: Install kube ansible package
-  pip:
-    name: "{{ package }}"
-  vars:
-    package:
-      - kubernetes
-      - openshift
-      - docker
-
 - name: Ubuntu 安装 docker
   apt:
     name: 
