@@ -54,7 +54,7 @@
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
   when:
-    - only_deploy_voi not | bool
+    - not only_deploy_voi | bool
 
 - name: openEuler 执行 sync 命令
   shell: sync
