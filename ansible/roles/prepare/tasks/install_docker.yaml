@@ -20,6 +20,13 @@
     - ansible_distribution == 'openEuler'
   ignore_errors: true
 
+- name: 创建 /etc/docker 目录
+  become: true
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
+
 - name: 确认 Docker 配置是否有修改
   template:
     src: docker-daemon.json.j2
