@@ -18,8 +18,8 @@
     packages:
       - iperf3
   when:
-      - inventory_hostname in groups['openEuler']
-      - ansible_distribution == "Ubuntu"
+      - inventory_hostname in groups['allnodes']
+      - ansible_distribution == "openEuler"
 
 - name: iperf server start
   vars:
