@@ -219,27 +219,13 @@
   when:
     - ansible_distribution == "openEuler"
 
-- name: 复制开机执行脚本 reboot-script.sh
-  copy:
-    src: reboot-script.sh
-    dest: /etc/kubernetes/reboot-script.sh
-    mode: 755
-  when:
-    - ansible_distribution == "openEuler"
+- name: Disable system swap partition table
+  shell: "swapoff -a && sysctl -w vm.swappiness=0"
+  ignore_errors: true
 
-- name: 设置开机启动 iptables 命令
-  become: true
-  copy:
-    src: iptables-accept.service
-    dest: /usr/lib/systemd/system/
-  when:
-    - ansible_distribution == "openEuler"
-
-- name: Reload systemctl and enable iptables-accept service
-  become: true
-  systemd:
-    name: iptables-accept
-    daemon_reload: true
-    enabled: true
-  when:
-    - ansible_distribution == "openEuler"
+- name: Delete fstab swap config
+  lineinfile:
+    path: /etc/fstab
+    regexp: 'swap'
+    state: absent
+    backup: yes

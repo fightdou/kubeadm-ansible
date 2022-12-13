@@ -1,8 +1,3 @@
 - import_tasks: trochilus-install.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
-
-- name: 设置 bridge-nf-call-iptables 参数
-  shell: echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
-  when:
-    - ansible_distribution == "openEuler"

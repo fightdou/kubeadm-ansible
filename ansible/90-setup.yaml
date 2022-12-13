@@ -143,6 +143,14 @@
         tags: fsd,
         when: enable_fsd| bool }
 
+- name: Apply role post-deploy
+  gather_facts: false
+  hosts: baremetal
+  roles:
+    - { role: post-deploy,
+        tags: post-deploy,
+        when: enable_baremetal| bool }
+
 - name: Apply role elasticsearch
   gather_facts: false
   hosts: elasticsearch
