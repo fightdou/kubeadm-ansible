@@ -61,8 +61,6 @@
     path: "{{ desktop_mount_shell_dir }}"
     state: directory
     mode: 0755
-  when: 
-    - ansible_distribution == "Ubuntu"
 
 - name: Copy ceph_mount shell file
   become: true
@@ -70,8 +68,6 @@
     src: "cephmount.sh.j2"
     dest: "{{ desktop_mount_shell_dir }}/cephmount.sh"
     mode: "0777"
-  when: 
-    - ansible_distribution == "Ubuntu"
 
 - name: Copy cephmount to systemctl
   become: true
@@ -79,16 +75,12 @@
     src: "cephmount.service.j2"
     dest: "{{ cephmount_service_dir }}/cephmount.service"
     mode: "0655"
-  when: 
-    - ansible_distribution == "Ubuntu"
 
 - name: Reload systemctl and enable cephmount service
   become: true
   systemd:
     name: cephmount
     enabled: true
-  when: 
-    - ansible_distribution == "Ubuntu"
 
 - name: Create file share_image dir
   become: true
