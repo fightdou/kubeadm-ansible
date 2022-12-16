@@ -210,6 +210,11 @@
   when:
     - ansible_distribution == "openEuler"
 
+- name: 设置 bridge-nf-call-iptables 参数
+  shell: echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+  when:
+    - ansible_distribution == "openEuler"
+
 - name: Disable system swap partition table
   shell: "swapoff -a && sysctl -w vm.swappiness=0"
   ignore_errors: true
