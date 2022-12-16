@@ -127,8 +127,3 @@
   systemd:
     name: NetworkManager
     state: restarted
-
-- name: 重启docker
-  systemd:
-    name: docker
-    state: restarted

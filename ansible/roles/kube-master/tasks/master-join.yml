@@ -25,6 +25,10 @@
 
 - name: 其他 master 节点加入集群
   shell: kubeadm join --config=/etc/kubernetes/kubeadm-join.yml
+  register: join_result
+  until: join_result is success
+  retries: 12
+  delay: 10
 
 - block:
   - name: 创建 kubeconfig 目录
