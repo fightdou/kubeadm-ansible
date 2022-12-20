@@ -239,7 +239,7 @@ fsd_nginx_proxy_port: "{{ fsd_nginx_port }}"
 fsd_deploy_mode: all
 fsd_cloud_disk_user_name: troila
 fsd_cloud_disk_password: Troila12
-fsd_host_network: "{{ kube_hostnetwork }}"
+fsd_host_network: false
 fsd_voi_dir: "{{ desktop_mount_dir }}/voi"
 fsd_upload_dir: "{{ desktop_mount_dir }}/upload"
 fsd_share_root_path: "{{ desktop_mount_dir }}"
