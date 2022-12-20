@@ -32,17 +32,10 @@ spec:
       - name: libvirt
         image: "{{ .Values.image.libvirt }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
-        lifecycle:
-          preStop:
-            exec:
-              command:
-                - bash
-                - -c
-                - kill $(cat /var/run/libvirtd.pid)
         livenessProbe:
           httpGet:
             path: /
-            port: {{ .Values.trochilus_agent_port }}
+            port: 9002
             scheme: HTTP
           failureThreshold: 5
           initialDelaySeconds: 30

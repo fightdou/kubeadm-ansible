@@ -1,3 +1,6 @@
+- name: 拉取 mariadb 镜像
+  shell: docker pull {{ kube_image_repository }}/mariadb:{{ mariadb_image_tag }}
+
 - import_tasks: mariadb-install.yaml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"

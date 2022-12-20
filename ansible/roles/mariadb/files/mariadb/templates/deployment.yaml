@@ -60,9 +60,9 @@ spec:
                   password_aux=$(cat "$MARIADB_ROOT_PASSWORD_FILE")
               fi
               mysql -uroot -p"${password_aux}" -e "show databases"
-          failureThreshold: 10
-          initialDelaySeconds: 60
-          periodSeconds: 60
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          periodSeconds: 30
           successThreshold: 1
           timeoutSeconds: 30
         readinessProbe:
@@ -77,7 +77,7 @@ spec:
               fi
               mysql -uroot -p"${password_aux}" -e"set GLOBAL max_connections ={{ .Values.mariadb_connection }}"
               mysqladmin status -uroot -p"${password_aux}"
-          failureThreshold: 10
+          failureThreshold: 5
           initialDelaySeconds: 30
           periodSeconds: 30
           successThreshold: 1

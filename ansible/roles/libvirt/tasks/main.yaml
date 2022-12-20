@@ -28,5 +28,9 @@
 - name: undefine libvirt 网络
   shell: virsh net-undefine default
   ignore_errors: true
+  register: virsh_result
+  until: virsh_result is success
+  retries: 10
+  delay: 10
   when:
     - ansible_distribution == "openEuler"

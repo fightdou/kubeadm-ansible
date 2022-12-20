@@ -17,7 +17,7 @@ nodeSelector:
   trochilus_api:
     {{ control_node_role_name }}: {{ node_role_value }}
 clusterDomainSuffix: cluster.local
-replica: "{% if groups['trochilus-api'] | length > 2 %}2{% else %}1{% endif %}"
+replica: "{% if groups['trochilus-api'] | length > 2 %}3{% else %}1{% endif %}"
 hostNetwork: {{ trochilus_hostnetwork }}
 
 nodeInfo:

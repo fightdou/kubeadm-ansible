@@ -1,0 +1,13 @@
+- name: 生成 mount crontab 脚本
+  template:
+    src: exec_mount_cronjob.sh.j2
+    dest: "{{ desktop_mount_shell_dir }}/exec_mount_cronjob.sh"
+    owner: root
+    mode: 0755
+
+- name: 创建挂载 cephfs 共享目录定时任务
+  cron: 
+    minute: "1"
+    name: Exec mount cephfs
+    job: >
+      timeout 5 "{{ desktop_mount_shell_dir }}/exec_mount_cronjob.sh"

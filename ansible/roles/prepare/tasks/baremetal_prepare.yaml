@@ -30,10 +30,9 @@
         {% set api_interface = hostvars[host]['api_interface'] %}
         {% if 'ansible_' + api_interface in hostvars[host] %}
         {% set hostnames = [hostvars[host]['ansible_nodename'], hostvars[host]['ansible_hostname']] %}
+        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ kubernetes_domain_name }}
         {% if enable_docker_register_domain_deploy and host == groups['baremetal'][0] %}
-        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }} {{ kubernetes_domain_name }}
-        {% else %}
-        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}
+        {{ hostvars[host]['ansible_' + api_interface]['ipv4']['address'] }} {{ hostnames | unique | join(' ') }}  {{ docker_register_domain }}
         {% endif %}
         {% endif %}
         {% endfor %}
