@@ -8,7 +8,6 @@
 - import_tasks: mount_cephfs.yaml
   when:
     - enable_ceph | bool
-    - fsd_deploy_mode == "voi"
 
 - import_tasks: hugepages_config.yaml
   when:

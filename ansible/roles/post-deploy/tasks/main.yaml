@@ -5,7 +5,6 @@
 - import_tasks: create_mount_crontab.yaml
   when:
     - enable_ceph | bool
-    - fsd_deploy_mode == "voi"
 
 - name: 设置 bridge-nf-call-iptables 参数
   shell: echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
