@@ -1,10 +1,10 @@
 #!/bin/bash
 while true
 do
-    mount_state=`ls -l {{ desktop_mount_dir }} | wc -l`
-    if [ $mount_state -le 5 ]
+    mount_state=`timeout 5 ls -l {{ desktop_mount_dir }} | wc -l`
+    if [ $mount_state -le 4 ]
     then
-        umount {{ desktop_mount_dir }}
+        umount -l {{ desktop_mount_dir }}
         mount -a
         break
     fi
