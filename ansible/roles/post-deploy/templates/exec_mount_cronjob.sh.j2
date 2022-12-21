@@ -6,6 +6,11 @@ do
     then
         umount -l {{ desktop_mount_dir }}
         mount -a
+        sleep 5
+        docker ps | grep -w {{ kube_image_repository }}/fsd | awk -F' ' '{print $1}' | xargs -I {} docker restart {}
+        docker ps | grep -w {{ kube_image_repository }}/fsd_nginx | awk -F' ' '{print $1}' | xargs -I {} docker restart {}
+        docker ps | grep -w {{ kube_image_repository }}/trochilus-api | awk -F' ' '{print $1}' | xargs -I {} docker restart {}
+        docker ps | grep -w {{ kube_image_repository }}/trochilus-agent | awk -F' ' '{print $1}' | xargs -I {} docker restart {}
         break
     fi
 done
