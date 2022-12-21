@@ -7,7 +7,7 @@
 
 - name: 创建挂载 cephfs 共享目录定时任务
   cron: 
-    minute: "1"
+    minute: "*/1"
     name: Exec mount cephfs
     job: >
       timeout 5 "{{ desktop_mount_shell_dir }}/exec_mount_cronjob.sh"
