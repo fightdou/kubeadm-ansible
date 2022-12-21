@@ -33,10 +33,11 @@ spec:
         image: "{{ .Values.image.libvirt }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         livenessProbe:
-          httpGet:
-            path: /
-            port: 9002
-            scheme: HTTP
+          exec:
+            command:
+              - bash
+              - -c
+              - /usr/bin/virsh list
           failureThreshold: 5
           initialDelaySeconds: 30
           periodSeconds: 30
