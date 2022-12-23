@@ -11,6 +11,7 @@ nodeSelector:
   control_role: enabled
 priorityClassName: ""
 hostNetwork: ""
+fsdNginxHostNetwork: ""
 tolerationSeconds: 30
 
 service:

@@ -103,13 +103,13 @@ spec:
       imagePullSecrets:
         - name: {{ .Values.image.pullSecrets }}
       {{- end }}
-      {{- if .Values.hostNetwork }}
+      {{- if .Values.fsdNginxHostNetwork }}
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       {{- end }}
       priorityClassName: {{ .Values.priorityClassName }}
-      serviceAccount: {{ .Values.serviceAccountName}}
-      serviceAccountName: {{ .Values.serviceAccountName}}
+      serviceAccount: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
 {{- with .Values.nodeSelector }}
       nodeSelector:
 {{- toYaml . | nindent 8 }}

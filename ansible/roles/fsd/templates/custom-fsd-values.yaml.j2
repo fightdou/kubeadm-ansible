@@ -13,6 +13,7 @@ nodeSelector:
 priorityClassName: {{ kube_priority_name }}
 hostNetwork: {{ fsd_host_network }}
 tolerationSeconds: {{ kube_toleration_seconds }}
+fsdNginxHostNetwork: {{ fsd_nginx_host_network }}
 
 service:
   fsd_webhook:
