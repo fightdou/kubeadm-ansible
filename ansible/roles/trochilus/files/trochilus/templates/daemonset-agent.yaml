@@ -161,6 +161,12 @@ spec:
             - mountPath: /opt/trochilus
               mountPropagation: Bidirectional
               name: trochilus-lock-file
+            - mountPath: /etc/trochilus/ha
+              mountPropagation: Bidirectional
+              name: trochilus-ha-path
+            - mountPath: /etc/trochilus/dhcp
+              mountPropagation: Bidirectional
+              name: trochilus-dhcp-path
       securityContext: {}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
@@ -229,6 +235,14 @@ spec:
             path: {{ .Values.mount_share_dir }}
             type: DirectoryOrCreate
           name: share-dir-path
+        - hostPath:
+            path: {{ .Values.conf.ha_settings.ha_base_dir_path }}
+            type: DirectoryOrCreate
+          name: trochilus-ha-path
+        - hostPath:
+            path: {{ .Values.conf.network_settings.dhcp_confs }}
+            type: DirectoryOrCreate
+          name: trochilus-dhcp-path
         - hostPath:
             path: /opt/trochilus
             type: DirectoryOrCreate

@@ -122,6 +122,9 @@ conf:
     cgroup_path: /sys/fs/cgroup
   ha_settings:
     detected_mgmt_net_ip: {{ trochilus_detected_mgmt_net_ip }}
+    ha_base_dir_path: {{ trochilus_ha_base_dir_path }}
+  network_settings: 
+    dhcp_confs: {{ trochilus_dhcp_confs }}
 
 ingress:
   enabled: {{ trochilus_api_ingress }}

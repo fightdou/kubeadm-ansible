@@ -61,6 +61,7 @@ data:
     {{- end }}
     [network_settings]
     disable_linux_bridge_stp = true
+    dhcp_confs = {{ .Values.conf.network_settings.dhcp_confs }}
     support_flat_physicals = {{ .Values.networkConfig.flat_network_type }}
     physical_vlan_ranges = {{ .Values.networkConfig.vlan_network_type }}
     physical_interface_mappings =
@@ -78,6 +79,7 @@ data:
     vm_name_template = voi-%s
     [ha_settings]
     detected_mgmt_net_ip = {{ .Values.conf.ha_settings.detected_mgmt_net_ip }}
+    ha_base_dir_path = {{ .Values.conf.ha_settings.ha_base_dir_path }}
     [system_settings]
     metallb_namespace = {{ .Values.conf.system_settings.metallb_namespace }}
     cgroup_path = {{ .Values.conf.system_settings.cgroup_path }}

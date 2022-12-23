@@ -187,6 +187,8 @@ trochilus_voi_base_path: "{{ desktop_mount_dir }}/voi"
 trochilus_image_tag: 2.0.0
 # 如果vdi盒子和管理网不在同一个网段，就填管理网网关ip。如果vdi盒子和管理网在同一个网段，就啥也不填
 trochilus_detected_mgmt_net_ip: ""
+trochilus_ha_base_dir_path: /etc/trochilus/ha
+trochilus_dhcp_confs: /etc/trochilus/dhcp
 trochilus_enable_reserved_core: false
 trochilus_reserved_cores_num: 2
 
