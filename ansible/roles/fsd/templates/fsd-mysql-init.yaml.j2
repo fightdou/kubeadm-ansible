@@ -21,8 +21,6 @@ spec:
             - name: fsd-init-trochilus
               mountPath: /home/trochilus
       restartPolicy: Never
-      imagePullSecrets:
-        - name: {{ docker_register_secrets_name }}
       volumes:
         - name: fsd-init-static
           hostPath:
