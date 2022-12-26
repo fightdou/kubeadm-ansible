@@ -1,20 +1,34 @@
+
 # 网卡配置，存在bond时，指定bond名称与对应物理网卡信息；不存在bond时，ip地址后跟随角色
-# 格式，存在bond时：nic_info = ["bond1:172.18.31.92:0011:ens4,ens5"] (bond名称:bond的IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0:组成bond的网卡名称); 
+# 格式，存在bond时：nic_info = ["bond1:172.18.31.124:0011:ens4,ens5"] (bond名称:bond的IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0:组成bond的网卡名称);
 # 多个bond时，则需配置多个nic记录
-# 没有bond时：nic_info = ["ens3:172.18.31.92:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
+# 没有bond时：nic_info = ["ens3:172.18.31.124:1100"] (网卡名称:IP地址:网卡角色(管理网，外网，业务网，存储网）有则为1，无则为0)
 # ceph 有ssd时: bcache_map_list=[{'cache':'/dev/nvme0n1','data':'/dev/sda /dev/sdb /dev/sdc'},{'cache':'/dev/nvme1n1','data':'/dev/sdb /dev/sdc /dev/sdd'}]
-# 如果后端存储为lvm：配置为 lvm_pv_device="['/dev/sdb', '/dev/sdc']"
+
 [allnodes]
-10.2.36.98 ansible_ssh_user="root" ansible_ssh_pass="Troila12#$" hostname=control1 api_interface=enp2s0f0 ceph_public_interface=enp2s0f0 ceph_cluster_interface=enp2s0f0 flat_network_interface="['enp2s0f1']" vlan_network_interface="{'enp2s0f1':['1:1000','1001:2000']}" ceph_volume_data="['/dev/sda', '/dev/sdb', '/dev/sdc']" lvm_pv_device="['/dev/sdb', '/dev/sdc']" nic_info="['enp2s0f0::1011', 'enp2s0f1::0100']"
+# 172.18.31.124 hostname=control1 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4': '1:100'}" ceph_volume_data="['/dev/vdb','/dev/vdc']" nic_info="['ens3:172.18.31.124:1100', 'ens4::0100']"
+# 172.18.30.139 hostname=control2 api_interface=ens3 ceph_public_interface=ens3 ceph_cluster_interface=ens3 flat_network_interface="['ens4']" vlan_network_interface="{'ens4': '1:100'}" ceph_volume_data="['/dev/vdb','/dev/vdc']" nic_info="['ens3:172.18.31.124:1100', 'ens4::0100']"
+10.2.36.128  hostname=test1  api_interface=bond0  ceph_public_interface=bond2  ceph_cluster_interface=bond3  nic_info="['bond0:10.2.36.128:1000','bond2:10.2.11.128:0010','bond3:10.2.36.128:0001','bond1:null:0100']" flat_network_interface="['bond1']"   ceph_volume_data="['/dev/sda','/dev/sdb','/dev/sdc','/dev/sdd']"  vlan_network_interface="{'bond1':['1:4094']}"
+
+10.2.36.127  hostname=dd2  api_interface=bond0  ceph_public_interface=bond2  ceph_cluster_interface=bond3  nic_info="['bond0:10.2.36.127:1000','bond2:10.2.11.127:0010','bond3:10.2.36.127:0001','bond1:null:0100']" flat_network_interface="['bond1']"  ceph_volume_data="['/dev/sda','/dev/sdb','/dev/sdc','/dev/sdd']"   vlan_network_interface="{'bond1':['1:4094']}"
+
+10.2.36.6  hostname=dd1  api_interface=bond0  ceph_public_interface=bond2  ceph_cluster_interface=bond3  nic_info="['bond0:10.2.36.6:1000','bond2:10.2.11.6:0010','bond3:10.2.36.6:0001','bond1:null:0100']" flat_network_interface="['bond1']"    ceph_volume_data="['/dev/sda','/dev/sdb','/dev/sdc','/dev/sdd']" vlan_network_interface="{'bond1':['1:4094']}"
+
 
 [control]
-10.2.36.98
+10.2.36.128
+10.2.36.127
+10.2.36.6
 
 [compute]
-10.2.36.98
+10.2.36.128
+10.2.36.127
+10.2.36.6
 
 [storage]
-10.2.36.98
+10.2.36.128
+10.2.36.127
+10.2.36.6
 
 [ceph:children]
 ceph-mons
@@ -62,6 +76,9 @@ kube-worker
 load-balancer
 new-master
 new-worker
+control
+compute
+storage
 
 [ingress:children]
 control

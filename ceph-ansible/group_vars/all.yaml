@@ -1,14 +1,14 @@
 ---
 # default action
 action: "deploy"
-ceph_mons_hosts: "{% for host in groups['ceph-mons'] %} {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
+ceph_mons_hosts: "{% for host in groups['ceph-mons'] %} {{ hostvars[host]['ansible_' + hostvars[host]['ceph_public_interface']]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
 {% endfor %}"
-ceph_osds_hosts: "{% for host in groups['ceph-osds'] %} {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
+ceph_osds_hosts: "{% for host in groups['ceph-osds'] %} {{ hostvars[host]['ansible_' + hostvars[host]['ceph_public_interface']]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
 {% endfor %}"
-ceph_mgrs_hosts: "{% for host in groups['ceph-mgrs'] %} {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
+ceph_mgrs_hosts: "{% for host in groups['ceph-mgrs'] %} {{ hostvars[host]['ansible_' + hostvars[host]['ceph_public_interface']]['ipv4']['address'] }}   {{ hostvars[host]['ansible_hostname'] }}\n
 {% endfor %}"
-ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}"
-monmaptool: "monmaptool --create  {% for host in groups['ceph-mons'] %} --add {{ hostvars[host]['ansible_hostname']}}  {{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}:6789 {% endfor %}    --fsid {{ fsid }} monmap "
+ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + ceph_public_interface]['ipv4']['address'] }}"
+monmaptool: "monmaptool --create  {% for host in groups['ceph-mons'] %} --add {{ hostvars[host]['ansible_hostname']}}  {{ hostvars[host]['ansible_' + hostvars[host]['ceph_public_interface']]['ipv4']['address'] }}:6789 {% endfor %}    --fsid {{ fsid }} monmap "
 client_images_cap: "{{ osds_pool_secret.client_images.client_images_ceph_authtool_cap }}"
 client_volumes_cap: "{{ osds_pool_secret.client_volumes.client_volumes_ceph_authtool_cap }}"
 

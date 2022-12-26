@@ -1,4 +1,4 @@
 ---
-ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}"
+ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + ceph_public_interface]['ipv4']['address'] }}"
 desktop_mount_shell_dir: "/etc/ceph/cephmount"
 cephmount_service_dir: "/usr/lib/systemd/system/"

@@ -12,8 +12,8 @@ fsid: 116d4de8-fd14-491f-811f-c1bdd8fac12a
 cephx: true
 
 ## ceph 管理网段
-ceph_public_network: 10.2.36.0/24
-ceph_cluster_network: 10.2.36.0/24
+ceph_public_network: 10.2.11.0/24
+ceph_cluster_network: 10.2.12.0/24
 
 ## ceph osd 最小副本数 和 最大副本数
 osd_pool_default_size: 2

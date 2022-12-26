@@ -5,7 +5,7 @@ fsd_voi_upload_dir: "{{ desktop_mount_dir }}/upload"
 fsd_static_dir: "{{ desktop_mount_dir }}/static"
 fsd_log: /var/log/fsd
 init_sql_dir: /tmp/fsd
-ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}"
+ceph_local_ip: "{{ hostvars[inventory_hostname]['ansible_' + ceph_public_interface]['ipv4']['address'] }}"
 fsd_netty_codec_mac: "{{ ansible_default_ipv4.macaddress | replace(':', '')}}"
 prometheus_alert_rule_dir: "{{ desktop_mount_dir }}/prometheus/rules"
 prometheus_alertmanager_dir: "{{ desktop_mount_dir }}/prometheus/alertmanager/alertmanager.yml"

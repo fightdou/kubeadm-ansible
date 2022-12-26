@@ -15,7 +15,7 @@ csiConfig:
   - clusterID: "{{ fsid }}"
     monitors: 
     {% for host in groups['ceph-mons'] -%}
-    - "{{ hostvars[host]['ansible_' + hostvars[host]['api_interface']]['ipv4']['address'] }}"
+    - "{{ hostvars[host]['ansible_' + hostvars[host]['ceph_public_interface']]['ipv4']['address'] }}"
     {% endfor %}
 
 csiMapping: []
