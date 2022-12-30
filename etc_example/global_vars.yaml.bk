@@ -20,7 +20,12 @@ ipmi_username: root
 # ipmi 连接密码
 ipmi_password: Troila12#$
 # TDesktop APP 软件包路径
-tdesktop_path_name: /opt/offline/TDesktop.exe
+tdesktop_path_name: 
+  - /opt/offline/Win-TDesktop.exe
+  - /opt/offline/kylin_ARM-TDesktop.deb
+  - /opt/offline/UOS_ARM-TDesktop.deb
+  - /opt/offline/UOS_X86-TDesktop.deb
+  # - /opt/offline/kylin_X86-TDesktop.deb
 
 ####################
 # baremetal

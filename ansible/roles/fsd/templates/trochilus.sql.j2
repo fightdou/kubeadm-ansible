@@ -1,3 +1,3 @@
 USE klcloud_fsd;
 UPDATE `des_resource_pool` SET `vdi_desktop_num` = {{ vdi_desktop_num }}, `vdi_cpu_num` = {{ total_vcpus }}, `vdi_memory_num` = {{ total_mems }}, `vdi_storage_num` = {{ vdi_storage_num }}, `cloud_disk_num` = {{ cloud_disk_num }}, `voi_storage_num` = {{ voi_storage_num }} WHERE `uuid` = '0'; 
-UPDATE `sys_setting` SET `info` = '{"proxyIp": "{{ fsd_proxy_ip }}","vip": "{{ kube_apiserver_vip }}"}' where uuid = '5b2d43b2-5ff3-4731-a2e6-0854be87a8Z1';
+UPDATE `sys_setting` SET `info` = '{"proxyIp": "{{ fsd_proxy_ip }}","vip": "{{ kube_apiserver_vip }}","netMode":"INNER"}' where uuid = '5b2d43b2-5ff3-4731-a2e6-0854be87a8Z1';

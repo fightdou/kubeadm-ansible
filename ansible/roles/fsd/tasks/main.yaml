@@ -49,9 +49,10 @@
 - name: Copy Tdesktop.exe to share path
   become: true
   copy:
-    src: "{{ tdesktop_path_name }}"
+    src: "{{ item }}"
     dest: "{{ desktop_mount_dir }}/static/vdiUpgradePackage/"
     mode: "0644"
+  with_items: "{{ tdesktop_path_name }}"
   when:
     - not only_deploy_voi | bool
 
