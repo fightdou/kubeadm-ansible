@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+iptables -P FORWARD ACCEPT
+echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
+{% if enable_hugepages %}
+echo {{ hugepages_total }} > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+echo N > /sys/module/kvm/parameters/nx_huge_pages
+systemctl restart kubelet
+{% endif %}

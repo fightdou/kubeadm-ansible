@@ -86,6 +86,10 @@
     - nat
     - mangle
 
+- name: 清理 trochilus 创建的 namespace
+  shell: rm -rf /var/run/netns/*
+  ignore_errors: true
+
 - name: 清理 ipvsadm
   shell: "{{ item }} || true"
   with_items:
@@ -95,7 +99,7 @@
   blockinfile:
     path: "/etc/hosts"
     state: absent
-    marker: "# Ansible inventory hosts {mark}"
+    marker: "# {mark} ANSIBLE GENERATED HOSTS"
 
 - name: reset | check kube-ipvs0 network device
   stat:

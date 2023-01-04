@@ -11,9 +11,15 @@
   when:
     - ansible_distribution == "openEuler"
 
+- name: 获取可分配的大页数量
+  set_fact:
+    hugepages_total: "{{ (ansible_memtotal_mb  * (1 - hugepages_reserved_rate) // 2) | int }}"
+  when:
+    - enable_hugepages | bool
+
 - name: 复制开机执行脚本 reboot-script.sh
-  copy:
-    src: reboot-script.sh
+  template:
+    src: reboot-script.sh.j2
     dest: /etc/kubernetes/reboot-script.sh
     mode: 755
   when:
