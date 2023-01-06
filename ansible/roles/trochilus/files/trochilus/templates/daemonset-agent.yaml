@@ -152,6 +152,9 @@ spec:
             - mountPath: /etc/ceph
               mountPropagation: Bidirectional
               name: etc-ceph
+            - mountPath: /etc/sysctl.d/
+              mountPropagation: Bidirectional
+              name: etc-sysctl
             - mountPath: /var/log/trochilus
               mountPropagation: Bidirectional
               name: log-dir
@@ -223,6 +226,10 @@ spec:
             path: /etc/machine-id
             type: ""
           name: machine-id
+        - hostPath:
+            path: /etc/sysctl.d/
+            type: ""
+          name: etc-sysctl
         - hostPath:
             path: /etc/libvirt/qemu
             type: ""

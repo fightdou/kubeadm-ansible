@@ -164,6 +164,9 @@ spec:
           - mountPath: /etc/machine-id
             name: machine-id
             readOnly: true
+          - mountPath: /etc/sysctl.d/
+            mountPropagation: Bidirectional
+            name: etc-sysctl
           - mountPath: /etc/ceph
             mountPropagation: Bidirectional
             name: etc-ceph
@@ -223,6 +226,10 @@ spec:
             path: /etc/machine-id
             type: ""
           name: machine-id
+        - hostPath:
+            path: /etc/sysctl.d/
+            type: ""
+          name: etc-sysctl
         - hostPath:
             path: /etc/libvirt/qemu
             type: ""
