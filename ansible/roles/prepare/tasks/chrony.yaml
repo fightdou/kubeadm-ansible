@@ -1,19 +1,10 @@
 ---
 - name: Check if chrony is installed
-  command: rpm -q chrony
+  command: "{{ check_cmd }} chrony" 
   register: chrony_check
   changed_when: false
   args:
     warn: false
-  when: ansible_os_family == 'RedHat'
-
-- name: Check if chrony is installed
-  command: dpkg -s chrony
-  register: chrony_check
-  changed_when: false
-  args:
-    warn: false
-  when: ansible_os_family == 'Debian'
 
 - name: Install chrony
   package:

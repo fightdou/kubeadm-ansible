@@ -2,7 +2,7 @@
 # Please consider joining the pool (https://www.pool.ntp.org/join.html).
 #pool pool.ntp.org iburst
 {% if inventory_hostname == groups['control'][0] %}
-server {{ host }} iburst
+server {{ inventory_hostname }} iburst
 {% else %}
 server {{ groups['control'][0] }} iburst
 {% endif %}
