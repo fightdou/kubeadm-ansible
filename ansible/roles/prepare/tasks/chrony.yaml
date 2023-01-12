@@ -21,5 +21,8 @@
 - name: enable datetimectl ntp
   shell: timedatectl set-ntp true
 
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: update time
   shell: chronyc -a makestep
