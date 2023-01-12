@@ -1,7 +1,7 @@
 ---
 - name: Check if iperf3 is installed
   command: "{{ check_cmd }} iperf3" 
-  register: iperf3_iperf3
+  register: iperf3_check
   changed_when: false
   args:
     warn: false
