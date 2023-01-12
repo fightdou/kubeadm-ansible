@@ -1,0 +1,156 @@
+#jinja2: trim_blocks: False
+apiVersion: v1
+kind: Pod
+metadata:
+  name: libvirt
+  namespace: {{ helm_install_namespace }}
+spec:
+  tolerations:
+    - key: node.kubernetes.io/not-ready
+      effect: NoExecute
+      tolerationSeconds: {{ kube_toleration_seconds }}
+    - key: node.kubernetes.io/unreachable
+      operator: Exists
+      effect: NoExecute
+      tolerationSeconds: {{ kube_toleration_seconds }}
+  containers:
+    - name: libvirt
+      image: {{ kube_image_repository }}/libvirt:{{ libvirt_image_tag }}
+      imagePullPolicy: Always
+      livenessProbe:
+        exec:
+          command:
+            - bash
+            - -c
+            - /usr/bin/virsh list
+        failureThreshold: 5
+        initialDelaySeconds: 30
+        periodSeconds: 30
+        successThreshold: 1
+        timeoutSeconds: 30
+      readinessProbe:
+        exec:
+          command:
+            - bash
+            - -c
+            - /usr/bin/virsh list
+        failureThreshold: 5
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 30
+      securityContext:
+        privileged: true
+        runAsUser: 0
+        runAsGroup: 0
+        readOnlyRootFilesystem: false
+      {% if enable_hugepages -%}
+      resources:
+        limits:
+          hugepages-2Mi: {{ allocation_hugepages_total }}Gi
+          memory: 2Gi
+        requests:
+          memory: 2Gi
+      {% endif %}
+      volumeMounts:
+        - mountPath: /etc/localtime
+          name: localtime
+        {% if enable_hugepages %}
+        - mountPath: /hugepages-2Mi
+          name: hugepage-2mi
+        {% endif %}
+        - mountPath: /etc/vdi/
+          name: vdi-conf
+        - mountPath: /etc/libvirt
+          name: etc-libvirt
+        - mountPath: /lib/modules
+          name: libmodules
+          readOnly: true
+        - mountPath: /var/lib/libvirt
+          mountPropagation: Bidirectional
+          name: var-lib-libvirt
+        - mountPath: /run
+          name: run
+        - mountPath: /dev
+          name: dev
+        - mountPath: /sys/fs/cgroup
+          name: cgroup
+        - mountPath: /etc/machine-id
+          name: machine-id
+          readOnly: true
+        - mountPath: {{ trochilus_base_path }}
+          mountPropagation: Bidirectional
+          name: share-dir
+        {% if enable_ceph -%}
+        - mountPath: /etc/ceph
+          mountPropagation: Bidirectional
+          name: etc-ceph
+        {% endif %}
+  dnsPolicy: ClusterFirstWithHostNet
+  hostIPC: true
+  hostNetwork: {{ libvirt_hostnetwork }}
+  hostPID: true
+  nodeSelector:
+    {{ compute_node_role_name }}: {{ node_role_value }}
+  restartPolicy: Always
+  {% if docker_register_secrets_name -%}
+  imagePullSecrets:
+    - name: {{ docker_register_secrets_name }}
+  {% endif %}
+  serviceAccount: libvirt
+  serviceAccountName: libvirt
+  priorityClassName: {{ kube_priority_name }}
+  volumes:
+    - emptyDir: {}
+      name: secret-dir
+    {% if enable_hugepages -%}
+    - name: hugepage-2mi
+      emptyDir:
+        medium: HugePages-2Mi
+    {% endif %}
+    - name: localtime
+      hostPath:
+        path: /etc/localtime
+        type: File
+    - name: libmodules
+      hostPath:
+        path: /lib/modules
+        type: ""
+    - name: var-lib-libvirt
+      hostPath:
+        path: /var/lib/libvirt
+        type: ""
+    - name: run
+      hostPath:
+        path: /run
+        type: ""
+    - hostPath:
+        path: /dev
+        type: ""
+      name: dev
+    - hostPath:
+        path: /sys/fs/cgroup
+        type: ""
+      name: cgroup
+    - hostPath:
+        path: /etc/machine-id
+        type: ""
+      name: machine-id
+    - hostPath:
+        path: /etc/libvirt
+        type: ""
+      name: etc-libvirt
+    - hostPath:
+        path: {{ desktop_mount_dir }}
+        type: "DirectoryOrCreate"
+      name: share-dir
+    - hostPath:
+        path: /etc/vdi/
+        type: ""
+      name: vdi-conf
+    {% if enable_ceph -%}
+    - hostPath:
+        path: /etc/ceph
+        type: ""
+      name: etc-ceph
+    {% endif %}

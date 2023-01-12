@@ -2,19 +2,51 @@
   when:
     - enable_ceph | bool
 
-- name: 查看 dnsmasq 服务是否存在
-  shell: kill -9 $(pidof dnsmasq)
-  args:
-    executable: /bin/bash
-  ignore_errors: true
-  when:
-    - ansible_distribution == "openEuler"
-
 - name: 创建 vdi 目录
   file:
     path: /etc/vdi/
     state: directory
     mode: 0755
+
+- name: 创建 secrets 目录
+  file:
+    path: /etc/libvirt/secrets/
+    state: directory
+    mode: 0755
+  when:
+    - enable_ceph | bool
+
+- name: Copy libvirtd.conf 文件
+  copy:
+    src: libvirtd.conf
+    dest: /etc/libvirt/libvirtd.conf
+    owner: root
+    mode: 0644
+
+- name: Copy qemu.conf 文件
+  copy:
+    src: qemu.conf
+    dest: /etc/libvirt/qemu.conf
+    owner: root
+    mode: 0644
+
+- name: Copy secrets xml 密钥 文件
+  template:
+    src: ceph.xml.j2
+    dest: /etc/libvirt/secrets/{{ ceph_rbd_secret_uuid }}.xml
+    owner: root
+    mode: 0644
+  when:
+    - enable_ceph | bool
+
+- name: Copy secrets base64 密钥 文件
+  template:
+    src: ceph.base64.j2
+    dest: /etc/libvirt/secrets/{{ ceph_rbd_secret_uuid }}.base64
+    owner: root
+    mode: 0644
+  when:
+    - enable_ceph | bool
 
 - name: Copy vdi.ini 文件
   copy:
@@ -23,16 +55,27 @@
     owner: root
     mode: 0644
 
-- import_tasks: libvirt-install.yaml
-  run_once: True
-  delegate_to: "{{ groups['kube-master'][0] }}"
+- name: 生成 libvirt daemonset.yaml
+  template:
+    src: libvirt-daemonset.yaml.j2
+    dest: /etc/kubernetes/manifests/libvirt-daemonset.yaml
+    owner: root
+    mode: 0644
+
+# - import_tasks: libvirt-install.yaml
+#   run_once: True
+#   delegate_to: "{{ groups['kube-master'][0] }}"
+
+- name: 查看 libvirt 网络
+  shell: virsh net-list --all | grep default | wc -l
+  register: virsh_result
+  until: virsh_result is success
+  retries: 2
+  delay: 10
+  ignore_errors: true
 
 - name: undefine libvirt 网络
   shell: virsh net-undefine default
-  ignore_errors: true
-  register: virsh_result
-  until: virsh_result is success
-  retries: 10
-  delay: 10
   when:
     - ansible_distribution == "openEuler"
+    - virsh_result.stdout == "1"
