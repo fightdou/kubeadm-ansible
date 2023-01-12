@@ -1,3 +1,5 @@
+- include_tasks: chrony.yaml
+
 - name: 查看 docker 是否安装
   shell: docker info
   register: docker_install_info

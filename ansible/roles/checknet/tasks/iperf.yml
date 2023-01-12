@@ -1,25 +1,25 @@
 ---
-- name: Ubuntu install iperf
-  apt:
-    state: present
-    name: "{{ packages }}"
-  vars:
-    packages:
-      - iperf3
-  when:
-      - inventory_hostname in groups['allnodes']
-      - ansible_distribution == "Ubuntu"
+- name: Check if iperf3 is installed
+  command: rpm -q iperf3
+  register: iperf3_check
+  changed_when: false
+  args:
+    warn: false
+  when: ansible_os_family == 'RedHat'
 
-- name: openEuler install iperf
-  yum:
+- name: Check if iperf3 is installed
+  command: dpkg -s iperf3
+  register: iperf3_check
+  changed_when: false
+  args:
+    warn: false
+  when: ansible_os_family == 'Debian'
+
+- name: install iperf
+  package:
     state: present
-    name: "{{ packages }}"
-  vars:
-    packages:
-      - iperf3
-  when:
-      - inventory_hostname in groups['allnodes']
-      - ansible_distribution == "openEuler"
+    name: "iperf3"
+  when: iperf3_check.rc > 1  
 
 - name: iperf server start
   vars:

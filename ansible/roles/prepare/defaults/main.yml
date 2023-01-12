@@ -1,0 +1,2 @@
+---
+chrony_conf_path: "{% if ansible_os_family == 'RedHat' %}/etc/chrony.conf{% elif ansible_os_family == 'Debian' %}/etc/chrony/chrony.conf{% endif %}"

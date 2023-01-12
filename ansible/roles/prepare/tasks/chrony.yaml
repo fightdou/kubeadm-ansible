@@ -1,0 +1,30 @@
+---
+- name: Check if chrony is installed
+  command: rpm -q chrony
+  register: chrony_check
+  changed_when: false
+  args:
+    warn: false
+  when: ansible_os_family == 'RedHat'
+
+- name: Check if chrony is installed
+  command: dpkg -s chrony
+  register: chrony_check
+  changed_when: false
+  args:
+    warn: false
+  when: ansible_os_family == 'Debian'
+
+- name: Install chrony
+  package:
+    name: chrony
+  when: chrony_check.rc > 1
+
+- name: Copy chrony conf
+  template:
+    src: chrony.conf.j2
+    dest: "{{ chrony_conf_path }}"
+    mode: 0644
+  notify: Restart chronyd
+
+
