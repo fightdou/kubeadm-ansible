@@ -27,4 +27,8 @@
     mode: 0644
   notify: Restart chronyd
 
+- name: enable datetimectl ntp
+  shell: timedatectl set-ntp true
 
+- name: update time
+  shell: chronyc -a makestep
