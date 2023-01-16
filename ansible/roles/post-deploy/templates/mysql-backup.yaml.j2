@@ -13,7 +13,7 @@ spec:
             runAsUser: 0
           env:
           - name: MARIADB_ROOT_PASSWORD
-            value: {{ mariadb_root_password }}
+            value: "{{ mariadb_root_password }}"
           command:
             - /bin/sh
             - -c
