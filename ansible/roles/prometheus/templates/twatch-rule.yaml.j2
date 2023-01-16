@@ -1,3 +1,4 @@
+#jinja2: trim_blocks: False
 groups:
   - name: twatch.rule
     rules:
@@ -9,7 +10,11 @@ groups:
       expr: (sum(collectd_cpu_percent{host!="",type="idle"}) by (host,host_ip) / sum(collectd_cpu_percent{host!=""}) by (host,host_ip)) * 100
 
     - record: TWatch:Host::MemoryUsedInPercent
+      {% if only_deploy_voi -%}
       expr: (sum(collectd_memory{memory="used", host!=""}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100
+      {% else -%}
+      expr: (sum(collectd_memory{memory="used"}) by(host) - on(host) (node_memory_HugePages_Total * 1024 * 1024) + (sum(collectd_virt_memory{type="available"}) by(host)- sum(collectd_virt_memory{type="unused"})by(host)) )/ sum by(host) (collectd_memory)
+      {% endif %}
 
     - record: TWatch:Host::MemoryFreeInPercent
       expr: (sum(collectd_memory{host!="",memory!="used"}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100

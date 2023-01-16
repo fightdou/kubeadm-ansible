@@ -32,8 +32,8 @@
     dest: /etc/prometheus/prometheus.yaml
 
 - name: 复制 prometheus rule 文件
-  copy:
-    src: twatch-rule.yaml
+  template:
+    src: twatch-rule.yaml.j2
     dest: /etc/prometheus/rules/twatch-rule.yaml
 
 - name: 生成 alertmanager 配置文件
