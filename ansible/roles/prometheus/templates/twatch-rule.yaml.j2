@@ -13,7 +13,7 @@ groups:
       {% if only_deploy_voi -%}
       expr: (sum(collectd_memory{memory="used", host!=""}) by (host,host_ip) / on(host,host_ip) (sum(collectd_memory{host!=""}) by (host,host_ip))) * 100
       {% else -%}
-      expr: (sum(collectd_memory{memory="used"}) by(host) - on(host) (node_memory_HugePages_Total * 1024 * 1024) + (sum(collectd_virt_memory{type="available"}) by(host)- sum(collectd_virt_memory{type="unused"})by(host)) )/ sum by(host) (collectd_memory)
+      expr: (sum by(host,host_ip) (collectd_memory{memory="used"}) - on(host,host_ip) (node_memory_HugePages_Total * 1024 * 1024) + (sum by(host,host_ip) (collectd_virt_memory{type="available"}) - sum by(host,host_ip) (collectd_virt_memory{type="unused"}))) / sum by(host,host_ip) (collectd_memory) * 100
       {% endif %}
 
     - record: TWatch:Host::MemoryFreeInPercent
