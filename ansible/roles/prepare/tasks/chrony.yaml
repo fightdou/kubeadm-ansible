@@ -1,0 +1,28 @@
+---
+- name: Check if chrony is installed
+  command: "{{ check_cmd }} chrony" 
+  register: chrony_check
+  changed_when: false
+  args:
+    warn: false
+
+- name: Install chrony
+  package:
+    name: chrony
+  when: chrony_check.rc > 1
+
+- name: Copy chrony conf
+  template:
+    src: chrony.conf.j2
+    dest: "{{ chrony_conf_path }}"
+    mode: 0644
+  notify: Restart chronyd
+
+- name: enable datetimectl ntp
+  shell: timedatectl set-ntp true
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: update time
+  shell: chronyc -a makestep

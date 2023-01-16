@@ -2,3 +2,4 @@
 # defaults file for checknet
 ping_interface: ['api', 'ceph_public', 'ceph_cluster']
 netcheck_path: "/home/history/"
+check_cmd: "{% if ansible_os_family == 'RedHat' %}rpm -q{% elif ansible_os_family == 'Debian' %}dpkg -s{% endif %}"
