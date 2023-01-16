@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysqldump-backup-job
+  namespace: {{ helm_install_namespace }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: mysqldump
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          env:
+          - name: MARIADB_ROOT_PASSWORD
+            value: {{ mariadb_root_password }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mysqldump -uroot -p"{{ mariadb_root_password }}" -h mariadb --all-databases >/backup/database-backup-`date +%Y-%m-%d-%H-%M`.sql
+              find /backup/* -mtime +10 -exec rm {} \;
+          image: {{ kube_image_repository }}/mariadb:{{ mariadb_image_tag }}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /backup
+              name: data
+            - mountPath: /etc/localtime
+              name: localtime
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+            type: File
+        - name: data
+          hostPath:
+            path: /var/lib/mariadb-backup
+            type: DirectoryOrCreate
+      restartPolicy: Never
+      serviceAccount: mariadb
+      serviceAccountName: mariadb

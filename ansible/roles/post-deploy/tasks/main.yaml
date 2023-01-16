@@ -41,3 +41,14 @@
     enabled: true
   when:
     - ansible_distribution == "openEuler"
+
+- name: 执行 etcd 备份命令
+  shell: /usr/local/bin/etcdtools backup
+
+- name: copy mariadb-backup file
+  template:
+    src: mysql-backup.yaml.j2
+    dest: /etc/kubernetes/plugins/mariadb/mysql-backup.yaml
+
+- name: 执行 mysql 备份任务
+  shell: kubectl apply -f /etc/kubernetes/plugins/mariadb/mysql-backup.yaml
