@@ -55,6 +55,22 @@ pg_autoscale_mode: "off"
 ## 开启该选项用以改变隔离域为osd级别。
 ceph_aio: false
 
+# 是否开启rbd父缓存，默认关闭
+# 因该服务使用 ssd 作为缓存盘，保证环境中至少存在一块 ssd 盘
+# 开启此服务，建议关闭bcache
+rbd_parent_cache_enabled: false
+
+# 设置 ssd 缓存盘名称
+ssd_disk: "nvme0n1"
+
+# 设置cache缓存数据目录，此目录将被链接至指定磁盘下
+# 默认/data/ceph-cache
+immutable_object_cache_path: "/data/ceph-cache"
+
+# 缓存水印，如果容量达到这个水印，守护进程将会根据LRU系统数据删除缓存
+# 默认0.9
+immutable_object_cache_watermark: 0.9
+
 ## 是否开启 bcache 模式，不能与 cache_tiering 同时开启
 ## 需要在ceph-multiplenodes 填入 bcache_map_list 的列表参数。
 bcache: false

@@ -106,3 +106,11 @@ log file=/var/log/radosgw/client.radosgw.gateway.log
 rgw_frontends = civetweb port={{ hostvars[host]['cephf_ceph_local_ip'] }}:{{ radosgw_port }}
 {% endfor %}
 {% endif %}
+
+{% if rbd_parent_cache_enabled %}
+[client]
+rbd parent cache enabled = true
+immutable_object_cache_path = {{ immutable_object_cache_path }}
+immutable_object_cache_max_size = {{ ssd_disk_capacity }}
+immutable_object_cache_watermark = {{ immutable_object_cache_watermark }}
+{% endif %}

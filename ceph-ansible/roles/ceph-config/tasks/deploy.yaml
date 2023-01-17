@@ -1,4 +1,14 @@
 ---
+- name: get ssd disk capacity
+  shell: "lsblk | grep {{ ssd_disk }} | awk '{print $4}'"
+  register: DiskResult
+  when:
+    - rbd_parent_cache_enabled | bool
+
+- name: set_fact
+  set_fact:
+    ssd_disk_capacity: "{{ DiskResult.stdout }}"
+
 - name: cephfile-conf
   template:
     src: ceph.conf.j2

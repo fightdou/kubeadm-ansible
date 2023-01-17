@@ -143,6 +143,19 @@
     - deploy_radosgw | bool
     - ansible_distribution == "Ubuntu"
 
+- name: Install immutable packages
+  apt:
+    state: present
+    name: "{{ packages }}"
+    update_cache: True
+  vars:
+    packages:
+      - ceph-immutable-object-cache
+  when:
+    - inventory_hostname in groups['ceph-immutables']
+    - rbd_parent_cache_enabled | bool
+    - ansible_distribution == "Ubuntu"
+
 - name: openEuler disable selinux
   selinux:
     policy: targeted
@@ -262,6 +275,18 @@
     - bcache | bool
     - ansible_distribution == "openEuler"
 
+- name: openEuler install immutable packages
+  yum:
+    state: present
+    name: "{{ packages }}"
+  vars:
+    packages:
+      - ceph-immutable-object-cache
+  when:
+    - inventory_hostname in groups['ceph-immutables']
+    - rbd_parent_cache_enabled | bool
+    - ansible_distribution == "openEuler"
+
 - name: openEuler install mgr rpm packages
   yum:
     state: present
@@ -323,4 +348,10 @@
   template:
     src: ceph-radosgw@.service.j2
     dest: /usr/lib/systemd/system/ceph-radosgw@.service
+    mode: "644"
+
+- name: Generate ceph-immutable@.service config file
+  template:
+    src: ceph-immutable@.service.j2
+    dest: /usr/lib/systemd/system/ceph-immutable-object-cache@.service
     mode: "644"

@@ -74,3 +74,10 @@ mdss_secret:
     mds: allow *
 
 # gfs_hosts: "[{% for host in groups['glusterfs-bricks'] %}'{{ hostvars[host]['ansible_' + glusterfs_api_interface]['ipv4']['address'] }}',{% endfor %}]"
+
+## ceph-immutable-object-cache keying
+immu_secret:
+  immu_secret: AQAq8Zpj06ynDhAA5To3i0JW5xjDrjmr1mm16w==
+  immu_ceph_authtool_cap:
+    mon: allow r
+    osd: profile rbd-read-only

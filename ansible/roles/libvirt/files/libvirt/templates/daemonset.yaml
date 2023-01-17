@@ -118,6 +118,12 @@ spec:
             name: libvirt-etc
             readOnly: true
             subPath: {{ .Values.secret.rbd_secret_uuid }}.base64
+          {{- if .Values.immutable.enabled }}
+          - mountPath: {{ .Values.immutable.immutable_object_cache_path }}
+            name: immutable_object_cache_path
+          - mountPath: /var/run/ceph/immutable_object_cache_sock
+            name: immutable_object_cache_sock
+          {{- end }}
           {{- end }}
       dnsPolicy: ClusterFirstWithHostNet
       hostIPC: true
@@ -188,6 +194,16 @@ spec:
             path: /etc/ceph
             type: ""
           name: etc-ceph
+        {{- if .Values.immutable.enabled }}
+        - hostPath:
+            path: {{ .Values.immutable.immutable_object_cache_path }}
+            type: ""
+          name: immutable_object_cache_path
+        - hostPath:
+            path: /var/run/ceph/immutable_object_cache_sock
+            type: ""
+          name: immutable_object_cache_sock
+        {{- end }}     
         {{- end }}
 {{- if .Values.nodeSelector }}
       nodeSelector:

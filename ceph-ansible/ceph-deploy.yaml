@@ -83,3 +83,16 @@
       when:
         - deploy_radosgw | bool
         - cephx
+
+- name: Apply  role ceph-immutable
+  hosts: ceph-immutables
+  gather_facts: false
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - import_role:
+        name: ceph-immutable
+      tags: ['ceph-immutable', 'ceph-immutables']
+      when:
+        - rbd_parent_cache_enabled | bool
