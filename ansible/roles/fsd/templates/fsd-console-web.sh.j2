@@ -1,0 +1,2 @@
+#!/bin/bash
+/home/jdk1.8.0_351/bin/java -Xms128m -Xmx256m -jar /root/deploy/fsd-console-web.jar --fsd.common.host={{ kube_apiserver_vip }}:{{ fsd_webhook_port }} --fsd.common.ip={{ 'api' | filter_address() }}

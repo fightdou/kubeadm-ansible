@@ -3,7 +3,8 @@ Description=Manage Java fsd console service
 After=network-online.target docker.service kubelet.service
 
 [Service]
-ExecStart=/home/jdk1.8.0_331/bin/java -Xms128m -Xmx256m -jar /root/deploy/fsd-console-web.jar --fsd.common.host={{ kube_apiserver_vip }}:{{ fsd_webhook_port }} --fsd.common.ip={{ kube_apiserver_vip }}
+#ExecStart=/home/jdk1.8.0_351/bin/java -Xms128m -Xmx256m -jar /root/deploy/fsd-console-web.jar --fsd.common.host={{ kube_apiserver_vip }}:{{ fsd_webhook_port }} --fsd.common.ip={{ kube_apiserver_vip }}
+ExecStart=-/bin/bash -c '/opt/fsd-console-web.sh'
 ExecReload=/bin/kill -HUP $MAINPID
 User=root
 Type=simple
