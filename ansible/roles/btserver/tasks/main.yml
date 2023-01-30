@@ -1,5 +1,23 @@
+---
+- name: mkdir btserver values
+  file:
+    name: /etc/btserver
+    state: directory
+
+- name: generate btserver torrent.ini 文件
+  template:
+    src: torrent.ini.j2
+    dest: /etc/btserver/torrent.ini
+    owner: root
+    mode: 0644
+
+- name: generate btserver opentracker.conf 文件
+  template:
+    src: opentracker.conf.j2
+    dest: /etc/btserver/opentracker.conf
+    owner: root
+    mode: 0644
 
 - import_tasks: install_btserver.yml
   run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
-

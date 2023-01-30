@@ -9,7 +9,6 @@
     src: "btserver"
     dest: "{{ helm_charts_dir }}"
 
-
 - name: create btserver values.yml
   template:
     src: custom-values-btserver.yaml.j2
