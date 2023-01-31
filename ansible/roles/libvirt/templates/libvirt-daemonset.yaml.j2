@@ -86,6 +86,12 @@ spec:
           mountPropagation: Bidirectional
           name: etc-ceph
         {% endif %}
+        {% if enable_immutable -%}
+        - mountPath: /var/run/ceph/immutable_object_cache_sock
+          name: immutable_object_cache_sock
+        - mountPath: {{ ceph_immutable_path }}
+          name: immutable_object_cache_path
+        {% endif %}
   dnsPolicy: ClusterFirstWithHostNet
   hostIPC: true
   hostNetwork: {{ libvirt_hostnetwork }}
@@ -153,4 +159,14 @@ spec:
         path: /etc/ceph
         type: ""
       name: etc-ceph
+    {% endif %}
+    {% if enable_immutable -%}
+    - hostPath:
+        path: /var/run/ceph/immutable_object_cache_sock
+        type: ""
+      name: immutable_object_cache_sock
+    - hostPath:
+        path: {{ ceph_immutable_path }}
+        type: ""
+      name: immutable_object_cache_path
     {% endif %}

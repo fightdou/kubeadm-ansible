@@ -19,3 +19,6 @@ hostNetwork: {{ libvirt_hostnetwork }}
 hugepages_2M_total: {{ allocation_hugepages_total }}
 enableHugepages: {{ enable_hugepages }}
 trochilus_agent_port: {{ trochilus_agent_listen_port }}
+immutable:
+  enabled: true
+  immutable_object_cache_path: {{ immutable_object_cache_path }}

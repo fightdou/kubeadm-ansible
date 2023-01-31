@@ -176,6 +176,7 @@ hugepages_size: 2M
 enable_hugepages: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 hugepages_reserved_rate: 0.2
 libvirt_image_tag: 2.0.0
+ceph_immutable_path: "{{ immutable_object_cache_path }}"
 
 ###################
 # Trochilus Options
@@ -317,6 +318,7 @@ enable_kibana: false
 enable_ceph: "{% if only_deploy_voi %}false{% else %}true{% endif %}"
 enable_checknet: false
 enable_lvm: false
+enable_immutable: "{{ rbd_parent_cache_enabled }}"
 
 ################
 # Redis Options

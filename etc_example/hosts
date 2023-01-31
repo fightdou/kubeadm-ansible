@@ -36,6 +36,7 @@ ceph-osds
 ceph-mdss
 ceph-mgrs
 ceph-radosgws
+ceph-immutables
 
 [ceph-mons:children]
 control
@@ -52,6 +53,8 @@ control
 [ceph-radosgws:children]
 control
 
+[ceph-immutables:children]
+compute
 
 [voi:children]
 control

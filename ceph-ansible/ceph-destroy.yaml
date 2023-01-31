@@ -90,3 +90,29 @@
   tasks:
     - name: Cleaning ceph-radosgw.control service
       shell: systemctl stop ceph-radosgw@*
+
+- name: Apply to the all ceph immutable Service Node
+  hosts: "{{ groups['ceph-immutables'] }}"
+  become: yes
+  vars:
+    ansible_become_user: root
+  tasks:
+    - name: Delete fstab config
+      lineinfile:
+        path: /etc/fstab
+        regexp: "{{ immutable_object_cache_path }}"
+        state: absent
+        backup: yes
+      when:
+        - rbd_parent_cache_enabled | bool
+
+    - name: Clear cache information
+      shell: rm -rf {{ immutable_object_cache_path }}
+      when:
+        - rbd_parent_cache_enabled | bool
+
+    - name:  Cleaning ceph-immutable.control service
+      shell: systemctl stop ceph-immutable-object-cache@ceph-immutable-object-cache.{{ ansible_hostname }}
+      ignore_errors: True
+      when:
+        - rbd_parent_cache_enabled | bool

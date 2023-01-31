@@ -1,0 +1,70 @@
+---
+- name: 格式化 ssd 缓存盘
+  filesystem:
+        fstype: xfs
+        dev: "/dev/{{ ssd_disk }}"
+        opts: -n ftype=1 -L "data"
+  with_items: "{{ groups['ceph-immutables'] }}"
+
+- name: 验证缓存数据目录
+  file:
+    path: "{{ immutable_object_cache_path }}"
+    state: directory
+  with_items: "{{ groups['ceph-immutables'] }}"
+  
+- name: 设置开机自动挂载
+  lineinfile:
+    line: "/dev/{{ ssd_disk }} {{ immutable_object_cache_path }} xfs defaults 0 0"
+    state: present
+    path: /etc/fstab
+  with_items: "{{ groups['ceph-immutables'] }}"
+
+- name: 将缓存数据目录挂载至 ssd 缓存盘
+  shell: "mount -a"
+  with_items: "{{ groups['ceph-immutables'] }}"
+
+- name: create immutable  keyring
+  delegate_to: "{{ groups['ceph-immutables'][0] }}"
+  run_once: true
+  block:
+    - name: create ceph-immutable keyring
+      ceph_key:
+        name: "client.ceph-immutable-object-cache.{{ hostvars[item]['ansible_hostname'] }}"
+        secret: "{{ immu_secret.immu_secret }}"
+        state: present
+        dest: "/var/lib/ceph/tmp/"
+        cluster: "{{ cluster }}"
+        caps: "{{ immu_secret.immu_ceph_authtool_cap }}"
+        import_key: False
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      when: groups['ceph-immutables'] | length > 0
+      with_items: "{{ groups['ceph-immutables'] }}"
+    
+    - name: import key to ceph cluster
+      shell: "ceph auth import -i /var/lib/ceph/tmp/ceph.client.ceph-immutable-object-cache.{{ hostvars[item]['ansible_hostname'] }}.keyring"
+      with_items: "{{ groups['ceph-immutables'] }}"
+
+- name: all node syn immutable.keyring
+  shell: ceph auth get client.ceph-immutable-object-cache.{{ hostvars[item]['ansible_hostname'] }} > /etc/ceph/ceph.client.ceph-immutable-object-cache.{{ hostvars[item]['ansible_hostname'] }}.keyring
+  with_items: "{{ groups['ceph-immutables'] }}"
+
+- name: create immutable.service directory
+  file:
+    path: /var/lib/ceph/immutable/immutable.{{ ansible_hostname }}
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  
+- name: copy immutable keyring
+  copy:
+    src: /etc/ceph/ceph.client.ceph-immutable-object-cache.{{ ansible_hostname }}.keyring
+    dest: /var/lib/ceph/immutable/immutable.{{ ansible_hostname }}/keyring
+    owner: root
+    group: root
+    mode: 0755
+    remote_src: yes
+
+- include_tasks: "deploy_immutable_service_package.yml"
