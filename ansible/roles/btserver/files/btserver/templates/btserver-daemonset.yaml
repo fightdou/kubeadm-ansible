@@ -52,22 +52,20 @@ spec:
           - name: btserver
             mountPath: {{ .Values.containerPath }}
           - mountPath: /opt/torrent_server_bin/torrent.ini
-            name: etc-torrent
+            name: btserver-etc
+            subPath: torrent.ini
           - mountPath: /opt/torrent_server_bin/opentracker.conf
-            name: opentracker-etc
+            name: btserver-etc
+            subPath: opentracker.conf
       volumes:
       - name: localtime
         hostPath:
           path: /etc/localtime
           type: File
-      - hostPath:
-          path: /etc/btserver/opentracker.conf
-          type: File
-        name: opentracker-etc
-      - hostPath:
-          path: /etc/btserver/torrent.ini
-          type: File
-        name: etc-torrent
+      - name: btserver-etc
+        configMap:
+          defaultMode: 420
+          name: btserver-etc
       - name: btserver
         hostPath:
           path: {{ .Values.btserver_share_path }}

@@ -8,6 +8,12 @@
     state: directory
     mode: 0755
 
+- name: 创建 libvirt 目录
+  file:
+    path: /etc/libvirt/
+    state: directory
+    mode: 0755
+
 - name: 创建 secrets 目录
   file:
     path: /etc/libvirt/secrets/
@@ -54,6 +60,18 @@
     dest: /etc/vdi/vdi_conf.ini
     owner: root
     mode: 0644
+
+- name: 获取 osd 数量
+  shell: systemctl | grep running | grep osd@ | wc -l
+  register: osd_num
+  when:
+    - enable_ceph | bool
+
+- name: 获取可分配的大页数量
+  set_fact:
+    allocation_hugepages_total: "{{ (ansible_memtotal_mb  - reserved_osd_memory_mb * osd_num.stdout | int - reserved_mds_memory_mb - reserved_mon_memory_mb - reseverd_system_memory_mb - reserved_host_memory_mb) // 1024 | int }}"
+  when:
+    - enable_ceph | bool
 
 - name: 生成 libvirt daemonset.yaml
   template:
