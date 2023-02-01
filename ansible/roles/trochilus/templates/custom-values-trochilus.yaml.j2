@@ -80,9 +80,9 @@ conf:
     trochilus_reserved_cores_num: {{ trochilus_reserved_cores_num }}
     enable_reserved_core: {{ trochilus_enable_reserved_core }}
   api_settings:
-    enabled_volume_backends: {% if enable_ceph %}rbd1{% elif enable_lvm %}lvm1{% endif %}
+    enabled_volume_backends: {% if enable_ceph | bool %}rbd1{% elif enable_lvm %}lvm1{% endif %}
   image_settings:
-    enabled_image_store: {% if enable_ceph %}rbd{% else %}filesystem{% endif %}
+    enabled_image_store: {% if enable_ceph | bool %}rbd{% else %}filesystem{% endif %}
     rbd_store_config_file: /etc/ceph/ceph.conf
     rbd_store_user: admin
     rbd_store_pool: {{ osd_pools.images_pools.pool_name }}
@@ -100,7 +100,7 @@ conf:
     lv_type: thin
   vm_settings:
     virt_type: {{ trochilus_libvirt_driver }}
-    default_root_disk_backend: {% if enable_ceph %}rbd1{% elif enable_lvm %}lvm1{% endif %}
+    default_root_disk_backend: {% if enable_ceph | bool %}rbd1{% elif enable_lvm %}lvm1{% endif %}
     rbd_secret_uuid: {{ ceph_rbd_secret_uuid }}
   voi_settings:
     voi_image_base_path: {{ trochilus_voi_base_path }}/images

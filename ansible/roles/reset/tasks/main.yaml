@@ -86,9 +86,13 @@
     - nat
     - mangle
 
-- name: 清理 trochilus 创建的 namespace
-  shell: rm -rf /var/run/netns/*
-  ignore_errors: true
+- name: 获取 trochilus 创建的网络 namespace
+  shell: ip netns | awk -F' ' '{print $1}'
+  register: trochilus_netns
+
+- name: 删除网络命名空间
+  shell: ip netns del {{ item }}
+  with_items: "{{ trochilus_netns.stdout_lines }}"
 
 - name: 清理 ipvsadm
   shell: "{{ item }} || true"

@@ -6,11 +6,6 @@
   when:
     - enable_ceph | bool
 
-- name: 设置 bridge-nf-call-iptables 参数
-  shell: echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables
-  when:
-    - ansible_distribution == "openEuler"
-
 - name: 获取可分配的大页数量
   set_fact:
     hugepages_total: "{{ (ansible_memtotal_mb  * (1 - hugepages_reserved_rate) // 2) | int }}"

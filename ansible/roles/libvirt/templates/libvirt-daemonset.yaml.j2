@@ -44,7 +44,7 @@ spec:
         runAsUser: 0
         runAsGroup: 0
         readOnlyRootFilesystem: false
-      {% if enable_hugepages -%}
+      {% if enable_hugepages | bool -%}
       resources:
         limits:
           hugepages-2Mi: {{ allocation_hugepages_total }}Gi
@@ -55,7 +55,7 @@ spec:
       volumeMounts:
         - mountPath: /etc/localtime
           name: localtime
-        {% if enable_hugepages %}
+        {% if enable_hugepages | bool %}
         - mountPath: /hugepages-2Mi
           name: hugepage-2mi
         {% endif %}
@@ -81,7 +81,7 @@ spec:
         - mountPath: {{ trochilus_base_path }}
           mountPropagation: Bidirectional
           name: share-dir
-        {% if enable_ceph -%}
+        {% if enable_ceph | bool -%}
         - mountPath: /etc/ceph
           mountPropagation: Bidirectional
           name: etc-ceph
@@ -101,7 +101,7 @@ spec:
   volumes:
     - emptyDir: {}
       name: secret-dir
-    {% if enable_hugepages -%}
+    {% if enable_hugepages | bool -%}
     - name: hugepage-2mi
       emptyDir:
         medium: HugePages-2Mi
@@ -146,7 +146,7 @@ spec:
         path: /etc/vdi/
         type: ""
       name: vdi-conf
-    {% if enable_ceph -%}
+    {% if enable_ceph | bool -%}
     - hostPath:
         path: /etc/ceph
         type: ""
