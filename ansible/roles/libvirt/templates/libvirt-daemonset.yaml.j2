@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: libvirt
-  namespace: {{ helm_install_namespace }}
+  namespace: kube-system
 spec:
   tolerations:
     - key: node.kubernetes.io/not-ready
@@ -97,8 +97,6 @@ spec:
   imagePullSecrets:
     - name: {{ docker_register_secrets_name }}
   {% endif %}
-  serviceAccount: libvirt
-  serviceAccountName: libvirt
   priorityClassName: {{ kube_priority_name }}
   volumes:
     - emptyDir: {}

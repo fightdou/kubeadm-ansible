@@ -125,7 +125,7 @@
   roles:
    - { role: guest-server,
        tags: guest-server,
-       when: enable_guest_server| bool }
+       when: "(enable_guest_server| bool) and not (only_deploy_voi) | bool" }
 
 - name: Apply role btserver
   gather_facts: false
