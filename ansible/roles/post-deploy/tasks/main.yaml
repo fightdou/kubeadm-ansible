@@ -6,9 +6,15 @@
   when:
     - enable_ceph | bool
 
+- name: 获取 osd 数量
+  shell: systemctl | grep running | grep osd@ | wc -l
+  register: osd_num
+  when:
+    - enable_hugepages | bool
+
 - name: 获取可分配的大页数量
   set_fact:
-    hugepages_total: "{{ (ansible_memtotal_mb  * (1 - hugepages_reserved_rate) // 2) | int }}"
+    hugepages_total: "{{ (ansible_memtotal_mb  - reserved_osd_memory_mb * osd_num.stdout | int - reserved_mds_memory_mb - reserved_mon_memory_mb - reseverd_system_memory_mb - reserved_host_memory_mb // 2) | int }}"
   when:
     - enable_hugepages | bool
 

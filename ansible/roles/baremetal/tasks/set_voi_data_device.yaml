@@ -22,10 +22,14 @@
       force: true
       dev: "{{ voi_data_device }}"
 
+  - name: cat disk UUID
+    shell: blkid | grep {{ voi_data_device }} | awk -F' ' '{print $2}'
+    register: disk_uuid
+
   - name: mount datanode disks
     mount:
       path: "{{ voi_data_directory }}"
-      src: "{{ voi_data_device }}"
+      src: "{{ disk_uuid.stdout | replace('\"', '') }}"
       fstype: ext4
       opts: "defaults,noatime,nobarrier"
       state: mounted

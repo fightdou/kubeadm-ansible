@@ -10,9 +10,8 @@ image:
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: {{ websockify_image_tag }}
+  pullSecrets: {{ docker_register_secrets_name }}
 
-imagePullSecrets: 
-  - name: {{ docker_register_secrets_name }}
 nameOverride: ""
 fullnameOverride: ""
 tokenSource: http://fsd-nginx:{{ fsd_nginx_port }}/api/v1

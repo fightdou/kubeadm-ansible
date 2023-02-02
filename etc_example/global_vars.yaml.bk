@@ -261,6 +261,10 @@ reserved_host_memory_mb: 16384
 # 每个osd需要留2G内存
 ceph_reserved_host_memory_mb: 6
 cpu_allocation_ratio: 4
+reserved_osd_memory_mb: 4096
+reserved_mon_memory_mb: 2048
+reserved_mds_memory_mb: 2048
+reseverd_system_memory_mb: 16384
 
 #######################
 # elasticsearch Options

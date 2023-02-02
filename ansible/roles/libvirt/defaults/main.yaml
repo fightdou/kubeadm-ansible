@@ -1,1 +1,0 @@
-allocation_hugepages_total: "{{ (ansible_memtotal_mb  * (1 - hugepages_reserved_rate) // 1024) | int }}"

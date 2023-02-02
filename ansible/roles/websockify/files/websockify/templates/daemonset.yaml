@@ -62,9 +62,9 @@ spec:
             successThreshold: 1
             timeoutSeconds: 15
           resources: {}
-      {{- with .Values.imagePullSecrets }}
+      {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        - name: {{ .Values.image.pullSecrets }}
       {{- end }}
       serviceAccountName: {{ include "websockify.serviceAccountName" . }}
       securityContext:
