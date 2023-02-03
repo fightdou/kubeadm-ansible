@@ -45,14 +45,17 @@
 
 - name: 执行 etcd 备份命令
   shell: /usr/local/bin/etcdtools backup
+  run_once: True
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: copy mariadb-backup job file
+  run_once: True
   template:
     src: mysql-backup.yaml.j2
     dest: /etc/kubernetes/plugins/mariadb/mysql-backup.yaml
   delegate_to: "{{ groups['kube-master'][0] }}"
 
 - name: 执行 mysql 备份任务
+  run_once: True
   shell: kubectl apply -f /etc/kubernetes/plugins/mariadb/mysql-backup.yaml
   delegate_to: "{{ groups['kube-master'][0] }}"
