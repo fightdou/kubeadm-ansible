@@ -23,8 +23,6 @@
     dest: "{{ fsd_cloud_disk_root_path }}/samba/diskSize.sh"
     mode: "0777"
   become: true
-  notify:
-    - Restart samba service
 
 - name: Cope samba config file
   template:
@@ -32,5 +30,27 @@
     dest: "/etc/samba/smb.conf"
     mode: "0755"
   become: true
-  notify:
-    - Restart samba service
+
+- name: Restart samba service
+  service:
+    name: "{{ item }}"
+    state: "restarted"
+    enabled: true
+  become: True
+  with_items:
+    - "nmbd"
+    - "smbd"
+  when: 
+    - ansible_distribution == "Ubuntu"
+
+- name: Restart samba service
+  service:
+    name: "{{ item }}"
+    state: "restarted"
+    enabled: true
+  become: True
+  with_items:
+    - "nmb"
+    - "smb"
+  when: 
+    - ansible_distribution == "openEuler"
