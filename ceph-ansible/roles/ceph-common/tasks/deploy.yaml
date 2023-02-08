@@ -227,6 +227,15 @@
     - inventory_hostname in groups['ceph-mons']
     - ansible_distribution == "openEuler"
 
+- name: 启动/重启 Docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
+  delegate_to: "{{ groups['baremetal'][0] }}"
+  when:
+    - inventory_hostname in groups['ceph-mons']
+
 - name: openEuler install osd rpm packages
   yum:
     state: present
