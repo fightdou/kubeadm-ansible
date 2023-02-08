@@ -85,3 +85,9 @@
       - "{{ offline_deb_repo_port }}:80"
   when:
     - ansible_distribution == "openEuler"
+
+- name: 启动/重启 Docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
