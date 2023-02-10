@@ -2,6 +2,14 @@
   when:
     - enable_ceph | bool
 
+- name: 查看 dnsmasq 服务是否存在
+  shell: kill -9 $(pidof dnsmasq)
+  args:
+    executable: /bin/bash
+  ignore_errors: true
+  when:
+    - ansible_distribution == "openEuler"
+
 - name: 创建 vdi 目录
   file:
     path: /etc/vdi/
@@ -88,12 +96,16 @@
   shell: virsh net-list --all | grep default | wc -l
   register: virsh_result
   until: virsh_result is success
-  retries: 2
+  retries: 6
   delay: 10
   ignore_errors: true
 
 - name: undefine libvirt 网络
   shell: virsh net-undefine default
+  register: undefine_result
+  until: undefine_result is success
+  retries: 2
+  delay: 10
+  ignore_errors: true
   when:
     - ansible_distribution == "openEuler"
-    - virsh_result.stdout == "1"
