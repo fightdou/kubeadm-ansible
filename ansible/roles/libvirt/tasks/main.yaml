@@ -2,14 +2,6 @@
   when:
     - enable_ceph | bool
 
-- name: 查看 dnsmasq 服务是否存在
-  shell: kill -9 $(pidof dnsmasq)
-  args:
-    executable: /bin/bash
-  ignore_errors: true
-  when:
-    - ansible_distribution == "openEuler"
-
 - name: 创建 vdi 目录
   file:
     path: /etc/vdi/
@@ -88,6 +80,18 @@
     owner: root
     mode: 0644
 
+- name: 查看 dnsmasq 服务是否存在
+  shell: kill -9 $(pidof dnsmasq)
+  register: virsh_result
+  until: virsh_result is success
+  retries: 6
+  delay: 10
+  args:
+    executable: /bin/bash
+  ignore_errors: true
+  when:
+    - ansible_distribution == "openEuler"
+
 # - import_tasks: libvirt-install.yaml
 #   run_once: True
 #   delegate_to: "{{ groups['kube-master'][0] }}"
@@ -102,10 +106,7 @@
 
 - name: undefine libvirt 网络
   shell: virsh net-undefine default
-  register: undefine_result
-  until: undefine_result is success
-  retries: 2
-  delay: 10
   ignore_errors: true
   when:
     - ansible_distribution == "openEuler"
+    - virsh_result.stdout == "1"

@@ -36,8 +36,11 @@
   - configuration_result.changed
 
 - name: Load all image
-  community.docker.docker_image_load:
-    path: "{{ docker_image_path }}"
+  shell: "docker load -i {{ docker_image_path }}"
+  register: load_result
+  until: load_result is success
+  retries: 6
+  delay: 10
 
 - name: Run registry 容器
   docker_container: 
