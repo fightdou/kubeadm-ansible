@@ -82,8 +82,6 @@ spec:
   hostIPC: true
   hostNetwork: {{ libvirt_hostnetwork }}
   hostPID: true
-  nodeSelector:
-    {{ compute_node_role_name }}: {{ node_role_value }}
   restartPolicy: Always
   {% if docker_register_secrets_name -%}
   imagePullSecrets:
