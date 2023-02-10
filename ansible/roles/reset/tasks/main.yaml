@@ -135,3 +135,9 @@
   systemd:
     name: NetworkManager
     state: restarted
+
+- name: 重启网络
+  systemd:
+    name: docker
+    state: restarted
+  ignore_errors: true
